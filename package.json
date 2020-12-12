@@ -1,0 +1,37 @@
+{
+  "name": "exploding-chickens",
+  "version": "1.0.0",
+  "description": "A bootleg game made by a group of friends",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "test": "node app.js test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/RAK3RMAN/exploding-chickens.git"
+  },
+  "author": "Radison A, Sengdao I, Vincent D",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/RAK3RMAN/exploding-chickens/issues"
+  },
+  "homepage": "https://github.com/RAK3RMAN/exploding-chickens#readme",
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "chalk": "^4.1.0",
+    "cookie-parser": "^1.4.4",
+    "data-store": "^3.1.0",
+    "ejs": "^2.6.1",
+    "express": "^4.17.1",
+    "express-session": "^1.15.6",
+    "http": "0.0.0",
+    "http-errors": "^1.7.2",
+    "ip": "^1.1.5",
+    "moment": "^2.29.1",
+    "mongoose": "^5.7.12",
+    "morgan": "^1.9.1",
+    "ora": "^5.1.0",
+    "uuid": "^3.3.2"
+  }
+}
