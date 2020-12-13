@@ -29,7 +29,7 @@ console.log(chalk.white('--> Github: ' + pkg.homepage + '\n'));
 
 //Setup config.json datastore
 spinner.start('Checking configuration values');
-const config_storage = new dataStore({path: './config.json'});
+const config_storage = new dataStore({path: '../config/env.json'});
 let invalid_config = false;
 
 //Config value: webserver_port | the port where the webserver will listen for requests
