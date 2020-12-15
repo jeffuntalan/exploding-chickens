@@ -1,12 +1,15 @@
-/*\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
-Filename    : exploding-chickens/models/game.js
-Description : mongoose model for each game,
-              including players and cards
-Author(s)   : RAk3rman
-\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\*/
+/*\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
+Filename : exploding-chickens/models/game.js
+Desc     : mongoose model for each game,
+           including players and cards
+Author(s): RAk3rman
+\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\*/
+
+//Packages
 const mongoose = require('mongoose');
 const { uniqueNamesGenerator, adjectives, colors, animals } = require('unique-names-generator');
 
+//Player schema
 let playerSchema = mongoose.Schema({
     nickname: {
         type: String,
@@ -22,6 +25,7 @@ let playerSchema = mongoose.Schema({
     }
 });
 
+//Card schema
 let cardSchema = mongoose.Schema({
     name: {
         type: String,
@@ -41,6 +45,7 @@ let cardSchema = mongoose.Schema({
     }
 });
 
+//Game schema
 let gameSchema = mongoose.Schema({
     slug: {
         type: String,
@@ -62,4 +67,5 @@ let gameSchema = mongoose.Schema({
     card: [cardSchema]
 });
 
+//Export game model
 module.exports = mongoose.model('game', gameSchema);

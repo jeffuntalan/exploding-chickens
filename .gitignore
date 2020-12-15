@@ -5,4 +5,4 @@
 
 node_modules/
 
-config/env\.json
+config/config\.json
