@@ -12,7 +12,7 @@ const chalk = require('chalk');
 const ora = require('ora');
 const spinner = ora('');
 
-// Name : config_setup.check_values()
+// Name : setup.check_values()
 // Desc : checks all env.json values and configures each value if invalid
 // Author(s) : RAk3rman
 exports.check_values = function (config_storage) {
@@ -45,6 +45,5 @@ exports.check_values = function (config_storage) {
         process.exit(0);
     } else {
         spinner.succeed(`${chalk.cyan('Setup')}: Configuration values have been propagated`);
-        //connect_mongoose();
     }
 }

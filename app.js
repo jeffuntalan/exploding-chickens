@@ -24,8 +24,9 @@ const ora = require('ora');
 const spinner = ora('');
 const ip = require('ip');
 
-//Configuration
-let config_setup = require('./config/setup.js');
+//Configuration & testing
+let setup = require('./config/setup.js');
+let evaluation = require('./config/evaluation.js');
 
 //Services
 let card_actions = require('./services/card-actions.js');
@@ -38,7 +39,7 @@ console.log(chalk.white('--> Description: ' + pkg.description));
 console.log(chalk.white('--> Github: ' + pkg.homepage + '\n'));
 
 //Check configuration values
-config_setup.check_values(config_storage);
+setup.check_values(config_storage);
 
 //End of Packages and configuration - - - - - - - - - - - - - - - - - - - - - -
 
@@ -51,13 +52,31 @@ config_setup.check_values(config_storage);
 //Setup external connections - - - - - - - - - - - - - - - - - - - - - - - - -
 
 //Prepare async mongoose connection messages
-mongoose.connection.on('connected', function () {spinner.succeed(`${chalk.yellow('Mongoose')}: Connected successfully`)});
-mongoose.connection.on('timeout', function () {spinner.fail(`${chalk.yellow('Mongoose')}: Connection timed out`)});
-mongoose.connection.on('disconnected', function () {spinner.warn(`${chalk.yellow('Mongoose')}: Connection was interrupted`)});
+mongoose.connection.on('connected', function () {spinner.succeed(`${chalk.yellow('Mongoose')}: Connected successfully`);mongoose_connected()});
+mongoose.connection.on('timeout', function () {spinner.fail(`${chalk.yellow('Mongoose')}: Connection timed out`);mongoose_disconnected()});
+mongoose.connection.on('disconnected', function () {spinner.warn(`${chalk.yellow('Mongoose')}: Connection was interrupted`);mongoose_disconnected()});
 //Connect to mongodb using mongoose
 spinner.start(`${chalk.yellow('Mongoose')}: Attempting to connect using url "` + config_storage.get('mongodb_url') + `"`);
 mongoose.connect(config_storage.get('mongodb_url'), {useNewUrlParser: true,  useUnifiedTopology: true, connectTimeoutMS: 10000});
 
-//End of Setup external connections - - - - - - - - - - - - - - - - - - - - - -
+//When mongoose establishes a connection with mongodb
+function mongoose_connected() {
+    //Check if we are in testing environment
+    if (!(process.env.testENV || process.argv[2] !== "test")) {
+        spinner.info(`${chalk.red('Evaluation')}: Starting evaluation suite`);
+        evaluation.game_creation();
+        evaluation.player_test();
+        evaluation.card_test();
+        spinner.succeed(`${chalk.red('Evaluation')}: Evaluation suite completed successfully`);
+        process.exit(0);
+    } else {
+        spinner.start('Not in testing environment, waiting for instructions');
+        //TODO: Start webserver here
+    }
+}
+//When mongoose losses a connection with mongodb
+function mongoose_disconnected() {
 
-//process.exit(0);
+}
+
+//End of Setup external connections - - - - - - - - - - - - - - - - - - - - - -
