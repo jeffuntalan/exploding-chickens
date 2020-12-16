@@ -6,7 +6,7 @@ Author(s): RAk3rman
 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\*/
 
 //Packages
-const mongoose = require('mongoose');
+let mongoose = require('mongoose');
 const { uniqueNamesGenerator, adjectives, colors, animals } = require('unique-names-generator');
 
 //Player schema

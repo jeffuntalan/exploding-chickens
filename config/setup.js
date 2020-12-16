@@ -25,8 +25,8 @@ exports.check_values = function (config_storage) {
     }
     //Config value: mongodb_url | the url used to access an external mongodb database
     if (!config_storage.has('mongodb_url') || config_storage.get('mongodb_url') === '') {
-        config_storage.set('mongodb_url', 'mongodb://localhost:27017');
-        spinner.warn(`${chalk.cyan('Setup')}: "mongodb_url" value in config.json set to default: "mongodb://localhost:27017"`);
+        config_storage.set('mongodb_url', 'mongodb://localhost:27017/exploding-chickens');
+        spinner.warn(`${chalk.cyan('Setup')}: "mongodb_url" value in config.json set to default: "mongodb://localhost:27017/exploding-chickens"`);
     }
     //Config value: express_secret | the session secret value used for express
     if (!config_storage.has('express_secret') || config_storage.get('express_secret') === '') {
