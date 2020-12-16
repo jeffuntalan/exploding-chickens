@@ -24,7 +24,7 @@ let sample_game_id = "";
 exports.game_creation = async function () {
     spinner.info(`${chalk.red('Evaluation')}: ${chalk.bold('Evaluating game creation')}`);
     //Create sample game
-    spinner.info(`${chalk.red('Evaluation')}: Creating sample game (1 of 2)`);
+    spinner.info(`${chalk.red('Evaluation')}: Creating sample game (1 of 1)`);
     let sample_game = await game_actions.create_game().catch(e => {failed_test(e)});
     spinner.succeed(`${chalk.red('Evaluation')}: Created game with the following parameters: ` + JSON.stringify(sample_game));
     sample_game_id = sample_game["_id"];

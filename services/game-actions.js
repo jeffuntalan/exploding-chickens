@@ -1,7 +1,7 @@
 /*\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 Filename : exploding-chickens/services/game-actions.js
-Desc     : mongoose model for each game,
-           including players and cards
+Desc     : all actions and helper functions
+           related to game play
 Author(s): RAk3rman
 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\*/
 
