@@ -29,7 +29,7 @@ exports.game_creation = async function () {
     spinner.succeed(`${chalk.red('Evaluation')}: Created game with the following parameters: ` + JSON.stringify(sample_game));
     sample_game_id = sample_game["_id"];
     //Edit sample game
-    spinner.info(`${chalk.red('Evaluation')}: Checking sample game data (2 of 2)`);
+    spinner.info(`${chalk.red('Evaluation')}: ${chalk.redBright('N/A')} Checking sample game data (2 of 2)`);
     //TODO edit various parameters of sample game
 }
 
@@ -37,7 +37,7 @@ exports.game_creation = async function () {
 // Desc : adds players to a sample game and tests interaction
 // Author(s) :
 exports.player_test = async function () {
-    spinner.info(`${chalk.red('Evaluation')}: ${chalk.bold('Evaluating player actions')}`);
+    spinner.info(`${chalk.red('Evaluation')}: ${chalk.redBright('N/A')} ${chalk.bold('Evaluating player actions')}`);
     //TODO adds players to a sample game and tests interaction
 }
 
@@ -45,7 +45,7 @@ exports.player_test = async function () {
 // Desc : adds cards to a sample game and tests interaction
 // Author(s) :
 exports.card_test = async function () {
-    spinner.info(`${chalk.red('Evaluation')}: ${chalk.bold('Evaluating card actions')}`);
+    spinner.info(`${chalk.red('Evaluation')}: ${chalk.redBright('N/A')} ${chalk.bold('Evaluating card actions')}`);
     //TODO adds cards to a sample game and tests interaction
 }
 
@@ -53,7 +53,7 @@ exports.card_test = async function () {
 // Desc : tests game functions and interaction
 // Author(s) :
 exports.game_test = async function () {
-    spinner.info(`${chalk.red('Evaluation')}: ${chalk.bold('Evaluating game actions')}`);
+    spinner.info(`${chalk.red('Evaluation')}: ${chalk.redBright('N/A')} ${chalk.bold('Evaluating game actions')}`);
     //TODO tests game functions and interaction
 }
 
