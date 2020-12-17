@@ -55,7 +55,7 @@ exports.modify_player = async function (game_id, player_id, player_nickname, pla
                         });
                     }
                 } else {
-                    reject("player cannot be created because game does not exist");
+                    reject("Player cannot be created because game does not exist");
                 }
             }
         });
@@ -73,6 +73,7 @@ exports.randomize_seats = async function (game_id) {
                 reject(err);
             } else {
                 //TODO randomize seats given found_game
+                console.log(found_game);
                 resolve(found_game);
             }
         });
