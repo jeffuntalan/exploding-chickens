@@ -7,10 +7,15 @@ Author(s): RAk3rman
 
 //Packages
 let mongoose = require('mongoose');
+const { v4: uuidv4 } = require('uuid');
 const { uniqueNamesGenerator, adjectives, colors, animals } = require('unique-names-generator');
 
 //Player schema
 let playerSchema = mongoose.Schema({
+    _id: {
+        type: String,
+        default: uuidv4()
+    },
     nickname: {
         type: String,
         required: true
@@ -27,6 +32,10 @@ let playerSchema = mongoose.Schema({
 
 //Card schema
 let cardSchema = mongoose.Schema({
+    _id: {
+        type: String,
+        default: uuidv4()
+    },
     name: {
         type: String,
         required: true
@@ -47,6 +56,10 @@ let cardSchema = mongoose.Schema({
 
 //Game schema
 let gameSchema = mongoose.Schema({
+    _id: {
+        type: String,
+        default: uuidv4()
+    },
     slug: {
         type: String,
         default: uniqueNamesGenerator({
@@ -63,8 +76,8 @@ let gameSchema = mongoose.Schema({
         type: Number,
         default: 0
     },
-    player: [playerSchema],
-    card: [cardSchema]
+    players: [playerSchema],
+    cards: [cardSchema]
 });
 
 //Export game model

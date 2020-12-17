@@ -52,18 +52,19 @@ setup.check_values(config_storage);
 //Setup external connections - - - - - - - - - - - - - - - - - - - - - - - - -
 
 //Prepare async mongoose connection messages
-mongoose.connection.on('connected', function () {spinner.succeed(`${chalk.yellow('Mongoose')}: Connected successfully at ` + config_storage.get('mongodb_url'));mongoose_connected()});
-mongoose.connection.on('timeout', function () {spinner.fail(`${chalk.yellow('Mongoose')}: Connection timed out`);mongoose_disconnected()});
-mongoose.connection.on('disconnected', function () {spinner.warn(`${chalk.yellow('Mongoose')}: Connection was interrupted`);mongoose_disconnected()});
+mongoose.connection.on('connected', function () {spinner.succeed(`${chalk.bold.yellow('Mongoose')}: Connected successfully at ` + config_storage.get('mongodb_url'));mongoose_connected()});
+mongoose.connection.on('timeout', function () {spinner.fail(`${chalk.bold.yellow('Mongoose')}: Connection timed out`);mongoose_disconnected()});
+mongoose.connection.on('disconnected', function () {spinner.warn(`${chalk.bold.yellow('Mongoose')}: Connection was interrupted`);mongoose_disconnected()});
 //Connect to mongodb using mongoose
-spinner.start(`${chalk.yellow('Mongoose')}: Attempting to connect using url "` + config_storage.get('mongodb_url') + `"`);
+spinner.start(`${chalk.bold.yellow('Mongoose')}: Attempting to connect using url "` + config_storage.get('mongodb_url') + `"`);
 mongoose.connect(config_storage.get('mongodb_url'), {useNewUrlParser: true,  useUnifiedTopology: true, connectTimeoutMS: 10000});
+mongoose.set('useFindAndModify', false);
 
 //When mongoose establishes a connection with mongodb
 function mongoose_connected() {
     //Check if we are in testing environment
     if (!(process.env.testENV || process.argv[2] !== "test")) {
-        spinner.info(`${chalk.red('Evaluation')}: ${chalk.bold.underline('Starting evaluation suite')}`);
+        spinner.info(`${chalk.bold.red('Evaluation')}: ${chalk.bold.underline('Starting evaluation suite')}`);
         const run_eval = async () => {
             await evaluation.game_creation();
             await evaluation.player_test();
@@ -72,7 +73,7 @@ function mongoose_connected() {
             await evaluation.game_deletion();
         }
         run_eval().then(() => {
-            spinner.succeed(`${chalk.red('Evaluation')}: ${chalk.bold.underline('Evaluation suite completed successfully')}`);
+            spinner.succeed(`${chalk.bold.red('Evaluation')}: ${chalk.bold.underline('Evaluation suite completed successfully')}`);
             process.exit(0);
         });
     } else {
