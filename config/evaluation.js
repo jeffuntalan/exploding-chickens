@@ -35,7 +35,7 @@ exports.game_creation = async function () {
 
 // Name : evaluation.player_test()
 // Desc : adds players to a sample game and tests interaction
-// Author(s) : RAk3rman
+// Author(s) : RAk3rman, SengdowJones
 exports.player_test = async function () {
     //Console header
     let console_head = `${chalk.bold.red('Evaluation')}: ${chalk.yellow('P-ACT')} `;
@@ -68,7 +68,21 @@ exports.player_test = async function () {
     //Test seat randomization
     spinner.info(console_head + `Randomizing seat positions for all players`);
     //TODO test seat randomization
-    spinner.warn(console_head + `${chalk.italic('//TODO//')}`);
+    await player_handler.randomize_seats(sample_game_id).catch(e => {failed_test(e)});
+    await game.findById({ _id: sample_game_id }, function (err, found_game) {
+        if (err) {
+            failed_test(err);
+        } else {
+            // For every player, express updated seat position to console
+            for (let i = 0; i <= found_game.players.length - 1; i++) {
+                spinner.succeed(console_head +
+                    `Changed ` + found_game.players[i].nickname +
+                    `'s seat position to ` + found_game.players[i].seat +
+                    ` with id: ` + found_game.players[i]._id +
+                    ` (` + (i+1) +` of ` + found_game.players.length + `)`);
+            }
+        }
+    });
 }
 
 // Name : evaluation.card_test()

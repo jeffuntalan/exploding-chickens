@@ -64,7 +64,7 @@ exports.modify_player = async function (game_id, player_id, player_nickname, pla
 
 // Name : player_handler.randomize_seats()
 // Desc : given a game_id, gives each player a random seat position (without replacement)
-// Author(s) :
+// Author(s) : SengdowJones
 exports.randomize_seats = async function (game_id) {
     //Create new promise and return created_game after saved
     return await new Promise((resolve, reject) => {
@@ -72,8 +72,28 @@ exports.randomize_seats = async function (game_id) {
             if (err) {
                 reject(err);
             } else {
-                //TODO randomize seats given found_game
-                console.log(found_game);
+
+                // Randomly sample seat number without replacement
+                let bucket = [];
+
+               for (let i=0;i<=found_game.players.length-1;i++) {
+                   bucket.push(i)
+               }
+
+                function getRandomFromBucket() {
+                    let randomIndex = Math.floor(Math.random()*bucket.length);
+                    return bucket.splice(randomIndex, 1)[0];
+                }
+
+               // Update seat number for each player
+                for (let i=0;i<=found_game.players.length-1;i++) {
+                   game.findOneAndUpdate({ _id: game_id, "players._id": found_game.players[i]._id }, {"$set": { "players.$.seat": getRandomFromBucket() }}, function (err) {
+                        if (err) {
+                            reject(err);
+                        } else {
+                        }
+                    });
+                }
                 resolve(found_game);
             }
         });
