@@ -1,6 +1,6 @@
 {
   "name": "exploding-chickens",
-  "version": "1.0",
+  "version": "1.0.0",
   "description": "A bootleg game made by a group of friends",
   "main": "app.js",
   "scripts": {
