@@ -41,25 +41,25 @@ exports.player_test = async function () {
     let console_head = `${chalk.bold.red('Evaluation')}: ${chalk.yellow('P-ACT')} `;
     spinner.info(console_head + `${chalk.bold('Evaluating player actions')}`);
     //Create 4 sample players
-    spinner.info(console_head + `Creating sample players (4 Total)`);
+    spinner.info(console_head + `Creating sample players (4 total)`);
     let player_a = await player_handler.modify_player(sample_game_id, undefined, "Player X", 0, "offline").catch(e => {failed_test(e)});
-    spinner.succeed(console_head + `Created sample player (1 of 4) with id: ` + player_a);
+    spinner.succeed(console_head + `Created Player X (aka A) (1 of 4) with id: ` + player_a);
     let player_b = await player_handler.modify_player(sample_game_id, undefined, "Player B", 2, "online").catch(e => {failed_test(e)});
-    spinner.succeed(console_head + `Created sample player (2 of 4) with id: ` + player_b);
+    spinner.succeed(console_head + `Created Player B (2 of 4) with id: ` + player_b);
     let player_c = await player_handler.modify_player(sample_game_id, undefined, "Player C", 3, "online").catch(e => {failed_test(e)});
-    spinner.succeed(console_head + `Created sample player (3 of 4) with id: ` + player_c);
+    spinner.succeed(console_head + `Created Player C (3 of 4) with id: ` + player_c);
     let player_d = await player_handler.modify_player(sample_game_id, undefined, "Player D", 4, "online").catch(e => {failed_test(e)});
-    spinner.succeed(console_head + `Created sample player (4 of 4) with id: ` + player_d);
+    spinner.succeed(console_head + `Created Player D (4 of 4) with id: ` + player_d);
     //Test player modification
-    spinner.info(console_head + `Modifying sample player and verifying changes with id: ` + player_a);
+    spinner.info(console_head + `Modifying Player X (aka A) and verifying changes with id: ` + player_a);
     await player_handler.modify_player(sample_game_id, player_a, "Player A", 1, "online").catch(e => {failed_test(e)});
-    spinner.succeed(console_head + `Modified sample player with id: ` + player_a);
+    spinner.succeed(console_head + `Modified Player X (aka A) with id: ` + player_a);
     await game.findById({ _id: sample_game_id }, function (err, found_game) {
         if (err) {
             failed_test(err);
         } else {
             if (found_game.players.id(player_a).nickname === "Player A" || found_game.players.id(player_a).seat === 1 || found_game.players.id(player_a).status === "online") {
-                spinner.succeed(console_head + `Verified sample player changes with id: ` + player_a);
+                spinner.succeed(console_head + `Verified Player A's changes with id: ` + player_a);
             } else {
                 failed_test("Modified sample player values do not match");
             }
@@ -67,7 +67,6 @@ exports.player_test = async function () {
     });
     //Test seat randomization
     spinner.info(console_head + `Randomizing seat positions for all players`);
-    //TODO test seat randomization
     await player_handler.randomize_seats(sample_game_id).catch(e => {failed_test(e)});
     await game.findById({ _id: sample_game_id }, function (err, found_game) {
         if (err) {
@@ -77,9 +76,9 @@ exports.player_test = async function () {
             for (let i = 0; i <= found_game.players.length - 1; i++) {
                 spinner.succeed(console_head +
                     `Changed ` + found_game.players[i].nickname +
-                    `'s seat position to ` + found_game.players[i].seat +
-                    ` with id: ` + found_game.players[i]._id +
-                    ` (` + (i+1) +` of ` + found_game.players.length + `)`);
+                    `'s (` + (i+1) + ` of ` + found_game.players.length + `)` +
+                    ` seat position to ` + found_game.players[i].seat +
+                    ` with id: ` + found_game.players[i]._id);
             }
         }
     });
