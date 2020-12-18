@@ -93,6 +93,7 @@ exports.card_test = async function () {
     spinner.info(console_head + `${chalk.bold('Evaluating card actions')}`);
     //TODO adds cards to a sample game and tests interaction
     spinner.warn(console_head + `${chalk.italic('//TODO//')}`);
+    await card_actions.import_cards(sample_game_id).catch(e => {failed_test(e)});
 }
 
 // Name : evaluation.game_test()

@@ -1,0 +1,27 @@
+[
+  {
+    "_id": "defuse-base-a",
+    "name": "Defuse",
+    "action": "defuse"
+  },
+  {
+    "_id": "nope-base-a",
+    "name": "Nope",
+    "action": "nope"
+  },
+  {
+    "_id": "stf3-base-a",
+    "name": "See the Future X3",
+    "action": "stf3"
+  },
+  {
+    "_id": "reverse-base-a",
+    "name": "Reverse",
+    "action": "reverse"
+  },
+  {
+    "_id": "skip-base-a",
+    "name": "Skip",
+    "action": "skip"
+  }
+]

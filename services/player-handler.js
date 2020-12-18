@@ -74,7 +74,7 @@ exports.randomize_seats = async function (game_id) {
             } else {
                 //Create array containing each available seat
                 let bucket = [];
-                for (let i=0;i<=found_game.players.length-1;i++) {
+                for (let i = 0; i <= found_game.players.length - 1; i++) {
                     bucket.push(i)
                 }
                 //Returns a random value from the array and deletes it
@@ -83,13 +83,13 @@ exports.randomize_seats = async function (game_id) {
                     return bucket.splice(randomIndex, 1)[0];
                 }
                 //Update seat number for each player
-                for (let i = 0; i <= found_game.players.length-1; i++) {
+                for (let i = 0; i <= found_game.players.length - 1; i++) {
                     game.findOneAndUpdate({ _id: game_id, "players._id": found_game.players[i]._id }, {"$set": { "players.$.seat": getRandomFromBucket() }}, function (err) {
                         if (err) {
                             reject(err);
                         } else {
                             //Resolve promise when the last game has been updated
-                            if (i >= found_game.players.length-1) {
+                            if (i >= found_game.players.length - 1) {
                                 resolve();
                             }
                         }

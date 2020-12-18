@@ -34,7 +34,7 @@ let playerSchema = mongoose.Schema({
 let cardSchema = mongoose.Schema({
     _id: {
         type: String,
-        default: uuidv4()
+        required: true
     },
     name: {
         type: String,
@@ -46,7 +46,7 @@ let cardSchema = mongoose.Schema({
     },
     assignment: {
         type: String,
-        required: true
+        default: "draw_deck"
     },
     position: {
         type: Number,
