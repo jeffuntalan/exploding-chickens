@@ -86,7 +86,7 @@ exports.player_test = async function () {
 
 // Name : evaluation.card_test()
 // Desc : adds cards to a sample game and tests interaction
-// Author(s) :
+// Author(s) : RAk3rman
 exports.card_test = async function () {
     //Console header
     let console_head = `${chalk.bold.red('Evaluation')}: ${chalk.cyan('C-ACT')} `;
@@ -94,6 +94,13 @@ exports.card_test = async function () {
     //TODO adds cards to a sample game and tests interaction
     spinner.warn(console_head + `${chalk.italic('//TODO//')}`);
     await card_actions.import_cards(sample_game_id).catch(e => {failed_test(e)});
+    await game.findById({ _id: sample_game_id }, function (err, found_game) {
+        if (err) {
+            failed_test(err);
+        } else {
+            console.log(found_game);
+        }
+    });
 }
 
 // Name : evaluation.game_test()

@@ -22,6 +22,7 @@ exports.import_cards = async function (game_id) {
             if (err) {
                 reject(err);
             } else {
+                //Loop through each json value and add card
                 for (let i = 0; i <= template_base.length - 1; i++) {
                     found_game.cards.push({ _id: template_base[i]._id, name: template_base[i].name, action: template_base[i].action, position: i });
                 }
