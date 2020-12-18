@@ -23,5 +23,10 @@
     "_id": "skip-base-a",
     "name": "Skip",
     "action": "skip"
+  },
+  {
+    "_id": "chicken-base-a",
+    "name": "Exploding Chicken",
+    "action": "explodes"
   }
 ]

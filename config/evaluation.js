@@ -94,6 +94,7 @@ exports.card_test = async function () {
     spinner.warn(console_head + `${chalk.italic('//TODO//')}`);
     await card_actions.import_cards(sample_game_id).catch(e => {failed_test(e)});
     await card_actions.assign_defuse(sample_game_id).catch(e => {failed_test(e)});
+    await card_actions.player_hand(sample_game_id).catch(e => {failed_test(e)});
     await game.findById({ _id: sample_game_id }, function (err, found_game) {
         if (err) {
             failed_test(err);

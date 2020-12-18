@@ -42,7 +42,7 @@ exports.import_cards = async function (game_id) {
 
 // Name : game_actions.assign_defuse(game_id)
 // Desc : assigns defuses to all players
-// Author(s) :
+// Author(s) : Vincent Do & RAk3rman
 exports.assign_defuse = async function (game_id) {
     //Create new promise and return created_game after saved
     return await new Promise((resolve, reject) => {
@@ -58,11 +58,11 @@ exports.assign_defuse = async function (game_id) {
                         console.log(found_game.cards[i]._id);
                     }
                 }
+                //assign defuse card to player id
                 for (let i = 0; i <= found_game.players.length - 1; i++) {
                     console.log(found_game.players[i]._id);
-                    game.findOneAndUpdate({ _id: game_id, "card._id": found_game.cards[i]._id },
+                    game.findOneAndUpdate({ _id: game_id, "cards._id": found_game.cards[i]._id },
                         {"$set": { "cards.$.assignment": found_game.players[i]._id, "cards.$.position": found_game.players[i].seat  }}, function (err) {
-                        console.log(found_game.cards[i].assignment);
                         if (err) {
                             reject(err);
                         } else {
@@ -72,6 +72,50 @@ exports.assign_defuse = async function (game_id) {
                             }
                         }
                     });
+                }
+            }
+        });
+    });
+}
+// Name : game_actions.player_hand(game_id)
+// Desc : assigns 4 more cards to each player
+// Author(s) : Vincent Do
+exports.player_hand = async function (game_id) {
+    //Create new promise and return created_game after saved
+    return await new Promise((resolve, reject) => {
+        game.findById({ _id: game_id }, function (err, found_game) {
+            if (err) {
+                reject(err);
+            } else {
+                //Finding player
+                let bucket = [];
+                for (let j = 0; j <= 4; j++) {
+                    for (let i = 0; i <= found_game.players.length - 1; i++) {
+                        bucket.push(found_game.players[i]);
+                    }
+                }
+                //assign card assignment to player id
+                for (let i = 0; i <= bucket.length - 1; i++) {
+                    let j = 0;
+                    if (found_game.cards[j]._id !== "explode") {
+                        j++;
+                        game.findOneAndUpdate({_id: game_id, "cards._id": found_game.cards._id},
+                            {"$set": {"cards.$.assignment": bucket[i]._id, "cards.$.position": bucket[i].seat}}, function (err) {
+                                if (err) {
+                                    reject(err);
+                                } else {
+                                    //Resolve promise when the last game has been updated
+                                    if (i >= found_game.players.length - 1) {
+                                        resolve();
+                                    }
+                                }
+                            });
+                        console.log(found_game.cards[j].position);
+                        console.log("X");
+                        console.log(found_game.cards[j].assignment);
+                    } else {
+                        j++;
+                    }
                 }
             }
         });
