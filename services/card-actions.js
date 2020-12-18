@@ -51,6 +51,28 @@ exports.assign_defuse = async function (game_id) {
                 reject(err);
             } else {
                 //TODO assign defuses to each player here
+                let bucket = [];
+                for (let i = 0; i <= found_game.cards.length - 1; i++) {
+                    if (found_game.cards[i].action === "defuse") {
+                        bucket.push(found_game.cards[i]._id);
+                        console.log(found_game.cards[i]._id);
+                    }
+                }
+                for (let i = 0; i <= found_game.players.length - 1; i++) {
+                    console.log(found_game.players[i]._id);
+                    game.findOneAndUpdate({ _id: game_id, "card._id": found_game.cards[i]._id },
+                        {"$set": { "cards.$.assignment": found_game.players[i]._id, "cards.$.position": found_game.players[i].seat  }}, function (err) {
+                        console.log(found_game.cards[i].assignment);
+                        if (err) {
+                            reject(err);
+                        } else {
+                            //Resolve promise when the last game has been updated
+                            if (i >= found_game.players.length - 1) {
+                                resolve();
+                            }
+                        }
+                    });
+                }
             }
         });
     });
