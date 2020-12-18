@@ -2,7 +2,7 @@
 Filename : exploding-chickens/config/evaluation.js
 Desc     : evaluation suite for testing game,
            player, and card interactions
-Author(s): RAk3rman
+Author(s): RAk3rman, SengdowJones
 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\*/
 
 //Packages

@@ -10,9 +10,24 @@
     "action": "nope"
   },
   {
-    "_id": "stf3-base-a",
-    "name": "See the Future X3",
-    "action": "stf3"
+    "_id": "see-base-a",
+    "name": "See the Future",
+    "action": "stf"
+  },
+  {
+    "_id": "shuffle-base-a",
+    "name": "Shuffle",
+    "action": "shuffle"
+  },
+  {
+    "_id": "favor-base-a",
+    "name": "Favor",
+    "action": "favor"
+  },
+  {
+    "_id": "attack-base-a",
+    "name": "Attack",
+    "action": "attack"
   },
   {
     "_id": "reverse-base-a",

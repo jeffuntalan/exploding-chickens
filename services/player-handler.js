@@ -2,7 +2,7 @@
 Filename : exploding-chickens/services/player-handler.js
 Desc     : handles all player actions
            and modifies players in game db
-Author(s): RAk3rman
+Author(s): RAk3rman, SengdowJones
 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\*/
 
 //Packages
