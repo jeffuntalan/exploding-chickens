@@ -27,17 +27,33 @@ exports.create_game = async function () {
     });
 }
 
-// Name : game_actions.delete_game()
-// Desc : deletes a existing game in mongodb
+// Name : game_actions.game_details()
+// Desc : returns the details for a game
 // Author(s) : RAk3rman
-exports.delete_game = async function (_id) {
-    //Create new promise and return delete_game _id after deleted
+exports.game_details = async function (game_id) {
+    //Create new promise and return created_game after saved
     return await new Promise((resolve, reject) => {
-        game.deleteOne({ _id: _id }, function (err) {
+        game.findById({ _id: game_id }, function (err, found_game) {
             if (err) {
                 reject(err);
             } else {
-                resolve(_id);
+                resolve(found_game);
+            }
+        });
+    });
+}
+
+// Name : game_actions.delete_game()
+// Desc : deletes a existing game in mongodb
+// Author(s) : RAk3rman
+exports.delete_game = async function (game_id) {
+    //Create new promise and return delete_game _id after deleted
+    return await new Promise((resolve, reject) => {
+        game.deleteOne({ _id: game_id }, function (err) {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(game_id);
             }
         });
     });

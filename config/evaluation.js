@@ -99,16 +99,13 @@ exports.card_test = async function () {
     spinner.info(console_head + `Assigning initial defuse cards to all players`);
     let defuse_count  = await card_actions.assign_defuse(sample_game_id).catch(e => {failed_test(e)});
     spinner.succeed(console_head + `Assigned ` + chalk.bold(defuse_count) + ` defuse cards to ` + chalk.bold(defuse_count) + ` players`);
+    //Shuffle all cards in draw_deck
+    spinner.info(console_head + `Shuffling all cards in draw deck`);
+    await card_actions.shuffle_draw_deck(sample_game_id).catch(e => {failed_test(e)});
     //Create player hand
     await card_actions.player_hand(sample_game_id).catch(e => {failed_test(e)});
+    //Advance turn
     await card_actions.advance_turn(sample_game_id).catch(e => {failed_test(e)});
-    // await game.findById({ _id: sample_game_id }, function (err, found_game) {
-    //     if (err) {
-    //         failed_test(err);
-    //     } else {
-    //         console.log(found_game);
-    //     }
-    // });
 }
 
 // Name : evaluation.game_test()
