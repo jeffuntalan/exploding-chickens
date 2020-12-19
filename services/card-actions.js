@@ -208,10 +208,10 @@ function rand_bucket(bucket) {
     return bucket.splice(randomIndex, 1)[0];
 }
 
-// Name : game_actions.attack(game_id)
+// Name : game_actions.attack_pre(game_id)
 // Desc : forces the next player in turn order to take 2 consecutive turns
 // Author(s) : SengdowJones
-exports.attack = async function (game_id) {
+exports.attack_pre = async function (game_id) {
     return await new Promise((resolve, reject) => {
         game.findById({ _id: game_id }, function (err, found_game) {
             if (err) {
