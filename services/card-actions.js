@@ -175,32 +175,39 @@ exports.advance_turn = async function (game_id) {
 }
 
 // Name : game_actions.shuffle_draw_deck(game_id)
-// Desc : shuffles the positions of all cards in the draw deck
+// Desc : shuffles the positions of all cards in the draw deck, returns number of cards in draw deck
 // Author(s) : RAk3rman
 exports.shuffle_draw_deck = async function (game_id) {
     //Get game details
     let game_details = await game_actions.game_details(game_id);
     //Create new promise and return created_game after saved
     return await new Promise((resolve, reject) => {
-        //Loop through each card
-        //Create array containing each defuse card id
         let bucket = [];
+        let cards_in_deck = 0;
+        //Loop through each card to create array
         for (let i = 0; i <= game_details.cards.length - 1; i++) {
-            //Check to see if card in draw deck
+            //Check to see if card in draw deck and not exploding
             if (game_details.cards[i].assignment === "draw_deck" && game_details.cards[i].action !== "explodes") {
-                bucket.push(game_details.cards[i]._id);
+                bucket.push(cards_in_deck);
+                cards_in_deck++;
             }
         }
-        resolve();
+        //Loop though each card and reassign position
+        for (let i = 0; i <= game_details.cards.length - 1; i++) {
+            //Check to see if card in draw deck and not exploding
+            if (game_details.cards[i].assignment === "draw_deck" && game_details.cards[i].action !== "explodes") {
+                game_details.cards[i].position = rand_bucket(bucket);
+            }
+        }
+        //Save updated game
+        game_details.save({}, function (err) {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(cards_in_deck + 1);
+            }
+        });
     });
-}
-
-// Name : rand_bucket(bucket)
-// Desc : returns a random array position from a given bucket
-// Author(s) : RAk3rman
-function rand_bucket(bucket) {
-    let randomIndex = Math.floor(Math.random()*bucket.length);
-    return bucket.splice(randomIndex, 1)[0];
 }
 
 // Name : game_actions.attack_pre(game_id)
@@ -271,6 +278,14 @@ exports.attack_post = async function (game_id) {
             }
         });
     });
+}
+
+// Name : rand_bucket(bucket)
+// Desc : returns a random array position from a given bucket
+// Author(s) : RAk3rman
+function rand_bucket(bucket) {
+    let randomIndex = Math.floor(Math.random()*bucket.length);
+    return bucket.splice(randomIndex, 1)[0];
 }
 
 // Name : game_actions.seethefuture(game_id)

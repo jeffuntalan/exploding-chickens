@@ -101,7 +101,8 @@ exports.card_test = async function () {
     spinner.succeed(console_head + `Assigned ` + chalk.bold(defuse_count) + ` defuse cards to ` + chalk.bold(defuse_count) + ` players`);
     //Shuffle all cards in draw_deck
     spinner.info(console_head + `Shuffling all cards in draw deck`);
-    await card_actions.shuffle_draw_deck(sample_game_id).catch(e => {failed_test(e)});
+    let cards_in_deck = await card_actions.shuffle_draw_deck(sample_game_id).catch(e => {failed_test(e)});
+    spinner.succeed(console_head + `Shuffled ` + chalk.bold(cards_in_deck) + ` cards in draw deck`);
     //Create player hand
     await card_actions.player_hand(sample_game_id).catch(e => {failed_test(e)});
     //Advance turn
