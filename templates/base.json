@@ -37,7 +37,7 @@
   {
     "_id": "see-base-a",
     "name": "See the Future",
-    "action": "stf"
+    "action": "seethefuture"
   },
   {
     "_id": "shuffle-base-a",
