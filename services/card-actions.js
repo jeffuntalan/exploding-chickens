@@ -118,7 +118,7 @@ exports.player_hand = async function (game_id) {
     });
 }
 
-// Name : game_actions.skip_turn(game_id)
+// Name : game_actions.advance_turn(game_id)
 // Desc : Skip next player's turn
 // Author(s) : Vincent Do
 exports.advance_turn = async function (game_id) {
@@ -206,4 +206,49 @@ exports.shuffle_draw_deck = async function (game_id) {
 function rand_bucket(bucket) {
     let randomIndex = Math.floor(Math.random()*bucket.length);
     return bucket.splice(randomIndex, 1)[0];
+}
+
+// Name : game_actions.attack(game_id)
+// Desc : forces the next player in turn order to take 2 consecutive turns
+// Author(s) : SengdowJones
+exports.attack = async function (game_id) {
+    return await new Promise((resolve, reject) => {
+        game.findById({ _id: game_id }, function (err, found_game) {
+            if (err) {
+                reject(err);
+            } else {
+                //Forces next player to take a turn
+                let current = found_game.seat_playing;
+                if (found_game.players.length < found_game.seat_playing + 1) {
+                    let turn = found_game.seat_playing + 1 - found_game.players.length;
+                    if (turn === 0) {
+                        game.findOneAndUpdate({_id: game_id, "seat_playing": found_game.seat_playing},
+                            {"$set": {"seat.$.playing": 0}}, function (err) {
+                                if (err) {
+                                    reject(err);
+                                } else {
+                                    //Resolve promise when the last player has been updated
+                                    if (current !== found_game.seat_playing) {
+                                        resolve(found_game.players.length);
+                                    }
+                                }
+
+                            });
+                    }
+                } else {
+                    game.findOneAndUpdate({_id: game_id, "seat_playing": found_game.seat_playing},
+                        {"$set": {"seat.$.playing": found_game.seat_playing += 1}}, function (err) {
+                            if (err) {
+                                reject(err);
+                            } else {
+                                //Resolve promise when the last player has been updated
+                                if (current !== found_game.seat_playing) {
+                                    resolve(found_game.players.length);
+                                }
+                            }
+                        });
+                }
+            }
+        });
+    });
 }
