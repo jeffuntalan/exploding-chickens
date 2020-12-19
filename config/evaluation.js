@@ -86,22 +86,28 @@ exports.player_test = async function () {
 
 // Name : evaluation.card_test()
 // Desc : adds cards to a sample game and tests interaction
-// Author(s) :
+// Author(s) : RAk3rman
 exports.card_test = async function () {
     //Console header
     let console_head = `${chalk.bold.red('Evaluation')}: ${chalk.cyan('C-ACT')} `;
     spinner.info(console_head + `${chalk.bold('Evaluating card actions')}`);
-    spinner.warn(console_head + `${chalk.italic('//TODO//')}`);
-    await card_actions.import_cards(sample_game_id).catch(e => {failed_test(e)});
-    await card_actions.assign_defuse(sample_game_id).catch(e => {failed_test(e)});
+    //Import cards
+    spinner.info(console_head + `Importing cards from base.json`);
+    let card_count = await card_actions.import_cards(sample_game_id).catch(e => {failed_test(e)});
+    spinner.succeed(console_head + `Imported ` + chalk.bold(card_count) + ` cards from base.json`);
+    //Assign defuse cards
+    spinner.info(console_head + `Assigning initial defuse cards to all players`);
+    let defuse_count  = await card_actions.assign_defuse(sample_game_id).catch(e => {failed_test(e)});
+    spinner.succeed(console_head + `Assigned ` + chalk.bold(defuse_count) + ` defuse cards to ` + chalk.bold(defuse_count) + ` players`);
+    //Create player hand
     await card_actions.player_hand(sample_game_id).catch(e => {failed_test(e)});
-    await game.findById({ _id: sample_game_id }, function (err, found_game) {
-        if (err) {
-            failed_test(err);
-        } else {
-            console.log(found_game);
-        }
-    });
+    // await game.findById({ _id: sample_game_id }, function (err, found_game) {
+    //     if (err) {
+    //         failed_test(err);
+    //     } else {
+    //         console.log(found_game);
+    //     }
+    // });
 }
 
 // Name : evaluation.game_test()

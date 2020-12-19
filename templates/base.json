@@ -5,6 +5,31 @@
     "action": "defuse"
   },
   {
+    "_id": "defuse-base-b",
+    "name": "Defuse",
+    "action": "defuse"
+  },
+  {
+    "_id": "defuse-base-c",
+    "name": "Defuse",
+    "action": "defuse"
+  },
+  {
+    "_id": "defuse-base-d",
+    "name": "Defuse",
+    "action": "defuse"
+  },
+  {
+    "_id": "defuse-base-e",
+    "name": "Defuse",
+    "action": "defuse"
+  },
+  {
+    "_id": "defuse-base-f",
+    "name": "Defuse",
+    "action": "defuse"
+  },
+  {
     "_id": "nope-base-a",
     "name": "Nope",
     "action": "nope"

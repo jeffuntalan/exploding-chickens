@@ -32,7 +32,7 @@ exports.import_cards = async function (game_id) {
                         reject(err);
                     } else {
                         //Resolve promise when the last card has been pushed
-                        resolve();
+                        resolve(template_base.length);
                     }
                 });
             }
@@ -42,7 +42,7 @@ exports.import_cards = async function (game_id) {
 
 // Name : game_actions.assign_defuse(game_id)
 // Desc : assigns defuses to all players
-// Author(s) : Vincent Do & RAk3rman
+// Author(s) : Vincent Do, RAk3rman
 exports.assign_defuse = async function (game_id) {
     //Create new promise and return created_game after saved
     return await new Promise((resolve, reject) => {
@@ -50,25 +50,28 @@ exports.assign_defuse = async function (game_id) {
             if (err) {
                 reject(err);
             } else {
-                //TODO assign defuses to each player here
+                //Create array containing each defuse card id
                 let bucket = [];
                 for (let i = 0; i <= found_game.cards.length - 1; i++) {
                     if (found_game.cards[i].action === "defuse") {
                         bucket.push(found_game.cards[i]._id);
-                        console.log(found_game.cards[i]._id);
                     }
                 }
-                //assign defuse card to player id
+                //Returns a random value from the array and deletes it
+                function get_rand_bucket() {
+                    let randomIndex = Math.floor(Math.random()*bucket.length);
+                    return bucket.splice(randomIndex, 1)[0];
+                }
+                //Assign defuse card to player id in first position
                 for (let i = 0; i <= found_game.players.length - 1; i++) {
-                    console.log(found_game.players[i]._id);
-                    game.findOneAndUpdate({ _id: game_id, "cards._id": found_game.cards[i]._id },
-                        {"$set": { "cards.$.assignment": found_game.players[i]._id, "cards.$.position": found_game.players[i].seat  }}, function (err) {
+                    game.findOneAndUpdate({ _id: game_id, "cards._id": get_rand_bucket() },
+                        {"$set": { "cards.$.assignment": found_game.players[i]._id, "cards.$.position": 0  }}, function (err) {
                         if (err) {
                             reject(err);
                         } else {
-                            //Resolve promise when the last game has been updated
+                            //Resolve promise when the last player has been updated
                             if (i >= found_game.players.length - 1) {
-                                resolve();
+                                resolve(found_game.players.length);
                             }
                         }
                     });
@@ -77,6 +80,7 @@ exports.assign_defuse = async function (game_id) {
         });
     });
 }
+
 // Name : game_actions.player_hand(game_id)
 // Desc : assigns 4 more cards to each player
 // Author(s) : Vincent Do
@@ -110,9 +114,9 @@ exports.player_hand = async function (game_id) {
                                     }
                                 }
                             });
-                        console.log(found_game.cards[j].position);
-                        console.log("X");
-                        console.log(found_game.cards[j].assignment);
+                        // console.log(found_game.cards[j].position);
+                        // console.log("X");
+                        // console.log(found_game.cards[j].assignment);
                     } else {
                         j++;
                     }
