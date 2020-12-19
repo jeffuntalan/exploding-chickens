@@ -101,6 +101,7 @@ exports.card_test = async function () {
     spinner.succeed(console_head + `Assigned ` + chalk.bold(defuse_count) + ` defuse cards to ` + chalk.bold(defuse_count) + ` players`);
     //Create player hand
     await card_actions.player_hand(sample_game_id).catch(e => {failed_test(e)});
+    await card_actions.advance_turn(sample_game_id).catch(e => {failed_test(e)});
     // await game.findById({ _id: sample_game_id }, function (err, found_game) {
     //     if (err) {
     //         failed_test(err);
