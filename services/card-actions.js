@@ -118,7 +118,7 @@ exports.player_hand = async function (game_id) {
     });
 }
 
-// Name : game_actions.skip_turn(game_id)
+// Name : game_actions.advance_turn(game_id)
 // Desc : Skip next player's turn
 // Author(s) : Vincent Do
 exports.advance_turn = async function (game_id) {
@@ -202,4 +202,25 @@ exports.shuffle_draw_deck = async function (game_id) {
 function rand_bucket(bucket) {
     let randomIndex = Math.floor(Math.random()*bucket.length);
     return bucket.splice(randomIndex, 1)[0];
+}
+
+// Name : game_actions.attack(game_id)
+// Desc : shuffles the positions of all cards in the draw deck
+// Author(s) : SengdowJones
+exports.attack = async function (game_id) {
+    //Get game details
+    let game_details = await game_actions.game_details(game_id);
+    //Create new promise and return created_game after saved
+    return await new Promise((resolve, reject) => {
+        //Loop through each card
+        //Create array containing each defuse card id
+        let bucket = [];
+        for (let i = 0; i <= game_details.cards.length - 1; i++) {
+            //Check to see if card in draw deck
+            if (game_details.cards[i].assignment === "draw_deck" && game_details.cards[i].action !== "explodes") {
+                bucket.push(game_details.cards[i]._id);
+            }
+        }
+        resolve();
+    });
 }
