@@ -74,7 +74,7 @@ let gameSchema = mongoose.Schema({
     },
     seat_playing: {
         type: Number,
-        default: 3
+        default: 0
     },
     turn_direction: {
         type: String,

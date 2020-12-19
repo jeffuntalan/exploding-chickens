@@ -111,8 +111,6 @@ exports.player_hand = async function (game_id) {
                         });
                     }
                 }
-                //console.log("X");
-                //console.log(found_game.cards);
             }
         });
     });
@@ -127,53 +125,50 @@ exports.advance_turn = async function (game_id) {
             if (err) {
                 reject(err);
             } else {
-                //Skipping turn
+                //Skipping turn of next player
                 let current = found_game.seat_playing;
-                console.log(current);
-                if (found_game.players.length < current + 2) {
+                if (found_game.players.length <= current + 2) {
                     let turn = found_game.players.length - current;
-                    console.log(turn);
                     if (turn === 1) {
-                        game.findOneAndUpdate({_id: game_id, "seat_playing": found_game.seat_playing},
-                            {"$set": {"seat.$.playing": 0}}, function (err) {
+                        game.findOneAndUpdate({_id: game_id },
+                            {"$set": {"seat_playing": 0}}, function (err) {
                                 if (err) {
                                     reject(err);
                                 } else {
                                     //Resolve promise when the last player has been updated
                                     if (current !== found_game.seat_playing) {
-                                        resolve(found_game.players.length);
+                                        resolve(found_game.seat_playing);
                                     }
                                 }
 
                             });
 
                     } else if (turn === 2) {
-                        game.findOneAndUpdate({_id: game_id, "seat_playing": found_game.seat_playing},
-                            {"$set": {"seat.$.playing": 1}}, function (err) {
+                        game.findOneAndUpdate({_id: game_id},
+                            {"$set": {"seat_playing": 1}}, function (err) {
                                 if (err) {
                                     reject(err);
                                 } else {
                                     //Resolve promise when the last player has been updated
                                     if (current !== found_game.seat_playing) {
-                                        resolve(found_game.players.length);
+                                        resolve(found_game.seat_playing);
                                     }
                                 }
                             });
                     }
                 } else {
-                    game.findOneAndUpdate({_id: game_id, "seat_playing": found_game.seat_playing},
-                        {"$set": {"seat.$.playing": found_game.seat_playing += 2}}, function (err) {
+                    game.findOneAndUpdate({_id: game_id},
+                        {"$set": {"seat_playing": found_game.seat_playing + 2}}, function (err) {
                             if (err) {
                                 reject(err);
                             } else {
                                 //Resolve promise when the last player has been updated
                                 if (current !== found_game.seat_playing) {
-                                    resolve(found_game.players.length);
+                                    resolve(found_game.seat_playing);
                                 }
                             }
                         });
                 }
-                console.log(found_game.seat_playing);
             }
         });
     });

@@ -106,6 +106,7 @@ exports.card_test = async function () {
     await card_actions.player_hand(sample_game_id).catch(e => {failed_test(e)});
     //Advance turn
     await card_actions.advance_turn(sample_game_id).catch(e => {failed_test(e)});
+    console.log(await game_actions.game_details(sample_game_id).seat_playing);
 }
 
 // Name : evaluation.game_test()
