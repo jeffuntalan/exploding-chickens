@@ -277,23 +277,19 @@ exports.attack_post = async function (game_id) {
 // Desc : allows active player to view the top three cards of the draw deck
 // Author(s) : SengdowJones
 exports.seethefuture = async function (game_id) {
+    //Get game details
+    let game_details = await game_actions.game_details(game_id);
+    //Create new promise and return created_game after saved
     return await new Promise((resolve, reject) => {
-        game.findById({ _id: game_id }, function (err, found_game) {
-            if (err) {
-                reject(err);
-            } else {
-                //Updates seat_playing to same seat_playing
-                game.findOneAndUpdate({_id: game_id, "seat_playing": found_game.seat_playing},
-                    {"$set": {"seat.$.playing": found_game.seat_playing}}, function (err) {
-                        if (err) {
-                            reject(err);
-                        } else {
-                            //Resolve promise when the last player has been updated
-                            resolve(found_game.players.length);
-                        }
-                    });
-
+        //Loop through each card
+        //Create array containing each see the future id
+        let bucket = [];
+        for (let i = 0; i <= 2; i++) {
+            //Check to see if card in draw deck
+            if (game_details.cards[i].assignment === "draw_deck") {
+                bucket.push(game_details.cards[i]._id);
             }
-        });
+        }
+        resolve();
     });
 }
