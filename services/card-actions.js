@@ -136,8 +136,8 @@ exports.advance_turn = async function (game_id) {
                                     reject(err);
                                 } else {
                                     //Resolve promise when the last player has been updated
-                                    if (current !== found_game.seat_playing) {
-                                        resolve(found_game.seat_playing);
+                                    if (current === found_game.seat_playing) {
+                                        resolve(found_game.players.length);
                                     }
                                 }
 
@@ -150,8 +150,8 @@ exports.advance_turn = async function (game_id) {
                                     reject(err);
                                 } else {
                                     //Resolve promise when the last player has been updated
-                                    if (current !== found_game.seat_playing) {
-                                        resolve(found_game.seat_playing);
+                                    if (current === found_game.seat_playing) {
+                                        resolve(found_game.players.length);
                                     }
                                 }
                             });
@@ -163,8 +163,8 @@ exports.advance_turn = async function (game_id) {
                                 reject(err);
                             } else {
                                 //Resolve promise when the last player has been updated
-                                if (current !== found_game.seat_playing) {
-                                    resolve(found_game.seat_playing);
+                                if (current === found_game.seat_playing) {
+                                    resolve(found_game.players.length);
                                 }
                             }
                         });
