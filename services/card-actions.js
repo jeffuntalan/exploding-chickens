@@ -286,10 +286,11 @@ exports.seethefuture = async function (game_id) {
         let bucket = [];
         for (let i = 0; i <= 2; i++) {
             //Check to see if card in draw deck
-            if (game_details.cards[i].assignment === "draw_deck") {
-                bucket.push(game_details.cards[i]._id);
+            if (game_details.cards[i].assignment === "draw_deck")
+                bucket.push(game_details.cards[i]);
+            else
+                i = i - 1;
             }
-        }
         resolve();
     });
 }
