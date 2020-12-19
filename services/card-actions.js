@@ -129,9 +129,11 @@ exports.advance_turn = async function (game_id) {
             } else {
                 //Skipping turn
                 let current = found_game.seat_playing;
-                if (found_game.players.length < found_game.seat_playing + 2) {
-                    let turn = found_game.seat_playing + 1 - found_game.players.length;
-                    if (turn === 0) {
+                console.log(current);
+                if (found_game.players.length < current + 2) {
+                    let turn = found_game.players.length - current;
+                    console.log(turn);
+                    if (turn === 1) {
                         game.findOneAndUpdate({_id: game_id, "seat_playing": found_game.seat_playing},
                             {"$set": {"seat.$.playing": 0}}, function (err) {
                                 if (err) {
@@ -144,7 +146,8 @@ exports.advance_turn = async function (game_id) {
                                 }
 
                             });
-                    } else if (turn === 1) {
+
+                    } else if (turn === 2) {
                         game.findOneAndUpdate({_id: game_id, "seat_playing": found_game.seat_playing},
                             {"$set": {"seat.$.playing": 1}}, function (err) {
                                 if (err) {
@@ -170,6 +173,7 @@ exports.advance_turn = async function (game_id) {
                             }
                         });
                 }
+                console.log(found_game.seat_playing);
             }
         });
     });
