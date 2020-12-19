@@ -204,7 +204,7 @@ function rand_bucket(bucket) {
 }
 
 // Name : game_actions.attack_pre(game_id)
-// Desc : forces the next player in turn order to take 2 consecutive turns
+// Desc : forces the next player in turn order to take 2 consecutive turns by changing seat_playing
 // Author(s) : SengdowJones
 exports.attack_pre = async function (game_id) {
     return await new Promise((resolve, reject) => {
@@ -243,6 +243,31 @@ exports.attack_pre = async function (game_id) {
                             }
                         });
                 }
+            }
+        });
+    });
+}
+
+// Name : game_actions.attack_post(game_id)
+// Desc : forces the next player in turn order to take 2 consecutive turns by keeping the same seat_playing
+// Author(s) : SengdowJones
+exports.attack_post = async function (game_id) {
+    return await new Promise((resolve, reject) => {
+        game.findById({ _id: game_id }, function (err, found_game) {
+            if (err) {
+                reject(err);
+            } else {
+                //Updates seat_playing to same seat_playing
+                    game.findOneAndUpdate({_id: game_id, "seat_playing": found_game.seat_playing},
+                        {"$set": {"seat.$.playing": found_game.seat_playing}}, function (err) {
+                            if (err) {
+                                reject(err);
+                            } else {
+                                //Resolve promise when the last player has been updated
+                                    resolve(found_game.players.length);
+                            }
+                        });
+
             }
         });
     });
