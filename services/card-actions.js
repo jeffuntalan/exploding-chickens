@@ -119,6 +119,7 @@ exports.player_hand = async function (game_id) {
 // Name : game_actions.advance_turn(game_id)
 // Desc : Skip next player's turn
 // Author(s) : Vincent Do
+/**
 exports.advance_turn = async function (game_id) {
     return await new Promise((resolve, reject) => {
         game.findById({ _id: game_id }, function (err, found_game) {
@@ -159,6 +160,52 @@ exports.advance_turn = async function (game_id) {
                 } else {
                     game.findOneAndUpdate({_id: game_id},
                         {"$set": {"seat_playing": found_game.seat_playing + 2}}, function (err) {
+                            if (err) {
+                                reject(err);
+                            } else {
+                                //Resolve promise when the last player has been updated
+                                if (current === found_game.seat_playing) {
+                                    resolve(found_game.players.length);
+                                }
+                            }
+                        });
+                }
+            }
+        });
+    });
+}
+ **/
+// Name : game_actions.advance_turn(game_id)
+// Desc : Skip next player's turn
+// Author(s) : Vincent Do
+ exports.skip_turn = async function (game_id) {
+    return await new Promise((resolve, reject) => {
+        game.findById({ _id: game_id }, function (err, found_game) {
+            if (err) {
+                reject(err);
+            } else {
+                //Skipping turn of next player
+                let current = found_game.seat_playing;
+                if (found_game.players.length <= current + 2) {
+                    let turn = found_game.players.length - current;
+                    if (turn === 1) {
+                        game.findOneAndUpdate({_id: game_id },
+                            {"$set": {"seat_playing": 0}}, function (err) {
+                                if (err) {
+                                    reject(err);
+                                } else {
+                                    //Resolve promise when the last player has been updated
+                                    if (current === found_game.seat_playing) {
+                                        resolve(found_game.players.length);
+                                    }
+                                }
+
+                            });
+
+                    }
+                } else {
+                    game.findOneAndUpdate({_id: game_id},
+                        {"$set": {"seat_playing": found_game.seat_playing + 1}}, function (err) {
                             if (err) {
                                 reject(err);
                             } else {

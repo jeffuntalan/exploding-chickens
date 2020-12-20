@@ -107,7 +107,7 @@ exports.card_test = async function () {
     await card_actions.player_hand(sample_game_id).catch(e => {failed_test(e)});
     //Advance turn
     spinner.info(console_head + `Skipping turn`);
-    await card_actions.advance_turn(sample_game_id).catch(e => {failed_test(e)});
+    await card_actions.skip_turn(sample_game_id).catch(e => {failed_test(e)});
     spinner.succeed(console_head + `Skipped ` );
     console.log(await game_actions.game_details(sample_game_id).seat_playing);
 }
