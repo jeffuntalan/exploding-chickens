@@ -136,3 +136,31 @@ exports.advance_turn = async function (game_id) {
         });
     });
 }
+// Name : game_actions.discard_card(game_id)
+// Desc : Put card in discard pile
+// Author(s) : Vincent Do
+exports.discard_card = async function (game_id, card_id) {
+    //Get game details
+    let game_details = await game_actions.game_details(game_id);
+    //Create new promise and return delete_game _id after deleted
+    return await new Promise((resolve, reject) => {
+        let value = -1;
+        for (let i = 0; i <= game_details.cards.length - 1; i++) {
+            if (game_details.cards[i].assignment === "discard_deck") {
+                console.log(game_details.cards[i].position);
+            }
+            if (game_details.cards[i].position > value && game_details.cards[i].assignment === "discard_deck") {
+                value = game_details.cards[i].position;
+            }
+        }
+        game.findOneAndUpdate({ _id: game_id, "cards._id": card_id},
+            {"$set": { "cards.$.assignment": "discard_deck", "cards.$.position": value + 1  }}, function (err) {
+                if (err) {
+                    reject(err);
+                } else {
+                    //Resolve promise when the last card has been updated
+                    resolve();
+                }
+            });
+    });
+}

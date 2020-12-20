@@ -123,6 +123,10 @@ exports.game_test = async function () {
     next_player_id = await game_actions.advance_turn(sample_game_id).catch(e => {failed_test(e)});
     spinner.succeed(console_head + `Advanced turn to player with id: ` + next_player_id);
     //TODO tests game functions and interaction
+    spinner.info(console_head + `Discarding card`);
+    let discard = await game_actions.discard_card(sample_game_id, "skip-base-a").catch(e => {failed_test(e)});
+    spinner.succeed(console_head + `New card position is: ` + discard);
+
 }
 
 // Name : evaluation.game_deletion()
