@@ -140,6 +140,8 @@ exports.game_deletion = async function () {
     spinner.succeed(console_head + `Deleted game with id: ` + sample_game);
 }
 
+//PRIVATE FUNCTIONS
+
 // Name : failed_test()
 // Desc : called when a test fails, exits program and returns 1 (error)
 // Author(s) : RAk3rman
