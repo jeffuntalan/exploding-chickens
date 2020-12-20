@@ -76,8 +76,10 @@ exports.advance_turn = async function (game_id) {
         if (game_details.turns_remaining <= 1) { //Only one turn left, player seat advances
             //Check if we are going forward or backward
             if (game_details.turn_direction === "forward") {
-                if (!(game_details.players.length <= game_details.seat_playing + 2)) { //Player seat advances by one
+                if (!(game_details.players.length <= game_details.seat_playing + 1)) { //Player seat advances by one
                     game_details.seat_playing++;
+                } else {
+                    game_details.seat_playing = 0;
                 }
             } else if (game_details.turn_direction === "backward") {
                 if (!(game_details.seat_playing - 1 < 0)) { //Player seat decreases by one

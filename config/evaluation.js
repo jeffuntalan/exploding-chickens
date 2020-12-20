@@ -115,8 +115,14 @@ exports.game_test = async function () {
     let console_head = `${chalk.bold.red('Evaluation')}: ${chalk.magenta('G-ACT')} `;
     spinner.info(console_head + `${chalk.bold('Evaluating game actions')}`);
     //Advance turn to player b
-    spinner.info(console_head + `Advancing turn to next player`);
+    spinner.info(console_head + `Advancing forward 4 turns`);
     let next_player_id = await game_actions.advance_turn(sample_game_id).catch(e => {failed_test(e)});
+    spinner.succeed(console_head + `Advanced turn to player with id: ` + next_player_id);
+    next_player_id = await game_actions.advance_turn(sample_game_id).catch(e => {failed_test(e)});
+    spinner.succeed(console_head + `Advanced turn to player with id: ` + next_player_id);
+    next_player_id = await game_actions.advance_turn(sample_game_id).catch(e => {failed_test(e)});
+    spinner.succeed(console_head + `Advanced turn to player with id: ` + next_player_id);
+    next_player_id = await game_actions.advance_turn(sample_game_id).catch(e => {failed_test(e)});
     spinner.succeed(console_head + `Advanced turn to player with id: ` + next_player_id);
     //TODO tests game functions and interaction
 }
