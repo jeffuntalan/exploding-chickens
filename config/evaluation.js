@@ -28,9 +28,13 @@ exports.game_creation = async function () {
     spinner.info(console_head + `${chalk.bold('Evaluating game creation')}`);
     //Create sample game
     spinner.info(console_head + `Creating sample game`);
-    let sample_game = await game_actions.create_game().catch(e => {failed_test(e)});
-    spinner.succeed(console_head + `Created sample game with parameters: ` + JSON.stringify(sample_game));
-    sample_game_id = sample_game["_id"];
+    let game_details = await game_actions.create_game().catch(e => {failed_test(e)});
+    spinner.succeed(console_head + `Created sample game with parameters: ` + JSON.stringify(game_details));
+    sample_game_id = game_details["_id"];
+    //Import cards
+    spinner.info(console_head + `Importing cards from base.json`);
+    let card_count = await game_actions.import_cards(sample_game_id).catch(e => {failed_test(e)});
+    spinner.succeed(console_head + `Imported ` + chalk.bold(card_count) + ` cards from base.json`);
 }
 
 // Name : evaluation.player_test()
@@ -54,34 +58,29 @@ exports.player_test = async function () {
     spinner.info(console_head + `Modifying Player X (aka A) and verifying changes with id: ` + player_a);
     await player_handler.modify_player(sample_game_id, player_a, "Player A", 1, "online").catch(e => {failed_test(e)});
     spinner.succeed(console_head + `Modified Player X (aka A) with id: ` + player_a);
-    await game.findById({ _id: sample_game_id }, function (err, found_game) {
-        if (err) {
-            failed_test(err);
-        } else {
-            if (found_game.players.id(player_a).nickname === "Player A" || found_game.players.id(player_a).seat === 1 || found_game.players.id(player_a).status === "online") {
-                spinner.succeed(console_head + `Verified Player A's changes with id: ` + player_a);
-            } else {
-                failed_test("Modified sample player values do not match");
-            }
-        }
-    });
+    let game_details = await game_actions.game_details(sample_game_id);
+    if (game_details.players.id(player_a).nickname === "Player A" || game_details.players.id(player_a).seat === 1 || game_details.players.id(player_a).status === "online") {
+        spinner.succeed(console_head + `Verified Player A's changes with id: ` + player_a);
+    } else {
+        failed_test("Modified sample player values do not match");
+    }
+    //Assign cards to all players and print assignment
+    spinner.info(console_head + `Assigning initial cards to all players`);
+    await player_handler.create_hand(sample_game_id).catch(e => {failed_test(e)});
+    console.log(await game_actions.game_details(sample_game_id));
+    //spinner.succeed(console_head + `Assigned ` + chalk.bold(defuse_count) + ` defuse cards to ` + chalk.bold(defuse_count) + ` players`);
     //Test seat randomization
     spinner.info(console_head + `Randomizing seat positions for all players`);
     await player_handler.randomize_seats(sample_game_id).catch(e => {failed_test(e)});
-    await game.findById({ _id: sample_game_id }, function (err, found_game) {
-        if (err) {
-            failed_test(err);
-        } else {
-            // For every player, express updated seat position to console
-            for (let i = 0; i <= found_game.players.length - 1; i++) {
-                spinner.succeed(console_head +
-                    `Changed ` + found_game.players[i].nickname +
-                    `'s (` + (i+1) + ` of ` + found_game.players.length + `)` +
-                    ` seat position to ` + found_game.players[i].seat +
-                    ` with id: ` + found_game.players[i]._id);
-            }
-        }
-    });
+    game_details = await game_actions.game_details(sample_game_id);
+    // For every player, express updated seat position to console
+    for (let i = 0; i <= game_details.players.length - 1; i++) {
+        spinner.succeed(console_head +
+            `Changed ` + game_details.players[i].nickname +
+            `'s (` + (i+1) + ` of ` + game_details.players.length + `)` +
+            ` seat position to ` + game_details.players[i].seat +
+            ` with id: ` + game_details.players[i]._id);
+    }
 }
 
 // Name : evaluation.card_test()
@@ -91,14 +90,6 @@ exports.card_test = async function () {
     //Console header
     let console_head = `${chalk.bold.red('Evaluation')}: ${chalk.cyan('C-ACT')} `;
     spinner.info(console_head + `${chalk.bold('Evaluating card actions')}`);
-    //Import cards
-    spinner.info(console_head + `Importing cards from base.json`);
-    let card_count = await card_actions.import_cards(sample_game_id).catch(e => {failed_test(e)});
-    spinner.succeed(console_head + `Imported ` + chalk.bold(card_count) + ` cards from base.json`);
-    //Assign defuse cards
-    spinner.info(console_head + `Assigning initial defuse cards to all players`);
-    let defuse_count  = await card_actions.assign_defuse(sample_game_id).catch(e => {failed_test(e)});
-    spinner.succeed(console_head + `Assigned ` + chalk.bold(defuse_count) + ` defuse cards to ` + chalk.bold(defuse_count) + ` players`);
     //Shuffle all cards in draw_deck
     spinner.info(console_head + `Shuffling all cards in draw deck`);
     let cards_in_deck = await card_actions.shuffle_draw_deck(sample_game_id).catch(e => {failed_test(e)});

@@ -57,9 +57,60 @@ exports.modify_player = async function (game_id, player_id, player_nickname, pla
     }
 };
 
-// Name : player_handler.randomize_seats()
+// Name : player_handler.create_hand(game)
+// Desc : given a game_id, gives each player a defuse card and 4 random cards from the draw_deck
+// Author(s) : RAk3rman
+exports.create_hand = async function (game_id) {
+    //Get game details
+    let game_details = await game_actions.game_details(game_id);
+    //Create new promise
+    await new Promise((resolve, reject) => {
+        //Create array containing the position of each defuse card and regular card
+        let defuseBucket = [];
+        let cardBucket = [];
+        for (let i = 0; i <= game_details.cards.length - 1; i++) {
+            if (game_details.cards[i].action === "defuse") {
+                defuseBucket.push(i);
+            } else if (game_details.cards[i].action !== "exploding") {
+                cardBucket.push(i);
+            }
+        }
+        //Assign defuse card to player id in first position
+        for (let i = 0; i <= game_details.players.length - 1; i++) {
+            let rand_defuse_pos = rand_bucket(defuseBucket);
+            game_details.cards[rand_defuse_pos].assignment = game_details.players[i]._id;
+            game_details.cards[rand_defuse_pos].position = 0;
+        }
+        //Add remaining defuse cards to card bucket
+        for (let i = 0; i <= defuseBucket.length - 1; i++) {
+            cardBucket.push(defuseBucket[i]);
+        }
+        //Assign remaining 4 cards to each player
+        for (let i = 0; i <= game_details.players.length - 1; i++) {
+            //Over 4 cards on the same player
+            for (let j = 1; j <= 4; j++) {
+                let rand_card_pos = rand_bucket(cardBucket);
+                game_details.cards[rand_card_pos].assignment = game_details.players[i]._id;
+                game_details.cards[rand_card_pos].position = j;
+            }
+        }
+        //Save updated game
+        game_details.save({}, function (err) {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(game_details);
+            }
+        });
+    });
+    //Shuffle draw deck once we are done
+    await card_actions.shuffle_draw_deck(game_id)
+}
+
+
+// Name : player_handler.randomize_seats(game_id)
 // Desc : given a game_id, gives each player a random seat position (without replacement)
-// Author(s) : SengdowJones
+// Author(s) : SengdowJones, RAk3rman
 exports.randomize_seats = async function (game_id) {
     //Get game details
     let game_details = await game_actions.game_details(game_id);
@@ -72,17 +123,16 @@ exports.randomize_seats = async function (game_id) {
         }
         //Update seat number for each player
         for (let i = 0; i <= game_details.players.length - 1; i++) {
-            game.findOneAndUpdate({ _id: game_id, "players._id": game_details.players[i]._id }, {"$set": { "players.$.seat": rand_bucket(bucket) }}, function (err) {
-                if (err) {
-                    reject(err);
-                } else {
-                    //Resolve promise when the last game has been updated
-                    if (i >= game_details.players.length - 1) {
-                        resolve();
-                    }
-                }
-            });
+            game_details.players[i].seat = rand_bucket(bucket);
         }
+        //Save updated game
+        game_details.save({}, function (err) {
+            if (err) {
+                reject(err);
+            } else {
+                resolve();
+            }
+        });
     });
 }
 

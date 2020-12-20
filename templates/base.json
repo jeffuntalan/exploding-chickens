@@ -35,9 +35,19 @@
     "action": "nope"
   },
   {
-    "_id": "see-base-a",
-    "name": "See the Future",
-    "action": "seethefuture"
+    "_id": "nope-base-b",
+    "name": "Nope",
+    "action": "nope"
+  },
+  {
+    "_id": "nope-base-c",
+    "name": "Nope",
+    "action": "nope"
+  },
+  {
+    "_id": "nope-base-d",
+    "name": "Nope",
+    "action": "nope"
   },
   {
     "_id": "shuffle-base-a",
@@ -45,12 +55,37 @@
     "action": "shuffle"
   },
   {
-    "_id": "favor-base-a",
-    "name": "Favor",
-    "action": "favor"
+    "_id": "shuffle-base-b",
+    "name": "Shuffle",
+    "action": "shuffle"
+  },
+  {
+    "_id": "shuffle-base-c",
+    "name": "Shuffle",
+    "action": "shuffle"
+  },
+  {
+    "_id": "shuffle-base-d",
+    "name": "Shuffle",
+    "action": "shuffle"
   },
   {
     "_id": "attack-base-a",
+    "name": "Attack",
+    "action": "attack"
+  },
+  {
+    "_id": "attack-base-b",
+    "name": "Attack",
+    "action": "attack"
+  },
+  {
+    "_id": "attack-base-c",
+    "name": "Attack",
+    "action": "attack"
+  },
+  {
+    "_id": "attack-base-d",
     "name": "Attack",
     "action": "attack"
   },
@@ -65,8 +100,18 @@
     "action": "skip"
   },
   {
+    "_id": "favor-base-a",
+    "name": "Favor",
+    "action": "favor"
+  },
+  {
+    "_id": "see-base-a",
+    "name": "See the Future",
+    "action": "seethefuture"
+  },
+  {
     "_id": "chicken-base-a",
     "name": "Exploding Chicken",
-    "action": "explodes"
+    "action": "exploding"
   }
 ]

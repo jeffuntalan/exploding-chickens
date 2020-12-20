@@ -10,6 +10,7 @@ let game = require('../models/game.js');
 const dataStore = require('data-store');
 const config_storage = new dataStore({path: './config/config.json'});
 let verbose_debug_mode = config_storage.get('verbose_debug_mode');
+let template_base = require('../templates/base.json');
 
 //Services
 let card_actions = require('../services/card-actions.js');
@@ -59,6 +60,30 @@ exports.delete_game = async function (game_id) {
                 reject(err);
             } else {
                 resolve(game_id);
+            }
+        });
+    });
+}
+
+// Name : game_actions.import_cards(game_id)
+// Desc : bulk import cards via json file
+// Author(s) : RAk3rman
+exports.import_cards = async function (game_id) {
+    //Get game details
+    let game_details = await game_actions.game_details(game_id);
+    //Create new promise and return created_game after saved
+    return await new Promise((resolve, reject) => {
+        //Loop through each json value and add card
+        for (let i = 0; i <= template_base.length - 1; i++) {
+            game_details.cards.push({ _id: template_base[i]._id, name: template_base[i].name, action: template_base[i].action, position: i });
+        }
+        //Save existing game
+        game_details.save(function (err) {
+            if (err) {
+                reject(err);
+            } else {
+                //Resolve promise when the last card has been pushed
+                resolve(template_base.length);
             }
         });
     });
