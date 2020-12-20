@@ -59,25 +59,25 @@ exports.reverse = async function (game_id, card_id) {
 exports.shuffle_draw_deck = async function (game_id, card_id) {
     //Get game details
     let game_details = await game_actions.game_details(game_id);
-    //Create new promise and return created_game after saved
+    //Loop through each card to create array
+    let bucket = [];
+    let cards_in_deck = 0;
+    for (let i = 0; i <= game_details.cards.length - 1; i++) {
+        //Check to see if card in draw deck and not exploding
+        if (game_details.cards[i].assignment === "draw_deck" && game_details.cards[i].action !== "exploding") {
+            bucket.push(cards_in_deck);
+            cards_in_deck++;
+        }
+    }
+    //Loop though each card and reassign position
+    for (let i = 0; i <= game_details.cards.length - 1; i++) {
+        //Check to see if card in draw deck and not exploding
+        if (game_details.cards[i].assignment === "draw_deck" && game_details.cards[i].action !== "exploding") {
+            game_details.cards[i].position = rand_bucket(bucket);
+        }
+    }
+    //Create new promise
     return await new Promise((resolve, reject) => {
-        let bucket = [];
-        let cards_in_deck = 0;
-        //Loop through each card to create array
-        for (let i = 0; i <= game_details.cards.length - 1; i++) {
-            //Check to see if card in draw deck and not exploding
-            if (game_details.cards[i].assignment === "draw_deck" && game_details.cards[i].action !== "exploding") {
-                bucket.push(cards_in_deck);
-                cards_in_deck++;
-            }
-        }
-        //Loop though each card and reassign position
-        for (let i = 0; i <= game_details.cards.length - 1; i++) {
-            //Check to see if card in draw deck and not exploding
-            if (game_details.cards[i].assignment === "draw_deck" && game_details.cards[i].action !== "exploding") {
-                game_details.cards[i].position = rand_bucket(bucket);
-            }
-        }
         //Save updated game
         game_details.save({}, function (err) {
             if (err) {

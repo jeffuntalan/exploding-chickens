@@ -63,48 +63,48 @@ exports.modify_player = async function (game_id, player_id, player_nickname, pla
 exports.create_hand = async function (game_id) {
     //Get game details
     let game_details = await game_actions.game_details(game_id);
+    //Create array containing the position of each defuse card and regular card
+    let defuseBucket = [];
+    let cardBucket = [];
+    for (let i = 0; i <= game_details.cards.length - 1; i++) {
+        if (game_details.cards[i].action === "defuse") {
+            defuseBucket.push(i);
+        } else if (game_details.cards[i].action !== "exploding") {
+            cardBucket.push(i);
+        }
+    }
+    //Assign defuse card to player id in first position
+    for (let i = 0; i <= game_details.players.length - 1; i++) {
+        let rand_defuse_pos = rand_bucket(defuseBucket);
+        game_details.cards[rand_defuse_pos].assignment = game_details.players[i]._id;
+        game_details.cards[rand_defuse_pos].position = 0;
+    }
+    //Add remaining defuse cards to card bucket
+    for (let i = 0; i <= defuseBucket.length - 1; i++) {
+        cardBucket.push(defuseBucket[i]);
+    }
+    //Assign remaining 4 cards to each player
+    for (let i = 0; i <= game_details.players.length - 1; i++) {
+        //Over 4 cards on the same player
+        for (let j = 1; j <= 4; j++) {
+            let rand_card_pos = rand_bucket(cardBucket);
+            game_details.cards[rand_card_pos].assignment = game_details.players[i]._id;
+            game_details.cards[rand_card_pos].position = j;
+        }
+    }
     //Create new promise
     await new Promise((resolve, reject) => {
-        //Create array containing the position of each defuse card and regular card
-        let defuseBucket = [];
-        let cardBucket = [];
-        for (let i = 0; i <= game_details.cards.length - 1; i++) {
-            if (game_details.cards[i].action === "defuse") {
-                defuseBucket.push(i);
-            } else if (game_details.cards[i].action !== "exploding") {
-                cardBucket.push(i);
-            }
-        }
-        //Assign defuse card to player id in first position
-        for (let i = 0; i <= game_details.players.length - 1; i++) {
-            let rand_defuse_pos = rand_bucket(defuseBucket);
-            game_details.cards[rand_defuse_pos].assignment = game_details.players[i]._id;
-            game_details.cards[rand_defuse_pos].position = 0;
-        }
-        //Add remaining defuse cards to card bucket
-        for (let i = 0; i <= defuseBucket.length - 1; i++) {
-            cardBucket.push(defuseBucket[i]);
-        }
-        //Assign remaining 4 cards to each player
-        for (let i = 0; i <= game_details.players.length - 1; i++) {
-            //Over 4 cards on the same player
-            for (let j = 1; j <= 4; j++) {
-                let rand_card_pos = rand_bucket(cardBucket);
-                game_details.cards[rand_card_pos].assignment = game_details.players[i]._id;
-                game_details.cards[rand_card_pos].position = j;
-            }
-        }
         //Save updated game
         game_details.save({}, function (err) {
             if (err) {
                 reject(err);
             } else {
-                resolve(game_details);
+                resolve();
             }
         });
     });
     //Shuffle draw deck once we are done
-    await card_actions.shuffle_draw_deck(game_id)
+    await card_actions.shuffle_draw_deck(game_id);
 }
 
 
@@ -114,17 +114,17 @@ exports.create_hand = async function (game_id) {
 exports.randomize_seats = async function (game_id) {
     //Get game details
     let game_details = await game_actions.game_details(game_id);
-    //Create new promise and return created_game after saved
+    //Create array containing each available seat
+    let bucket = [];
+    for (let i = 0; i <= game_details.players.length - 1; i++) {
+        bucket.push(i)
+    }
+    //Update seat number for each player
+    for (let i = 0; i <= game_details.players.length - 1; i++) {
+        game_details.players[i].seat = rand_bucket(bucket);
+    }
+    //Create new promise
     return await new Promise((resolve, reject) => {
-        //Create array containing each available seat
-        let bucket = [];
-        for (let i = 0; i <= game_details.players.length - 1; i++) {
-            bucket.push(i)
-        }
-        //Update seat number for each player
-        for (let i = 0; i <= game_details.players.length - 1; i++) {
-            game_details.players[i].seat = rand_bucket(bucket);
-        }
         //Save updated game
         game_details.save({}, function (err) {
             if (err) {

@@ -71,12 +71,12 @@ exports.delete_game = async function (game_id) {
 exports.import_cards = async function (game_id) {
     //Get game details
     let game_details = await game_actions.game_details(game_id);
-    //Create new promise and return created_game after saved
+    //Loop through each json value and add card
+    for (let i = 0; i <= template_base.length - 1; i++) {
+        game_details.cards.push({ _id: template_base[i]._id, name: template_base[i].name, action: template_base[i].action, position: i });
+    }
+    //Create new promise
     return await new Promise((resolve, reject) => {
-        //Loop through each json value and add card
-        for (let i = 0; i <= template_base.length - 1; i++) {
-            game_details.cards.push({ _id: template_base[i]._id, name: template_base[i].name, action: template_base[i].action, position: i });
-        }
         //Save existing game
         game_details.save(function (err) {
             if (err) {
@@ -95,37 +95,37 @@ exports.import_cards = async function (game_id) {
 exports.advance_turn = async function (game_id) {
     //Get game details
     let game_details = await game_actions.game_details(game_id);
-    //Create new promise and return delete_game _id after deleted
+    //Check how many turns we have left
+    if (game_details.turns_remaining <= 1) { //Only one turn left, player seat advances
+        //Check if we are going forward or backward
+        if (game_details.turn_direction === "forward") {
+            if (!(game_details.players.length <= game_details.seat_playing + 1)) { //Player seat advances by one
+                game_details.seat_playing++;
+            } else {
+                game_details.seat_playing = 0;
+            }
+        } else if (game_details.turn_direction === "backward") {
+            if (!(game_details.seat_playing - 1 < 0)) { //Player seat decreases by one
+                game_details.seat_playing--;
+            } else {
+                game_details.seat_playing = game_details.players.length - 1;
+            }
+        }
+        //Make sure the number of turns remaining is not 0
+        game_details.turns_remaining = 1;
+    } else { //Multiple turns left, player seat remains the same and turns_remaining decreases by one
+        game_details.turns_remaining--;
+    }
+    //Find next player's id
+    let next_player_id = "";
+    for (let i = 0; i <= game_details.players.length - 1; i++) {
+        if (game_details.players[i].seat === game_details.seat_playing) {
+            next_player_id = game_details.players[i]._id;
+            break;
+        }
+    }
+    //Create new promise
     return await new Promise((resolve, reject) => {
-        //Check how many turns we have left
-        if (game_details.turns_remaining <= 1) { //Only one turn left, player seat advances
-            //Check if we are going forward or backward
-            if (game_details.turn_direction === "forward") {
-                if (!(game_details.players.length <= game_details.seat_playing + 1)) { //Player seat advances by one
-                    game_details.seat_playing++;
-                } else {
-                    game_details.seat_playing = 0;
-                }
-            } else if (game_details.turn_direction === "backward") {
-                if (!(game_details.seat_playing - 1 < 0)) { //Player seat decreases by one
-                    game_details.seat_playing--;
-                } else {
-                    game_details.seat_playing = game_details.players.length - 1;
-                }
-            }
-            //Make sure the number of turns remaining is not 0
-            game_details.turns_remaining = 1;
-        } else { //Multiple turns left, player seat remains the same and turns_remaining decreases by one
-            game_details.turns_remaining--;
-        }
-        //Find next player's id
-        let next_player_id = "";
-        for (let i = 0; i <= game_details.players.length - 1; i++) {
-            if (game_details.players[i].seat === game_details.seat_playing) {
-                next_player_id = game_details.players[i]._id;
-                break;
-            }
-        }
         //Save updated game
         game_details.save({}, function (err) {
             if (err) {
@@ -136,30 +136,33 @@ exports.advance_turn = async function (game_id) {
         });
     });
 }
+
 // Name : game_actions.discard_card(game_id)
-// Desc : Put card in discard pile
+// Desc : put card in discard deck
 // Author(s) : Vincent Do
 exports.discard_card = async function (game_id, card_id) {
     //Get game details
     let game_details = await game_actions.game_details(game_id);
-    //Create new promise and return delete_game _id after deleted
-    return await new Promise((resolve, reject) => {
-        let value = -1;
-        for (let i = 0; i <= game_details.cards.length - 1; i++) {
-            if (game_details.cards[i].assignment === "discard_deck") {
-                console.log(game_details.cards[i].position);
-            }
-            if (game_details.cards[i].position > value && game_details.cards[i].assignment === "discard_deck") {
-                value = game_details.cards[i].position;
-            }
+    //Find greatest position in discard deck
+    let value = -1;
+    for (let i = 0; i <= game_details.cards.length - 1; i++) {
+        if (game_details.cards[i].assignment === "discard_deck") {
+            console.log(game_details.cards[i].position);
         }
+        if (game_details.cards[i].position > value && game_details.cards[i].assignment === "discard_deck") {
+            value = game_details.cards[i].position;
+        }
+    }
+    console.log("Max: " + value);
+    //Create new promise
+    return await new Promise((resolve, reject) => {
+        //Update card that was discarded
         game.findOneAndUpdate({ _id: game_id, "cards._id": card_id},
-            {"$set": { "cards.$.assignment": "discard_deck", "cards.$.position": value + 1  }}, function (err) {
+            {"$set": { "cards.$.assignment": "discard_deck", "cards.$.position": value + 1 }}, function (err) {
                 if (err) {
                     reject(err);
                 } else {
-                    //Resolve promise when the last card has been updated
-                    resolve();
+                    resolve(value + 1);
                 }
             });
     });
