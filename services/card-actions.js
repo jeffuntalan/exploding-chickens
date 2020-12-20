@@ -176,7 +176,6 @@ exports.advance_turn = async function (game_id) {
 }
  **/
 // Name : card_actions.advance_turn(game_id)
-// Desc : Skip next player's turn
 // Author(s) : Vincent Do
  exports.skip_turn = async function (game_id) {
     return await new Promise((resolve, reject) => {
