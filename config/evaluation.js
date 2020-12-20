@@ -119,8 +119,11 @@ exports.game_test = async function () {
     //Console header
     let console_head = `${chalk.bold.red('Evaluation')}: ${chalk.magenta('G-ACT')} `;
     spinner.info(console_head + `${chalk.bold('Evaluating game actions')}`);
+    //Advance turn to player b
+    spinner.info(console_head + `Advancing turn to Player B`);
+    let next_player_id = await game_actions.advance_turn(sample_game_id).catch(e => {failed_test(e)});
+    spinner.succeed(console_head + `Advanced turn to player with id: ` + next_player_id);
     //TODO tests game functions and interaction
-    spinner.warn(console_head + `${chalk.italic('//TODO//')}`);
 }
 
 // Name : evaluation.game_deletion()

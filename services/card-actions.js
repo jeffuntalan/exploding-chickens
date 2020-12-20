@@ -17,7 +17,7 @@ let card_actions = require('../services/card-actions.js');
 let game_actions = require('../services/game-actions.js');
 let player_handler = require('../services/player-handler.js');
 
-// Name : game_actions.import_cards(game_id)
+// Name : card_actions.import_cards(game_id)
 // Desc : bulk import cards via json file
 // Author(s) : RAk3rman
 exports.import_cards = async function (game_id) {
@@ -41,7 +41,7 @@ exports.import_cards = async function (game_id) {
     });
 }
 
-// Name : game_actions.assign_defuse(game_id)
+// Name : card_actions.assign_defuse(game_id)
 // Desc : assigns defuses to all players
 // Author(s) : Vincent Do, RAk3rman
 exports.assign_defuse = async function (game_id) {
@@ -73,7 +73,7 @@ exports.assign_defuse = async function (game_id) {
     });
 }
 
-// Name : game_actions.player_hand(game_id)
+// Name : card_actions.player_hand(game_id)
 // Desc : assigns 4 more cards to each player
 // Author(s) : Vincent Do
 exports.player_hand = async function (game_id) {
@@ -116,7 +116,7 @@ exports.player_hand = async function (game_id) {
     });
 }
 
-// Name : game_actions.advance_turn(game_id)
+// Name : card_actions.advance_turn(game_id)
 // Desc : Skip next player's turn
 // Author(s) : Vincent Do
 /**
@@ -175,7 +175,7 @@ exports.advance_turn = async function (game_id) {
     });
 }
  **/
-// Name : game_actions.advance_turn(game_id)
+// Name : card_actions.advance_turn(game_id)
 // Desc : Skip next player's turn
 // Author(s) : Vincent Do
  exports.skip_turn = async function (game_id) {
@@ -221,7 +221,7 @@ exports.advance_turn = async function (game_id) {
     });
 }
 
-// Name : game_actions.shuffle_draw_deck(game_id)
+// Name : card_actions.shuffle_draw_deck(game_id)
 // Desc : shuffles the positions of all cards in the draw deck, returns number of cards in draw deck
 // Author(s) : RAk3rman
 exports.shuffle_draw_deck = async function (game_id) {
@@ -257,7 +257,7 @@ exports.shuffle_draw_deck = async function (game_id) {
     });
 }
 
-// Name : game_actions.attack_pre(game_id)
+// Name : card_actions.attack_pre(game_id)
 // Desc : forces the next player in turn order to take 2 consecutive turns by changing seat_playing
 // Author(s) : SengdowJones
 exports.attack_pre = async function (game_id) {
@@ -302,7 +302,7 @@ exports.attack_pre = async function (game_id) {
     });
 }
 
-// Name : game_actions.attack_post(game_id)
+// Name : card_actions.attack_post(game_id)
 // Desc : forces the next player in turn order to take 2 consecutive turns by keeping the same seat_playing
 // Author(s) : SengdowJones
 exports.attack_post = async function (game_id) {
@@ -335,7 +335,7 @@ function rand_bucket(bucket) {
     return bucket.splice(randomIndex, 1)[0];
 }
 
-// Name : game_actions.seethefuture(game_id)
+// Name : card_actions.seethefuture(game_id)
 // Desc : allows active player to view the top three cards of the draw deck
 // Author(s) : SengdowJones
 exports.seethefuture = async function (game_id) {

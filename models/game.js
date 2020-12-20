@@ -80,6 +80,10 @@ let gameSchema = mongoose.Schema({
         type: String,
         default: "forward"
     },
+    turns_remaining: {
+        type: Number,
+        default: 1
+    },
     players: [playerSchema],
     cards: [cardSchema]
 });
