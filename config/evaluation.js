@@ -105,11 +105,6 @@ exports.card_test = async function () {
     spinner.succeed(console_head + `Shuffled ` + chalk.bold(cards_in_deck) + ` cards in draw deck`);
     //Create player hand
     await card_actions.player_hand(sample_game_id).catch(e => {failed_test(e)});
-    //Advance turn
-    spinner.info(console_head + `Skipping turn`);
-    await card_actions.skip_turn(sample_game_id).catch(e => {failed_test(e)});
-    spinner.succeed(console_head + `Skipped ` );
-    console.log(await game_actions.game_details(sample_game_id).seat_playing);
 }
 
 // Name : evaluation.game_test()
@@ -120,7 +115,7 @@ exports.game_test = async function () {
     let console_head = `${chalk.bold.red('Evaluation')}: ${chalk.magenta('G-ACT')} `;
     spinner.info(console_head + `${chalk.bold('Evaluating game actions')}`);
     //Advance turn to player b
-    spinner.info(console_head + `Advancing turn to Player B`);
+    spinner.info(console_head + `Advancing turn to next player`);
     let next_player_id = await game_actions.advance_turn(sample_game_id).catch(e => {failed_test(e)});
     spinner.succeed(console_head + `Advanced turn to player with id: ` + next_player_id);
     //TODO tests game functions and interaction
