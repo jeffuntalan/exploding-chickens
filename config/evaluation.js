@@ -67,7 +67,16 @@ exports.player_test = async function () {
     //Assign cards to all players and print assignment
     spinner.info(console_head + `Assigning initial cards to all players`);
     await player_handler.create_hand(sample_game_id).catch(e => {failed_test(e)});
-    console.log(await game_actions.game_details(sample_game_id));
+    game_details = await game_actions.game_details(sample_game_id);
+    for (let i = 0; i <= game_details.players.length - 1; i++) {
+        let cards_assigned = "";
+        for (let j = 0; j <= game_details.cards.length - 1; j++) {
+            if (game_details.players[i]._id === game_details.cards[j].assignment) {
+                cards_assigned += " " + game_details.cards[j]._id;
+            }
+        }
+        spinner.succeed(console_head + `Assigned cards to ` + game_details.players[i].nickname + `:` + cards_assigned);
+    }
     //spinner.succeed(console_head + `Assigned ` + chalk.bold(defuse_count) + ` defuse cards to ` + chalk.bold(defuse_count) + ` players`);
     //Test seat randomization
     spinner.info(console_head + `Randomizing seat positions for all players`);
