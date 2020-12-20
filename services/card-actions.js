@@ -116,10 +116,47 @@ exports.player_hand = async function (game_id) {
     });
 }
 
-// Name : card_actions.shuffle_draw_deck(game_id)
+// Name : card_actions.skip(game_id, card_id)
+// Desc : skips the current turn, returns next player_id
+// Author(s) : RAk3rman
+exports.skip = async function (game_id, card_id) {
+    //Move card to discard pile
+    //await game_actions.discard_card(game_id, card_id);
+    //Advance turn to next_player, return next player_id
+    return await game_actions.advance_turn(game_id);
+}
+
+// Name : card_actions.reverse(game_id, card_id)
+// Desc : reverse the current player order, returns next player_id
+// Author(s) : RAk3rman
+exports.reverse = async function (game_id, card_id) {
+    //Get game details
+    let game_details = await game_actions.game_details(game_id);
+    //Switch to forwards or backwards
+    if (game_details.turn_direction === "forward") {
+        game_details.turn_direction = "backward";
+    } else if (game_details.turn_direction === "backward") {
+        game_details.turn_direction = "forward";
+    }
+    //Create new promise and wait for game_details to save
+    await new Promise((resolve, reject) => {
+        //Save updated game
+        game_details.save({}, function (err) {
+            if (err) {
+                reject(err);
+            }
+        });
+    });
+    //Move card to discard pile
+    //await game_actions.discard_card(game_id, card_id);
+    //Advance turn to next_player, return next player_id
+    return await game_actions.advance_turn(game_id);
+}
+
+// Name : card_actions.shuffle_draw_deck(game_id, card_id)
 // Desc : shuffles the positions of all cards in the draw deck, returns number of cards in draw deck
 // Author(s) : RAk3rman
-exports.shuffle_draw_deck = async function (game_id) {
+exports.shuffle_draw_deck = async function (game_id, card_id) {
     //Get game details
     let game_details = await game_actions.game_details(game_id);
     //Create new promise and return created_game after saved
@@ -146,7 +183,13 @@ exports.shuffle_draw_deck = async function (game_id) {
             if (err) {
                 reject(err);
             } else {
-                resolve(cards_in_deck + 1);
+                //Check if we have to discard card
+                if (card_id) {
+                    //TODO call discard card function
+                    resolve(cards_in_deck + 1);
+                } else {
+                    resolve(cards_in_deck + 1);
+                }
             }
         });
     });
