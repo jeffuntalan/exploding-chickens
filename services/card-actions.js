@@ -189,7 +189,7 @@ exports.seethefuture = async function (game_id, card_id) {
 }
 
 // Name : card_actions.defuse(game_id)
-// Desc : allows active player to view the top three cards of the draw deck
+// Desc : allows active player to play a defuse card in the event of drawing an Exploding Chicken
 // Author(s) : Vincent Do
 exports.defuse = async function (game_id, card_id, id) {
     //Get game details
