@@ -107,6 +107,9 @@ exports.card_test = async function () {
     spinner.info(console_head + `${chalk.italic('Shuffle:')} Shuffling all cards in draw deck`);
     let cards_in_deck = await card_actions.shuffle_draw_deck(sample_game_id).catch(e => {failed_test(e)});
     spinner.succeed(console_head + `${chalk.italic('Shuffle:')} Shuffled ` + chalk.bold(cards_in_deck) + ` cards in draw deck`);
+    spinner.info(console_head + `${chalk.italic('Exploding Chicken:')} Use a defuse or die`);
+    let defuse = await card_actions.shuffle_draw_deck(sample_game_id, "chicken-base-a", "aea35f36-cf9c-44f1-b4a5-3718658d3964").catch(e => {failed_test(e)});
+    spinner.succeed(console_head + `${chalk.italic('Exploding Chicken:')} successfully dealt with`);
 }
 
 // Name : evaluation.game_test()

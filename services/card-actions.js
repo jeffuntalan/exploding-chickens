@@ -191,18 +191,30 @@ exports.seethefuture = async function (game_id, card_id) {
 // Name : card_actions.defuse(game_id)
 // Desc : allows active player to view the top three cards of the draw deck
 // Author(s) : Vincent Do
-exports.defuse = async function (game_id, card_id, id) {
+exports.defuse = async function (game_id, card_id, player_id) {
     //Get game details
     let game_details = await game_actions.game_details(game_id);
     //Create new promise and return created_game after saved
     return await new Promise((resolve, reject) => {
         //Loop through each card
         for (let i = 0; i <= game_details.cards.length - 1; i++) {
-            if (game_details.cards[i].action === "defuse" && game_details.cards[i].assignment === id) {
+            if (game_details.cards[i].action === "defuse" && game_details.cards[i].assignment === player_id) {
                 game_actions.discard_card(game_id, game_details.cards[i]._id);
                 game_actions.chicken(game_id, game_details.cards[i]._id);
             } else {
-                //Remove player
+                for (let i = 0; i <= game_details.cards.length - 1; i++) {
+                    if (game_details.cards[i]._id === player_id) {
+                        game_actions.discard_card(game_id, game_details.cards[i]._id);
+                    }
+                }
+                game.findOneAndUpdate({ _id: game_id, "player._id": id},
+                    {"$set": { "player.$.status": "dead"}}, function (err) {
+                        if (err) {
+                            reject(err);
+                        } else {
+                            resolve(game_details.players.status);
+                        }
+                    });
             }
         }
         //Still need to put chicken back into deck

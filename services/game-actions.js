@@ -204,20 +204,6 @@ exports.chicken = async function (game_id, card_id, player_id) {
     let game_details = await game_actions.game_details(game_id);
     //Receiving new chicken position
     let new_position = 0;
-    const readline = require("readline");
-    const rl = readline.createInterface({
-        input: process.stdin,
-        output: process.stdout
-    });
-
-    rl.question("Where do you want to put the chicken ? ", function(new_position) {
-        rl.close();
-    });
-
-    rl.on("close", function() {
-        console.log("\nPutting chicken back in");
-        process.exit(0);
-    });
     //Create new promise
     return await new Promise((resolve, reject) => {
         //Update card positions in the draw_deck
