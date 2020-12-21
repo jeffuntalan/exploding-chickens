@@ -170,22 +170,16 @@ exports.discard_card = async function (game_id, card_id) {
 // Name : game_actions.draw_card(game_id)
 // Desc : Draw a card
 // Author(s) : Vincent Do
-exports.draw_card = async function (game_id, card_id, player_seat) {
+exports.draw_card = async function (game_id, card_id, player_id) {
     //Get game details
     let game_details = await game_actions.game_details(game_id);
     //Find current player hand
     let hand = -1;
-    let id = "";
-    for (let i = 0; i <= game_details.players.length - 1; i++) {
-        if (game_details.players[i].seat === player_seat) {
-            id = game.details.players[i]._id;
-        }
-    }
     if (game_details.cards.action === "exploding") {
-        await card_actions.defuse(game_id, card_id, id);
+        await card_actions.defuse(game_id, card_id, player_id);
     }
     for (let i = 0; i <= game_details.cards.length - 1; i++) {
-        if (game_details.cards[i]._id === id) {
+        if (game_details.cards[i]._id === player_id) {
             hand++;
         }
     }
@@ -193,7 +187,7 @@ exports.draw_card = async function (game_id, card_id, player_seat) {
     return await new Promise((resolve, reject) => {
         //Update card that was drawn
         game.findOneAndUpdate({ _id: game_id, "cards._id": card_id},
-            {"$set": { "cards.$.assignment": id, "cards.$.position": hand + 1 }}, function (err) {
+            {"$set": { "cards.$.assignment": player_id, "cards.$.position": hand + 1 }}, function (err) {
                 if (err) {
                     reject(err);
                 } else {
