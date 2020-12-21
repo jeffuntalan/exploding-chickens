@@ -196,3 +196,55 @@ exports.draw_card = async function (game_id, card_id, player_id) {
             });
     });
 }
+// Name : game_actions.chicken(game_id, card_id, player_seat)
+// Desc : Put chicken back
+// Author(s) : Vincent Do
+exports.chicken = async function (game_id, card_id, player_id) {
+    //Get game details
+    let game_details = await game_actions.game_details(game_id);
+    //Receiving new chicken position
+    let new_position = 0;
+    const readline = require("readline");
+    const rl = readline.createInterface({
+        input: process.stdin,
+        output: process.stdout
+    });
+
+    rl.question("Where do you want to put the chicken ? ", function(new_position) {
+        rl.close();
+    });
+
+    rl.on("close", function() {
+        console.log("\nPutting chicken back in");
+        process.exit(0);
+    });
+    //Create new promise
+    return await new Promise((resolve, reject) => {
+        //Update card positions in the draw_deck
+        for (let i = 0; i <= game_details.cards.length - 1; i++) {
+            if (game_details.cards[i].assignment === "draw_deck") {
+                if (game_details.cards[i].position >= new_position) {
+                    game.findOneAndUpdate({ _id: game_id, "cards._id": card_id},
+                        {"$set": { "cards.$.assignment": player_id, "cards.$.position": game_details.cards[i].position + 1 }}, function (err) {
+                            if (err) {
+                                reject(err);
+                            } else {
+                                resolve(new_position + 1);
+                            }
+                        });
+                } else {
+                    game.findOneAndUpdate({ _id: game_id, "cards._id": card_id},
+                        {"$set": { "cards.$.assignment": player_id, "cards.$.position": new_position }}, function (err) {
+                            if (err) {
+                                reject(err);
+                            } else {
+                                resolve(new_position);
+                            }
+                        });
+                }
+
+            }
+        }
+
+    });
+}
