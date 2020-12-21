@@ -110,6 +110,11 @@
     "action": "seethefuture"
   },
   {
+    "_id": "drawbottom-base-a",
+    "name": "Draw from the Bottom",
+    "action": "drawfromthebottom"
+  },
+  {
     "_id": "chicken-base-a",
     "name": "Exploding Chicken",
     "action": "exploding"
