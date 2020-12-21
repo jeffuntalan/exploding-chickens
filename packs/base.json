@@ -1,5 +1,9 @@
 [
   {
+    "pack_name": "Base",
+    "type": "base"
+  },
+  {
     "_id": "defuse-base-a",
     "name": "Defuse",
     "action": "defuse"
@@ -108,6 +112,11 @@
     "_id": "see-base-a",
     "name": "See the Future",
     "action": "seethefuture"
+  },
+  {
+    "_id": "drawbot-base-a",
+    "name": "Draw from the Bottom",
+    "action": "drawfromthebottom"
   },
   {
     "_id": "chicken-base-a",

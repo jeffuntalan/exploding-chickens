@@ -33,7 +33,7 @@ exports.game_creation = async function () {
     sample_game_id = game_details["_id"];
     //Import cards
     spinner.info(console_head + `Importing cards from base.json`);
-    let card_count = await game_actions.import_cards(sample_game_id).catch(e => {failed_test(e)});
+    let card_count = await game_actions.import_cards(sample_game_id, '../packs/eval.json').catch(e => {failed_test(e)});
     spinner.succeed(console_head + `Imported ` + chalk.bold(card_count) + ` cards from base.json`);
 }
 

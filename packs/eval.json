@@ -1,0 +1,121 @@
+[
+  {
+    "pack_name": "Base Evaluation",
+    "type": "evaluation"
+  },
+  {
+    "_id": "defuse-base-a",
+    "name": "Defuse",
+    "action": "defuse"
+  },
+  {
+    "_id": "defuse-base-b",
+    "name": "Defuse",
+    "action": "defuse"
+  },
+  {
+    "_id": "defuse-base-c",
+    "name": "Defuse",
+    "action": "defuse"
+  },
+  {
+    "_id": "defuse-base-d",
+    "name": "Defuse",
+    "action": "defuse"
+  },
+  {
+    "_id": "defuse-base-e",
+    "name": "Defuse",
+    "action": "defuse"
+  },
+  {
+    "_id": "defuse-base-f",
+    "name": "Defuse",
+    "action": "defuse"
+  },
+  {
+    "_id": "nope-base-a",
+    "name": "Nope",
+    "action": "nope"
+  },
+  {
+    "_id": "nope-base-b",
+    "name": "Nope",
+    "action": "nope"
+  },
+  {
+    "_id": "nope-base-c",
+    "name": "Nope",
+    "action": "nope"
+  },
+  {
+    "_id": "nope-base-d",
+    "name": "Nope",
+    "action": "nope"
+  },
+  {
+    "_id": "shuffle-base-a",
+    "name": "Shuffle",
+    "action": "shuffle"
+  },
+  {
+    "_id": "shuffle-base-b",
+    "name": "Shuffle",
+    "action": "shuffle"
+  },
+  {
+    "_id": "shuffle-base-c",
+    "name": "Shuffle",
+    "action": "shuffle"
+  },
+  {
+    "_id": "shuffle-base-d",
+    "name": "Shuffle",
+    "action": "shuffle"
+  },
+  {
+    "_id": "attack-base-a",
+    "name": "Attack",
+    "action": "attack"
+  },
+  {
+    "_id": "attack-base-b",
+    "name": "Attack",
+    "action": "attack"
+  },
+  {
+    "_id": "attack-base-c",
+    "name": "Attack",
+    "action": "attack"
+  },
+  {
+    "_id": "attack-base-d",
+    "name": "Attack",
+    "action": "attack"
+  },
+  {
+    "_id": "reverse-base-a",
+    "name": "Reverse",
+    "action": "reverse"
+  },
+  {
+    "_id": "skip-base-a",
+    "name": "Skip",
+    "action": "skip"
+  },
+  {
+    "_id": "favor-base-a",
+    "name": "Favor",
+    "action": "favor"
+  },
+  {
+    "_id": "see-base-a",
+    "name": "See the Future",
+    "action": "seethefuture"
+  },
+  {
+    "_id": "chicken-base-a",
+    "name": "Exploding Chicken",
+    "action": "exploding"
+  }
+]

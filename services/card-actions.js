@@ -165,6 +165,29 @@ exports.attack_post = async function (game_id) {
     });
 }
 
+// Name : card_actions.drawfromthebottom(game_id)
+// Desc : allows active player to draw one card from the bottom of the draw deck
+// Author(s) : SengdowJones
+exports.drawfromthebottom = async function (game_id, card_id) {
+    //Get game details
+    let game_details = await game_actions.game_details(game_id);
+    //Create new promise and return created_game after saved
+    return await new Promise((resolve, reject) => {
+        //Loop through each card
+        //Create array containing each see the future id
+        let bucket = [];
+        for (let i = 0; i <= 2; i++) {
+            //Check to see if card in draw deck
+            if (game_details.cards[i].assignment === "draw_deck")
+                bucket.push(game_details.cards[i]);
+            else
+                i = i - 1;
+        }
+        game_actions.discard_card(game_id, card_id);
+        resolve();
+    });
+}
+
 // Name : card_actions.seethefuture(game_id)
 // Desc : allows active player to view the top three cards of the draw deck
 // Author(s) : SengdowJones
@@ -189,7 +212,7 @@ exports.seethefuture = async function (game_id, card_id) {
 }
 
 // Name : card_actions.defuse(game_id)
-// Desc : allows active player to view the top three cards of the draw deck
+// Desc : allows active player to play a defuse card in the event of drawing an Exploding Chicken
 // Author(s) : Vincent Do
 exports.defuse = async function (game_id, card_id, player_id) {
     //Get game details
@@ -221,6 +244,7 @@ exports.defuse = async function (game_id, card_id, player_id) {
         resolve();
     });
 }
+
 //PRIVATE FUNCTIONS
 
 // Name : rand_bucket(bucket)
