@@ -168,7 +168,7 @@ exports.attack_post = async function (game_id) {
 // Name : card_actions.seethefuture(game_id)
 // Desc : allows active player to view the top three cards of the draw deck
 // Author(s) : SengdowJones
-exports.seethefuture = async function (game_id) {
+exports.seethefuture = async function (game_id, card_id) {
     //Get game details
     let game_details = await game_actions.game_details(game_id);
     //Create new promise and return created_game after saved
@@ -183,10 +183,29 @@ exports.seethefuture = async function (game_id) {
             else
                 i = i - 1;
             }
+        game_actions.discard_card(game_id, card_id);
         resolve();
     });
 }
 
+// Name : card_actions.defuse(game_id)
+// Desc : allows active player to view the top three cards of the draw deck
+// Author(s) : Vincent Do
+exports.defuse = async function (game_id, card_id, id) {
+    //Get game details
+    let game_details = await game_actions.game_details(game_id);
+    //Create new promise and return created_game after saved
+    return await new Promise((resolve, reject) => {
+        //Loop through each card
+        for (let i = 0; i <= game_details.cards.length - 1; i++) {
+            if (game_details.cards[i].action === "defuse" && game_details.cards[i].assignment === id) {
+                game_actions.discard_card(game_id, game_details.cards[i]._id);
+            }
+        }
+        //Still need to put chicken back into deck
+        resolve();
+    });
+}
 //PRIVATE FUNCTIONS
 
 // Name : rand_bucket(bucket)

@@ -103,6 +103,7 @@ exports.card_test = async function () {
     spinner.info(console_head + `Shuffling all cards in draw deck`);
     let cards_in_deck = await card_actions.shuffle_draw_deck(sample_game_id).catch(e => {failed_test(e)});
     spinner.succeed(console_head + `Shuffled ` + chalk.bold(cards_in_deck) + ` cards in draw deck`);
+
 }
 
 // Name : evaluation.game_test()
@@ -126,6 +127,9 @@ exports.game_test = async function () {
     spinner.info(console_head + `Discarding card`);
     let discard = await game_actions.discard_card(sample_game_id, "skip-base-a").catch(e => {failed_test(e)});
     spinner.succeed(console_head + `New card position is: ` + discard);
+    spinner.info(console_head + `Drawing card`);
+    let draw = await game_actions.draw_card(sample_game_id, "skip-base-a").catch(e => {failed_test(e)});
+    spinner.succeed(console_head + `New card position is: ` + draw);
 
 }
 
