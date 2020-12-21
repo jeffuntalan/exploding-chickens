@@ -110,7 +110,7 @@
     "action": "seethefuture"
   },
   {
-    "_id": "drawbottom-base-a",
+    "_id": "drawbot-base-a",
     "name": "Draw from the Bottom",
     "action": "drawfromthebottom"
   },
