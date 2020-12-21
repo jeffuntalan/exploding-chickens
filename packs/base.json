@@ -1,5 +1,9 @@
 [
   {
+    "pack_name": "Base",
+    "type": "base"
+  },
+  {
     "_id": "defuse-base-a",
     "name": "Defuse",
     "action": "defuse"

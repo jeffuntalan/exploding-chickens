@@ -223,6 +223,9 @@ exports.defuse = async function (game_id, card_id, id) {
         for (let i = 0; i <= game_details.cards.length - 1; i++) {
             if (game_details.cards[i].action === "defuse" && game_details.cards[i].assignment === id) {
                 game_actions.discard_card(game_id, game_details.cards[i]._id);
+                game_actions.chicken(game_id, game_details.cards[i]._id);
+            } else {
+                //Remove player
             }
         }
         //Still need to put chicken back into deck
