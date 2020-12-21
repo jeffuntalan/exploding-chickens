@@ -63,8 +63,8 @@ exports.shuffle_draw_deck = async function (game_id, card_id) {
     let bucket = [];
     let cards_in_deck = 0;
     for (let i = 0; i <= game_details.cards.length - 1; i++) {
-        //Check to see if card in draw deck and not exploding
-        if (game_details.cards[i].assignment === "draw_deck" && game_details.cards[i].action !== "exploding") {
+        //Check to see if card in draw deck
+        if (game_details.cards[i].assignment === "draw_deck") {
             bucket.push(cards_in_deck);
             cards_in_deck++;
         }
@@ -72,7 +72,7 @@ exports.shuffle_draw_deck = async function (game_id, card_id) {
     //Loop though each card and reassign position
     for (let i = 0; i <= game_details.cards.length - 1; i++) {
         //Check to see if card in draw deck and not exploding
-        if (game_details.cards[i].assignment === "draw_deck" && game_details.cards[i].action !== "exploding") {
+        if (game_details.cards[i].assignment === "draw_deck") {
             game_details.cards[i].position = rand_bucket(bucket);
         }
     }

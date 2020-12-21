@@ -153,7 +153,6 @@ exports.discard_card = async function (game_id, card_id) {
             value = game_details.cards[i].position;
         }
     }
-    console.log("Max: " + value);
     //Create new promise
     return await new Promise((resolve, reject) => {
         //Update card that was discarded
@@ -167,8 +166,9 @@ exports.discard_card = async function (game_id, card_id) {
             });
     });
 }
-// Name : game_actions.draw_card(game_id)
-// Desc : Draw a card
+
+// Name : game_actions.draw_card(game_id, card_id, player_seat)
+// Desc : draw a card
 // Author(s) : Vincent Do
 exports.draw_card = async function (game_id, card_id, player_id) {
     //Get game details

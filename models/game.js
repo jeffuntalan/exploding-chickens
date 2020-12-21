@@ -68,10 +68,6 @@ let gameSchema = mongoose.Schema({
             length: 2
         })
     },
-    created: {
-        type: Date,
-        default: Date.now
-    },
     seat_playing: {
         type: Number,
         default: 0
@@ -83,6 +79,14 @@ let gameSchema = mongoose.Schema({
     turns_remaining: {
         type: Number,
         default: 1
+    },
+    status: {
+        type: String,
+        default: "in_lobby"
+    },
+    created: {
+        type: Date,
+        default: Date.now
     },
     players: [playerSchema],
     cards: [cardSchema]
