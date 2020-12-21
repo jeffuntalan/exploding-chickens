@@ -175,6 +175,14 @@ exports.drawfromthebottom = async function (game_id, card_id) {
     return await new Promise((resolve, reject) => {
         //Change bottom card of draw deck's position to player's hand
         draw_card(game_id, card_id)
+        //Update draw deck
+        //Loop though each card and reassign position
+        for (let i = 0; i <= game_details.cards.length - 1; i++) {
+            //Check to see if card in draw deck and not exploding
+            if (game_details.cards[i].assignment === "draw_deck") {
+                game_details.cards[i].position = game_details.cards[i].position - 1;
+            }
+        }
         resolve();
     });
 }
