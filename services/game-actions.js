@@ -170,7 +170,7 @@ exports.discard_card = async function (game_id, card_id) {
 
 // Name : game_actions.draw_card(game_id, card_id, player_seat)
 // Desc : draw a card
-// Author(s) : Vincent Do
+// Author(s) : Vincent Do, SengdowJones
 exports.draw_card = async function (game_id, card_id, player_id) {
     //Get game details
     let game_details = await game_actions.game_details(game_id);
@@ -186,6 +186,7 @@ exports.draw_card = async function (game_id, card_id, player_id) {
             hand++;
         }
     }
+
     //Create new promise
     return await new Promise((resolve, reject) => {
         //Update card that was drawn
@@ -194,11 +195,18 @@ exports.draw_card = async function (game_id, card_id, player_id) {
                 if (err) {
                     reject(err);
                 } else {
+                    for (let i = 0; i <= game_details.cards.length - 1; i++) {
+                        //Update card positions in draw deck
+                        if (game_details.cards[i].assignment === "draw_deck") {
+                            game_details.cards[i].position = game_details.cards[i].position - 1;
+                        }
+                    }
                     resolve(hand + 1);
                 }
             });
     });
 }
+
 // Name : game_actions.chicken(game_id, card_id, player_seat)
 // Desc : Put chicken back
 // Author(s) : Vincent Do
