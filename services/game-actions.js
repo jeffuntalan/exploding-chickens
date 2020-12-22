@@ -176,9 +176,11 @@ exports.draw_card = async function (game_id, card_id, player_id) {
     let game_details = await game_actions.game_details(game_id);
     //Find current player hand
     let hand = -1;
+    //if the card drawn is a chicken, call defuse
     if (game_details.cards.action === "exploding") {
         await card_actions.defuse(game_id, card_id, player_id);
     }
+    //Counts how many cards in player's hand
     for (let i = 0; i <= game_details.cards.length - 1; i++) {
         if (game_details.cards[i]._id === player_id) {
             hand++;
@@ -210,6 +212,7 @@ exports.chicken = async function (game_id, card_id, player_id) {
         //Update card positions in the draw_deck
         for (let i = 0; i <= game_details.cards.length - 1; i++) {
             if (game_details.cards[i].assignment === "draw_deck") {
+                //Putting chicken back into deck
                 if (game_details.cards[i].position >= new_position) {
                     game.findOneAndUpdate({ _id: game_id, "cards._id": card_id},
                         {"$set": { "cards.$.assignment": player_id, "cards.$.position": game_details.cards[i].position + 1 }}, function (err) {

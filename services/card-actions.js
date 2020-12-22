@@ -224,11 +224,14 @@ exports.defuse = async function (game_id, card_id, player_id) {
                 game_actions.discard_card(game_id, game_details.cards[i]._id);
                 game_actions.chicken(game_id, game_details.cards[i]._id);
             } else {
+                //Removes the player's hand to the draw_deck
                 for (let i = 0; i <= game_details.cards.length - 1; i++) {
                     if (game_details.cards[i]._id === player_id) {
                         game_actions.discard_card(game_id, game_details.cards[i]._id);
                     }
                 }
+                //Changes player status of "dead"
+                game_actions.discard_card(game_id, card_id);
                 game.findOneAndUpdate({ _id: game_id, "player._id": id},
                     {"$set": { "player.$.status": "dead"}}, function (err) {
                         if (err) {
@@ -237,6 +240,15 @@ exports.defuse = async function (game_id, card_id, player_id) {
                             resolve(game_details.players.status);
                         }
                     });
+                let count = 1;
+                for (let i = 0; i <= game_details.players.length - 1; i++) {
+                    if (game_details.players[i].status === "dead") {
+                        count++;
+                        if (count === game_details.players.length) {
+                            //Announce winner
+                        }
+                    }
+                }
             }
         }
         //Still need to put chicken back into deck
