@@ -210,11 +210,13 @@ exports.draw_card = async function (game_id, card_id, player_id) {
 // Name : game_actions.chicken(game_id, card_id, player_seat)
 // Desc : Put chicken back
 // Author(s) : Vincent Do
-exports.chicken = async function (game_id, card_id, player_id) {
+exports.chicken = async function (game_id, card_id, draw_deck) {
     //Get game details
     let game_details = await game_actions.game_details(game_id);
-    //Receiving new chicken position
-    let new_position = 0;
+    let new_position = prompt("Where would you like to place the card?", "1");
+    if (new_position === null || new_position < 0) {
+        console.log("invalid position");
+    }
     //Create new promise
     return await new Promise((resolve, reject) => {
         //Update card positions in the draw_deck
@@ -222,27 +224,26 @@ exports.chicken = async function (game_id, card_id, player_id) {
             if (game_details.cards[i].assignment === "draw_deck") {
                 //Putting chicken back into deck
                 if (game_details.cards[i].position >= new_position) {
-                    game.findOneAndUpdate({ _id: game_id, "cards._id": card_id},
-                        {"$set": { "cards.$.assignment": player_id, "cards.$.position": game_details.cards[i].position + 1 }}, function (err) {
+                    game.findOneAndUpdate({ _id: game_id, "cards._id": game_details.cards[i]._id},
+                        {"$set": { "cards.$.assignment": "draw_deck", "cards.$.position": game_details.cards[i].position + 1 }}, function (err) {
                             if (err) {
                                 reject(err);
                             } else {
                                 resolve(new_position + 1);
                             }
                         });
-                } else {
-                    game.findOneAndUpdate({ _id: game_id, "cards._id": card_id},
-                        {"$set": { "cards.$.assignment": player_id, "cards.$.position": new_position }}, function (err) {
-                            if (err) {
-                                reject(err);
-                            } else {
-                                resolve(new_position);
-                            }
-                        });
                 }
 
             }
         }
+        game.findOneAndUpdate({ _id: game_id, "cards._id": card_id},
+            {"$set": { "cards.$.assignment": draw_deck, "cards.$.position": new_position }}, function (err) {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(new_position);
+                }
+            });
 
     });
 }

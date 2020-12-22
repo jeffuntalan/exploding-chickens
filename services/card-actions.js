@@ -154,7 +154,7 @@ exports.attack_post = async function (game_id) {
                         {"$set": {"seat.$.playing": found_game.seat_playing}}, function (err) {
                             if (err) {
                                 reject(err);
-                            } else {
+                             } else {
                                 //Resolve promise when the last player has been updated
                                     resolve(found_game.players.length);
                             }
@@ -249,6 +249,9 @@ exports.defuse = async function (game_id, card_id, player_id) {
         resolve();
     });
 }
+
+
+
 
 //PRIVATE FUNCTIONS
 
