@@ -199,7 +199,7 @@ exports.seethefuture = async function (game_id, card_id) {
             else
                 i = i - 1;
             }
-        game_actions.discard_card(game_id, card_id);
+        console.log(bucket);
         resolve();
     });
 }
