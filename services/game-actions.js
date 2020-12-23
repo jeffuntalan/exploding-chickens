@@ -209,7 +209,7 @@ exports.draw_card = async function (game_id, card_id, player_id) {
 
 // Name : game_actions.chicken(game_id, card_id, player_seat)
 // Desc : Put chicken back
-// Author(s) : Vincent Do
+// Author(s) : Vincent Do & Richie
 exports.chicken = async function (game_id, card_id, draw_deck) {
     //Get game details
     let game_details = await game_actions.game_details(game_id);
