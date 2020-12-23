@@ -94,7 +94,7 @@ exports.player_test = async function () {
 
 // Name : evaluation.card_test()
 // Desc : adds cards to a sample game and tests interaction
-// Author(s) : RAk3rman
+// Author(s) : RAk3rman,Vincent Do
 exports.card_test = async function () {
     //Console header
     let console_head = `${chalk.bold.red('Evaluation')}: ${chalk.cyan('C-ACT')} `;
@@ -105,16 +105,16 @@ exports.card_test = async function () {
     // spinner.succeed(console_head + `${chalk.italic('Skip:')} Skipped the current turn`);
     //Shuffle all cards in draw_deck
     spinner.info(console_head + `${chalk.italic('Shuffle:')} Shuffling all cards in draw deck`);
-    let cards_in_deck = await card_actions.shuffle_draw_deck(sample_game_id).catch(e => {failed_test(e)});
+    let cards_in_deck = await card_actions.shuffle_draw_deck(sample_game_id, "shuffle-base-a").catch(e => {failed_test(e)});
     spinner.succeed(console_head + `${chalk.italic('Shuffle:')} Shuffled ` + chalk.bold(cards_in_deck) + ` cards in draw deck`);
     spinner.info(console_head + `${chalk.italic('Exploding Chicken:')} Use a defuse or die`);
-    let defuse = await card_actions.shuffle_draw_deck(sample_game_id, "chicken-base-a", "aea35f36-cf9c-44f1-b4a5-3718658d3964").catch(e => {failed_test(e)});
+    await card_actions.defuse(sample_game_id, "chicken-base-a", "aea35f36-cf9c-44f1-b4a5-3718658d3964").catch(e => {failed_test(e)});
     spinner.succeed(console_head + `${chalk.italic('Exploding Chicken:')} successfully dealt with`);
 }
 
 // Name : evaluation.game_test()
 // Desc : tests game functions and interaction
-// Author(s) :
+// Author(s) :Vincent Do
 exports.game_test = async function () {
     //Console header
     let console_head = `${chalk.bold.red('Evaluation')}: ${chalk.magenta('G-ACT')} `;

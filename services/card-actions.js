@@ -21,6 +21,7 @@ let player_handler = require('../services/player-handler.js');
 // Author(s) : RAk3rman
 exports.skip = async function (game_id, card_id) {
     //Move card to discard pile
+    await game_actions.discard_card(game_id, card_id);
     //await game_actions.discard_card(game_id, card_id);
     //Advance turn to next_player, return next player_id
     return await game_actions.advance_turn(game_id);
@@ -40,6 +41,8 @@ exports.reverse = async function (game_id, card_id) {
     }
     //Create new promise and wait for game_details to save
     await new Promise((resolve, reject) => {
+        //Move card to discard pile
+        game_actions.discard_card(game_id, card_id);
         //Save updated game
         game_details.save({}, function (err) {
             if (err) {
@@ -47,10 +50,10 @@ exports.reverse = async function (game_id, card_id) {
             }
         });
     });
-    //Move card to discard pile
     //await game_actions.discard_card(game_id, card_id);
     //Advance turn to next_player, return next player_id
     return await game_actions.advance_turn(game_id);
+
 }
 
 // Name : card_actions.shuffle_draw_deck(game_id, card_id)
@@ -75,6 +78,10 @@ exports.shuffle_draw_deck = async function (game_id, card_id) {
         if (game_details.cards[i].assignment === "draw_deck") {
             game_details.cards[i].position = rand_bucket(bucket);
         }
+    }
+    if (card_id === null) {
+        //Move card to discard pile
+        await game_actions.discard_card(game_id, card_id);
     }
     //Create new promise
     return await new Promise((resolve, reject) => {
@@ -143,7 +150,7 @@ exports.attack_pre = async function (game_id) {
 // Name : card_actions.attack_post(game_id)
 // Desc : forces the next player in turn order to take 2 consecutive turns by keeping the same seat_playing
 // Author(s) : SengdowJones
-exports.attack_post = async function (game_id) {
+exports.attack_post = async function (game_id, card_id) {
     return await new Promise((resolve, reject) => {
         game.findById({ _id: game_id }, function (err, found_game) {
             if (err) {
@@ -162,6 +169,8 @@ exports.attack_post = async function (game_id) {
 
             }
         });
+        //Move card to discard pile
+        game_actions.discard_card(game_id, card_id);
     });
 }
 
@@ -177,6 +186,8 @@ exports.drawfromthebottom = async function (game_id, card_id) {
         draw_card(game_id, card_id)
         //Update draw deck
         //No need to reassign position since drawing from bottom remains 0
+        //Move card to discard pile
+        game_actions.discard_card(game_id, card_id);
         resolve();
     });
 }
@@ -226,7 +237,7 @@ exports.defuse = async function (game_id, card_id, player_id) {
                 }
                 //Changes player status of "dead"
                 game_actions.discard_card(game_id, card_id);
-                game.findOneAndUpdate({ _id: game_id, "player._id": id},
+                game.findOneAndUpdate({ _id: game_id, "player._id": player_id},
                     {"$set": { "player.$.status": "dead"}}, function (err) {
                         if (err) {
                             reject(err);
@@ -245,7 +256,6 @@ exports.defuse = async function (game_id, card_id, player_id) {
                 }
             }
         }
-        //Still need to put chicken back into deck
         resolve();
     });
 }
