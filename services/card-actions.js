@@ -192,27 +192,39 @@ exports.drawfromthebottom = async function (game_id, card_id) {
     });
 }
 
-// Name : card_actions.seethefuture(game_id, card_id)
+// Name : card_actions.see_the_future(game_id)
 // Desc : allows active player to view the top three cards of the draw deck
 // Author(s) : SengdowJones
-exports.seethefuture = async function (game_id, card_id) {
+exports.see_the_future = async function (game_id) {
     //Get game details
+
     let game_details = await game_actions.game_details(game_id);
-    //Create new promise and return created_game after saved
+    //Loop through each card to create array
+    let bucket = [];
+    let bucket_length = 0;
+    while (bucket_length < 3) {
+        for (let i=0;i<=game_details.cards.length-1;i++) {
+        //Check to see if card in draw deck
+        if (game_details.cards[i].assignment === "draw_deck") {
+            bucket.push(game_details.cards[i]);
+            bucket_length++;
+        } else {
+        }
+    }
+    }
+
+    //Create new promise
     return await new Promise((resolve, reject) => {
-        //Loop through each card
-        //Create array containing each see the future id
-        let bucket = [];
-        for (let i = 0; i <= 2; i++) {
-            //Check to see if card in draw deck
-            if (game_details.cards[i].assignment === "draw_deck")
-                bucket.push(game_details.cards[i]);
-            else
-                i = i - 1;
+        game.findById({_id: game_id}, function (err, found_game) {
+                if (err) {
+                    reject(err);
+                } else {
+                    //Resolve bucket of top 3 cards
+                    resolve(bucket);
+                }
             }
-        console.log(bucket);
-        resolve();
-    });
+        )
+    })
 }
 
 // Name : card_actions.defuse(game_id)

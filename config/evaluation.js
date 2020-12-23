@@ -110,6 +110,8 @@ exports.card_test = async function () {
     spinner.info(console_head + `${chalk.italic('Exploding Chicken:')} Use a defuse or die`);
     await card_actions.defuse(sample_game_id, "chicken-base-a", "aea35f36-cf9c-44f1-b4a5-3718658d3964").catch(e => {failed_test(e)});
     spinner.succeed(console_head + `${chalk.italic('Exploding Chicken:')} successfully dealt with`);
+    let the_future = await card_actions.see_the_future(sample_game_id).catch(e => {failed_test(e)});
+    spinner.succeed(console_head + `${chalk.italic('See the Future:')}` + the_future);
 }
 
 // Name : evaluation.game_test()
@@ -139,8 +141,7 @@ exports.game_test = async function () {
     spinner.info(console_head + `Putting Chicken back into deck`);
     let chicken = await game_actions.draw_card(sample_game_id, "skip-base-a").catch(e => {failed_test(e)});
     spinner.succeed(console_head + `New chicken position is: ` + chicken);
-
-}
+    }
 
 // Name : evaluation.game_deletion()
 // Desc : deletes a test game and cleans up
