@@ -28,12 +28,6 @@ exports.check_values = function (config_storage) {
         config_storage.set('mongodb_url', 'mongodb://localhost:27017/exploding-chickens');
         spinner.warn(`${chalk.bold.cyan('Setup')}: "mongodb_url" value in config.json set to default: "mongodb://localhost:27017/exploding-chickens"`);
     }
-    //Config value: express_secret | the session secret value used for express
-    if (!config_storage.has('express_secret') || config_storage.get('express_secret') === '') {
-        let new_secret = uuidv4();
-        config_storage.set('express_secret', new_secret);
-        spinner.warn(`${chalk.bold.cyan('Setup')}: "express_secret" value in config.json set to default: "` + new_secret + `"`);
-    }
     //Config value: verbose_debug_mode | the verbosity of output to the console
     if (!config_storage.has('verbose_debug_mode') || config_storage.get('verbose_debug_mode') === '') {
         config_storage.set('verbose_debug_mode', false);

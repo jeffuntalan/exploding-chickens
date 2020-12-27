@@ -24,7 +24,7 @@ let sample_game_id = "";
 // Author(s) : RAk3rman
 exports.game_creation = async function () {
     //Console header
-    let console_head = `${chalk.bold.red('Evaluation')}: ${chalk.green('G-ADD')} `;
+    let console_head = `${chalk.bold.red('Evaluation')}: ${chalk.dim.green('G-ADD')} `;
     spinner.info(console_head + `${chalk.bold('Evaluating game creation')}`);
     //Create sample game
     spinner.info(console_head + `Creating sample game`);
@@ -42,7 +42,7 @@ exports.game_creation = async function () {
 // Author(s) : RAk3rman, SengdowJones
 exports.player_test = async function () {
     //Console header
-    let console_head = `${chalk.bold.red('Evaluation')}: ${chalk.yellow('P-ACT')} `;
+    let console_head = `${chalk.bold.red('Evaluation')}: ${chalk.dim.yellow('P-ACT')} `;
     spinner.info(console_head + `${chalk.bold('Evaluating player actions')}`);
     //Create 4 sample players
     spinner.info(console_head + `Creating sample players (4 total)`);
@@ -97,7 +97,7 @@ exports.player_test = async function () {
 // Author(s) : RAk3rman,Vincent Do
 exports.card_test = async function () {
     //Console header
-    let console_head = `${chalk.bold.red('Evaluation')}: ${chalk.cyan('C-ACT')} `;
+    let console_head = `${chalk.bold.red('Evaluation')}: ${chalk.dim.cyan('C-ACT')} `;
     spinner.info(console_head + `${chalk.bold('Evaluating card actions')}`);
     //Skip a players turn
     // spinner.info(console_head + `${chalk.italic('Skip:')} Skipping current turn`);
@@ -119,7 +119,7 @@ exports.card_test = async function () {
 // Author(s) :Vincent Do
 exports.game_test = async function () {
     //Console header
-    let console_head = `${chalk.bold.red('Evaluation')}: ${chalk.magenta('G-ACT')} `;
+    let console_head = `${chalk.bold.red('Evaluation')}: ${chalk.dim.magenta('G-ACT')} `;
     spinner.info(console_head + `${chalk.bold('Evaluating game actions')}`);
     //Advance forward 4 turns
     spinner.info(console_head + `Advancing forward 4 turns`);
@@ -148,7 +148,7 @@ exports.game_test = async function () {
 // Author(s) : RAk3rman
 exports.game_deletion = async function () {
     //Console header
-    let console_head = `${chalk.bold.red('Evaluation')}: ${chalk.redBright('G-DEL')} `;
+    let console_head = `${chalk.bold.red('Evaluation')}: ${chalk.dim.redBright('G-DEL')} `;
     spinner.info(console_head + `${chalk.bold('Evaluating game deletion')}`);
     //Delete sample game
     spinner.info(console_head + `Deleting sample game (1 of 1)`);

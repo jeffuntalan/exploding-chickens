@@ -7,12 +7,7 @@ Author(s): RAk3rman
 //Packages and configuration - - - - - - - - - - - - - - - - - - - - - - - - -
 
 //Declare packages
-const express = require('express');
-const session = require('express-session');
-const morgan = require('morgan');
-const createError = require('http-errors');
-const cookieParser = require('cookie-parser');
-const bodyParser = require('body-parser');
+const pino = require('pino')();
 let mongoose = require('mongoose');
 const dataStore = require('data-store');
 const config_storage = new dataStore({path: './config/config.json'});
@@ -41,28 +36,28 @@ console.log(chalk.white('--> Github: ' + pkg.homepage + '\n'));
 //Check configuration values
 setup.check_values(config_storage);
 
+//Prepare fastly logger
+const customLogger = {
+    info: function (msg) {spinner.info(`${chalk.bold.blue('Fastly')}: ${chalk.dim.cyan('INFO')} ` + msg)},
+    warn: function (msg) {spinner.info(`${chalk.bold.blue('Fastly')}: ${chalk.dim.yellow('WARN')} ` + msg)},
+    error: function (msg) {spinner.info(`${chalk.bold.blue('Fastly')}: ${chalk.dim.red('ERROR')} ` + msg)},
+    fatal: function (msg) {spinner.info(`${chalk.bold.blue('Fastly')}: ${chalk.dim.red('FATAL')} ` + msg)},
+    trace: function (msg) {spinner.info(`${chalk.bold.blue('Fastly')}: ${chalk.dim.grey('TRACE')} ` + msg)},
+    debug: function (msg) {spinner.info(`${chalk.bold.blue('Fastly')}: ${chalk.dim.magenta('DEBUG')} ` + msg)},
+    child: function() {
+        const child = Object.create(this);
+        child.pino = pino.child(...arguments);
+        return child;
+    },
+};
+
+//Declare fastly
+const fastify = require('fastify')({logger: customLogger});
+
 //End of Packages and configuration - - - - - - - - - - - - - - - - - - - - - -
 
 
-//Express and main functions - - - - - - - - - - - - - - - - - - - - - - - - -
-
-//Declare app
-const app = express();
-app.set('view engine', 'ejs');
-app.use(session({
-    secret: config_storage.get('express_secret'),
-    resave: true,
-    saveUninitialized: true
-}));
-app.use(cookieParser());
-app.use(bodyParser.urlencoded({extended: true}));
-app.use(bodyParser.json());
-app.use(morgan('dev'));
-app.use(express.json());
-app.use(express.urlencoded({extended: false}));
-
-//Import static files to webpages
-app.use('/static', express.static(process.cwd() + '/static'));
+//Fastly and main functions - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 //Routers
 let game_actions_api = require('./routes/game-actions-api.js');
@@ -71,12 +66,12 @@ let site_routes = require('./routes/site-routes.js');
 let error_routes = require('./routes/error-routes.js');
 
 //Import routes
-game_actions_api(app);
-game_info_api(app);
-site_routes(app);
-error_routes(app);
+// game_actions_api(app);
+// game_info_api(app);
+// site_routes(app);
+// error_routes(app);
 
-//End of Express and main functions - - - - - - - - - - - - - - - - - - - - - -
+//End of Fastly and main functions - - - - - - - - - - - - - - - - - - - - - -
 
 
 //Setup external connections - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -91,18 +86,16 @@ spinner.start(`${chalk.bold.yellow('Mongoose')}: Attempting to connect using url
 mongoose.connect(config_storage.get('mongodb_url'), {useNewUrlParser: true,  useUnifiedTopology: true, connectTimeoutMS: 10000});
 mongoose.set('useFindAndModify', false);
 
-//Prepare for webserver connection
-const http = require('http');
-const server = http.createServer(app);
-
 //When mongoose establishes a connection with mongodb
 function mongoose_connected() {
     spinner.succeed(`${chalk.bold.yellow('Mongoose')}: Connected successfully at ` + config_storage.get('mongodb_url'));
     //Start webserver using config values
-    spinner.start(`${chalk.cyan('Webserver')}: Attempting to start http webserver on port ` + config_storage.get('webserver_port'));
-    server.listen(config_storage.get('webserver_port'), () => {
-        //Successfully started webserver
-        spinner.succeed(`${chalk.cyan('Webserver')}: Webserver running at http://` + ip.address() + `:` + config_storage.get('webserver_port'));
+    spinner.start(`${chalk.bold.blue('Fastly')}: Attempting to start http webserver on port ` + config_storage.get('webserver_port'));
+    fastify.listen(config_storage.get('webserver_port'), function (err, address) {
+        if (err) {
+            fastify.log.error(err)
+            process.exit(1)
+        }
         //Check if we are in testing environment
         if (!(process.env.testENV || process.argv[2] !== "test")) {
             spinner.info(`${chalk.bold.red('Evaluation')}: ${chalk.bold.underline('Starting evaluation suite')}`);
@@ -118,16 +111,13 @@ function mongoose_connected() {
                 process.exit(0);
             });
         }
-    });
+    })
 }
 
 //When mongoose losses a connection with mongodb
 function mongoose_disconnected() {
-    spinner.succeed(`${chalk.cyan('Webserver')}: Stopping http webserver on port ` + config_storage.get('webserver_port'));
-    server.close();
+    spinner.succeed(`${chalk.cyan('Fastly')}: Stopping http webserver on port ` + config_storage.get('webserver_port'));
+    //server.close();
 }
 
 //End of Setup external connections - - - - - - - - - - - - - - - - - - - - - -
-
-//Export Express
-module.exports = app;
