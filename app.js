@@ -36,28 +36,20 @@ console.log(chalk.white('--> Github: ' + pkg.homepage + '\n'));
 //Check configuration values
 setup.check_values(config_storage);
 
-//Prepare fastify logger
-const customLogger = {
-    info: function (msg) {spinner.info(`${chalk.bold.blue('Fastify')}: ${chalk.dim.cyan('INFO')} ` + msg)},
-    warn: function (msg) {spinner.info(`${chalk.bold.blue('Fastify')}: ${chalk.dim.yellow('WARN')} ` + msg)},
-    error: function (msg) {spinner.info(`${chalk.bold.blue('Fastify')}: ${chalk.dim.red('ERROR')} ` + msg)},
-    fatal: function (msg) {spinner.info(`${chalk.bold.blue('Fastify')}: ${chalk.dim.red('FATAL')} ` + msg)},
-    trace: function (msg) {spinner.info(`${chalk.bold.blue('Fastify')}: ${chalk.dim.grey('TRACE')} ` + msg)},
-    debug: function (msg) {spinner.info(`${chalk.bold.blue('Fastify')}: ${chalk.dim.magenta('DEBUG')} ` + msg)},
-    child: function() {
-        const child = Object.create(this);
-        child.pino = pino.child(...arguments);
-        return child;
-    },
-};
-
-//Declare fastify
-const fastify = require('fastify')({logger: customLogger});
-
 //End of Packages and configuration - - - - - - - - - - - - - - - - - - - - - -
 
 
 //Fastify and main functions - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+//Declare fastify
+const fastify = require('fastify')({logger: {prettyPrint: true}});
+
+//Prepare rendering template
+fastify.register(require('point-of-view'), {
+    engine: {
+        handlebars: require('handlebars')
+    }
+})
 
 //Routers
 let game_actions_api = require('./routes/game-actions-api.js');
@@ -70,6 +62,11 @@ let error_routes = require('./routes/error-routes.js');
 // game_info_api(app);
 // site_routes(app);
 // error_routes(app);
+
+//Home page
+fastify.get('/', (req, reply) => {
+    reply.view('/templates/home.hbs', { text: 'text' })
+})
 
 //End of Fastify and main functions - - - - - - - - - - - - - - - - - - - - - -
 
@@ -90,7 +87,7 @@ mongoose.set('useFindAndModify', false);
 function mongoose_connected() {
     spinner.succeed(`${chalk.bold.yellow('Mongoose')}: Connected successfully at ` + config_storage.get('mongodb_url'));
     //Start webserver using config values
-    spinner.start(`${chalk.bold.blue('Fastify')}: Attempting to start http webserver on port ` + config_storage.get('webserver_port'));
+    spinner.info(`${chalk.bold.blue('Fastify')}: Attempting to start http webserver on port ` + config_storage.get('webserver_port'));
     fastify.listen(config_storage.get('webserver_port'), function (err, address) {
         if (err) {
             fastify.log.error(err)
