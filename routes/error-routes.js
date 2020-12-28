@@ -5,24 +5,31 @@ Author(s): RAk3rman
 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\*/
 
 //Export to app.js file
-module.exports = function (app) {
+module.exports = function (fastify) {
     //Services
     let card_actions = require('../services/card-actions.js');
     let game_actions = require('../services/game-actions.js');
     let player_handler = require('../services/player-handler.js');
 
-    //404 error handling
-    app.use(function (req, res, next) {
-        next(createError(404));
-    });
+    //404 error handler
+    fastify.setNotFoundHandler({
+        preValidation: (req, reply, done) => {
+            // your code
+            done()
+        },
+        preHandler: (req, reply, done) => {
+            // your code
+            done()
+        }
+    }, function (request, reply) {
+        reply.status(404).view('/templates/error.hbs', {});
+    })
 
-    //Other error handling
-    app.use(function (err, req, res, next) {
-        //Pass through error message to webpage
-        res.locals.message = err.message;
-        res.locals.error = req.app.get('env') === 'development' ? err : {};
-        //Render error page
-        res.status(err.status || 500);
-        res.render('pages/error.ejs', {title: 'Error'});
-    });
+    //Other error code handler
+    fastify.setErrorHandler(function (error, request, reply) {
+        // Log error
+        this.log.error(error);
+        // Send error response
+        reply.status(error.statusCode).view('/templates/error.hbs', { error_code: error.statusCode });
+    })
 };

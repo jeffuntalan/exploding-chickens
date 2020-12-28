@@ -7,7 +7,7 @@ Author(s): RAk3rman
 //Packages and configuration - - - - - - - - - - - - - - - - - - - - - - - - -
 
 //Declare packages
-const pino = require('pino')();
+const pino = require('pino');
 let mongoose = require('mongoose');
 const dataStore = require('data-store');
 const config_storage = new dataStore({path: './config/config.json'});
@@ -54,18 +54,16 @@ fastify.register(require('point-of-view'), {
 //Routers
 let game_actions_api = require('./routes/game-actions-api.js');
 let game_info_api = require('./routes/game-info-api.js');
-let site_routes = require('./routes/site-routes.js');
 let error_routes = require('./routes/error-routes.js');
 
 //Import routes
-// game_actions_api(app);
-// game_info_api(app);
-// site_routes(app);
-// error_routes(app);
+game_actions_api(fastify);
+game_info_api(fastify);
+error_routes(fastify);
 
 //Home page
 fastify.get('/', (req, reply) => {
-    reply.view('/templates/home.hbs', { text: 'text' })
+    reply.view('/templates/home.hbs', { active_games: 0 })
 })
 
 //End of Fastify and main functions - - - - - - - - - - - - - - - - - - - - - -

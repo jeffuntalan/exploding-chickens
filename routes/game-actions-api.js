@@ -5,7 +5,7 @@ Author(s): RAk3rman
 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\*/
 
 //Export to app.js file
-module.exports = function (app) {
+module.exports = function (fastify) {
     //Packages
     let game = require('../models/game.js');
     const dataStore = require('data-store');
@@ -18,19 +18,15 @@ module.exports = function (app) {
     let player_handler = require('../services/player-handler.js');
 
     //Example API route
-    app.route('/api/game/actions/create')
-        .post(
-            function (req, res) {
-                game.find({bib_number: req.query.bib_number}, function (err, details) {
-                    if (err) {
-                        console.log("ENTRY Resolver: Retrieve failed: " + err);
-                        res.send(err);
-                    } else {
-                        console.log("ENTRY Resolver: Entry Sent: " + JSON.stringify(details))
-                    }
-                    res.json(details);
-                });
+    fastify.get('/api/example-1', (req, reply) => {
+        game.find({bib_number: req.query.bib_number}, function (err, details) {
+            if (err) {
+                console.log("ENTRY Resolver: Retrieve failed: " + err);
+                reply.send(err);
+            } else {
+                console.log("ENTRY Resolver: Entry Sent: " + JSON.stringify(details))
             }
-        );
-
+            reply.json(details);
+        });
+    })
 };
