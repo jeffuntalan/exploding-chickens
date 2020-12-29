@@ -141,6 +141,9 @@ exports.game_test = async function () {
     spinner.info(console_head + `Putting Chicken back into deck`);
     let chicken = await game_actions.draw_card(sample_game_id, "skip-base-a").catch(e => {failed_test(e)});
     spinner.succeed(console_head + `New chicken position is: ` + chicken);
+    spinner.info(console_head + `Calling card function`);
+    await game_actions.draw_card(sample_game_id, "skip-base-a").catch(e => {failed_test(e)});
+    spinner.succeed(console_head + `Called successfully `);
     }
 
 // Name : evaluation.game_deletion()
