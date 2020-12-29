@@ -147,9 +147,6 @@ exports.discard_card = async function (game_id, card_id) {
     //Find greatest position in discard deck
     let value = -1;
     for (let i = 0; i <= game_details.cards.length - 1; i++) {
-        if (game_details.cards[i].assignment === "discard_deck") {
-            console.log(game_details.cards[i].position);
-        }
         if (game_details.cards[i].position > value && game_details.cards[i].assignment === "discard_deck") {
             value = game_details.cards[i].position;
         }
@@ -246,4 +243,27 @@ exports.chicken = async function (game_id, card_id, draw_deck) {
             });
 
     });
+}
+// Name : game_actions.card_call(game_id, card_id, player_seat)
+// Desc : Calls the appropriate card function based on card id
+// Author(s) : Vincent Do & Richie
+exports.card_call = async function (game_id, card_id) {
+    //Get game details
+    let game_details = await game_actions.game_details(game_id);
+    //Create new promise
+    if (card_id.includes("shuffle")) {
+        await card_actions.shuffle_draw_deck(game_id, card_id);
+    }
+    if (card_id.includes("attack")) {
+        await card_actions.attack(game_id, card_id);
+    }
+    if (card_id.includes("skip")) {
+        await card_actions.skip(game_id, card_id);
+    }
+    if (card_id.includes("reverse")) {
+        await card_actions.reverse(game_id, card_id);
+    }
+    if (card_id.includes("favor")) {
+        console.log("joe mom");
+    }
 }
