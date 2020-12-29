@@ -247,7 +247,7 @@ exports.chicken = async function (game_id, card_id, draw_deck) {
 // Name : game_actions.card_call(game_id, card_id, player_seat)
 // Desc : Calls the appropriate card function based on card id
 // Author(s) : Vincent Do & Richie
-exports.card_call = async function (game_id, card_id) {
+exports.card_call = async function (game_id, card_id, player_id) {
     //Get game details
     let game_details = await game_actions.game_details(game_id);
     //Create new promise
@@ -264,6 +264,19 @@ exports.card_call = async function (game_id, card_id) {
         await card_actions.reverse(game_id, card_id);
     }
     if (card_id.includes("favor")) {
-        console.log("joe mom");
+        await card_actions.favor(game_id, card_id, player_id);
+    }
+    let count = 0;
+    let bucket = []
+    while (count !== 2) {
+        for (let i = 0; i <= game_details.cards.length - 1; i++) {
+            if (game_details.cards[i].assignment === player_id && game_details.cards[i].action === "chicken") {
+                bucket.push(game_details.cards[i]._id);
+                count++;
+            }
+        }
+    }
+    if (count >= 2) {
+        await card_actions.double(game_id, bucket[0], bucket[1], player_id);
     }
 }
