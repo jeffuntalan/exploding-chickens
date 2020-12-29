@@ -109,6 +109,31 @@
     "action": "favor"
   },
   {
+    "_id": "chickovsky-base-a",
+    "name": "Chickovsky",
+    "action": "chicken"
+  },
+  {
+    "_id": "funky-chicken-base-a",
+    "name": "Funky Chicken",
+    "action": "chicken"
+  },
+  {
+    "_id": "dolphin-fowls-base-a",
+    "name": "Dolphin Fowls",
+    "action": "chicken"
+  },
+  {
+    "_id": "big-chicken-base-a",
+    "name": "Big Chicken",
+    "action": "chicken"
+  },
+  {
+    "_id": "hen-ry-stickman-base-a",
+    "name": "Hen-ry Stickman",
+    "action": "chicken"
+  },
+  {
     "_id": "see-base-a",
     "name": "See the Future",
     "action": "seethefuture"
