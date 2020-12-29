@@ -71,6 +71,11 @@ fastify.get('/', (req, reply) => {
     reply.view('/templates/home.hbs', { active_games: 0 })
 })
 
+//Game page
+fastify.get('/game/:_id', (req, reply) => {
+    reply.view('/templates/game.hbs', { active_games: 0 })
+})
+
 //End of Fastify and main functions - - - - - - - - - - - - - - - - - - - - - -
 
 
