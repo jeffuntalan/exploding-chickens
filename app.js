@@ -68,17 +68,13 @@ error_routes(fastify);
 
 //Home page
 fastify.get('/', (req, reply) => {
-    reply.view('/templates/home.hbs', { active_games: 0 })
+    reply.view('/templates/home.hbs', { active_games: 0, title: "Home" })
 })
 
 //Game page
 fastify.get('/game/:_id', (req, reply) => {
     reply.view('/templates/game.hbs', { active_games: 0 })
 })
-
-//Error page
-fastify.get('/', (req, reply) => {
-    reply.view('/templates/error.hbs', { active_games: 0 })
 
 //End of Fastify and main functions - - - - - - - - - - - - - - - - - - - - - -
 
