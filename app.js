@@ -8,6 +8,7 @@ Author(s): RAk3rman
 
 //Declare packages
 const pino = require('pino');
+const path = require('path')
 let mongoose = require('mongoose');
 const dataStore = require('data-store');
 const config_storage = new dataStore({path: './config/config.json'});
@@ -48,7 +49,11 @@ const fastify = require('fastify')({logger: {prettyPrint: true}});
 fastify.register(require('point-of-view'), {
     engine: {
         handlebars: require('handlebars')
-    }
+    },
+})
+fastify.register(require('fastify-static'), {
+    root: path.join(__dirname, 'public'),
+    prefix: '/public/', // optional: default '/'
 })
 
 //Routers
