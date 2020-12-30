@@ -112,6 +112,12 @@ exports.card_test = async function () {
     spinner.succeed(console_head + `${chalk.italic('Exploding Chicken:')} successfully dealt with`);
     let the_future = await card_actions.see_the_future(sample_game_id).catch(e => {failed_test(e)});
     spinner.succeed(console_head + `${chalk.italic('See the Future:')}` + the_future);
+    spinner.info(console_head + `${chalk.italic('Exploding Chicken:')} Doing a favor`);
+    await card_actions.favor(sample_game_id, "chicken-base-a", "aea35f36-cf9c-44f1-b4a5-3718658d3964").catch(e => {failed_test(e)});
+    spinner.succeed(console_head + `${chalk.italic('Favor:')} successfully dealt with`);
+    spinner.info(console_head + `${chalk.italic('Exploding Chicken:')} Combining chicken to a favor`);
+    await card_actions.double(sample_game_id, "chicken-base-a", "aea35f36-cf9c-44f1-b4a5-3718658d3964").catch(e => {failed_test(e)});
+    spinner.succeed(console_head + `${chalk.italic('Favor:')} successfully dealt with`);
 }
 
 // Name : evaluation.game_test()
@@ -142,7 +148,7 @@ exports.game_test = async function () {
     let chicken = await game_actions.draw_card(sample_game_id, "skip-base-a").catch(e => {failed_test(e)});
     spinner.succeed(console_head + `New chicken position is: ` + chicken);
     spinner.info(console_head + `Calling card function`);
-    await game_actions.draw_card(sample_game_id, "skip-base-a").catch(e => {failed_test(e)});
+    await game_actions.card_call(sample_game_id, "skip-base-a", "aea35f36-cf9c-44f1-b4a5-3718658d3964").catch(e => {failed_test(e)});
     spinner.succeed(console_head + `Called successfully `);
     }
 
