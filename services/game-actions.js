@@ -268,12 +268,10 @@ exports.card_call = async function (game_id, card_id, player_id) {
     }
     let count = 0;
     let bucket = []
-    while (count !== 2) {
-        for (let i = 0; i <= game_details.cards.length - 1; i++) {
-            if (game_details.cards[i].assignment === player_id && game_details.cards[i].action === "chicken") {
-                bucket.push(game_details.cards[i]._id);
-                count++;
-            }
+    for (let i = 0; i <= game_details.cards.length - 1; i++) {
+        if (game_details.cards[i].assignment === player_id && game_details.cards[i].action === "chicken") {
+            bucket.push(game_details.cards[i]._id);
+            count++;
         }
     }
     if (count >= 2) {

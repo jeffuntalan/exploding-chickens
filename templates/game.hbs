@@ -23,6 +23,13 @@
             <div class="block">
                 <div class="ml-4 flex items-center md:ml-6">
                     <span class="relative inline-flex">
+                        {{! Active users }}
+                        <div class="inline-flex items-center -space-x-1 overflow-hidden p-2">
+                            <img class="inline-block h-6 w-6 rounded-full ring-2 ring-white" src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=4&w=256&h=256&q=60" alt="">
+                            <img class="inline-block h-6 w-6 rounded-full ring-2 ring-white" src="https://images.unsplash.com/photo-1550525811-e5869dd03032?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="">
+                            <img class="inline-block h-6 w-6 rounded-full ring-2 ring-white" src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2.25&w=256&h=256&q=80" alt="">
+                            <img class="inline-block h-6 w-6 rounded-full ring-2 ring-white" src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="">
+                        </div>
                         {{! Slide over button }}
                         <button class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-yellow-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white">
                             <svg class="block h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
@@ -40,15 +47,24 @@
         </div>
     </div>
 </nav>
-<div id='content' class='flex-1 mx-auto p-8'>
-    <h1>Sticky Footer Demo</h1>
-    <p>
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit, <br />
-        sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. <br />
-        Ut enim ad minim veniam, quis nostrud exercitation ullamco.<br />
-        Duis aute irure dolor in reprehenderit in voluptate velit esse. <br />
-        Excepteur sint occaecat cupidatat non proident.
-    </p>
+{{! Draw and discard deck }}
+<div class="flex flex-col items-center justify-center h-screen pb-10">
+    <div class="flex align-top mb-10">
+        <div class="inline-flex items-center p-2">
+            <img class="m-2 h-12 w-12 rounded-full" src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=4&w=256&h=256&q=60" alt="">
+            <img class="m-2 h-12 w-12 rounded-full" src="https://images.unsplash.com/photo-1550525811-e5869dd03032?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="">
+            <img class="m-2 h-12 w-12 rounded-full" src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2.25&w=256&h=256&q=80" alt="">
+            <img class="m-2 h-12 w-12 rounded-full" src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="">
+        </div>
+    </div>
+    <div class="flex align-bottom">
+        <div class="bg-gray-800 rounded-xl border shadow-lg h-64 w-52 mx-1">
+            <h1 class="text-white font-bold flex items-center justify-center h-64">Draw Deck</h1>
+        </div>
+        <div class="bg-gray-800 rounded-xl border shadow-lg h-64 w-52 mx-1">
+            <h1 class="text-white font-bold flex items-center justify-center h-64">Discard Deck</h1>
+        </div>
+    </div>
 </div>
 <footer class='w-full text-center py-2'>
     <div class="-my-2 overflow-x-auto">
