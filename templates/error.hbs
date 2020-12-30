@@ -1,26 +1,58 @@
 <style>
+    body {
+    background-color: #95c2de;
+}
 
-    * {
-    "Whitney SSm A", "Whitney SSm B", "Helvetica Neue", Helvetica, Arial, Sans-Serif;
-    }
+.mainbox {
+    background-color: #95c2de;
+    margin: auto;
+    height: 600px;
+    width: 600px;
+    position: relative;
+}
 
-    .error-text {
-        font-size: 130px;
-    }
+.err {
+    color: #ffffff;
+    font-family: 'Nunito Sans', sans-serif;
+    font-size: 11rem;
+    position:absolute;
+    left: 20%;
+    top: 8%;
+}
 
-    @media (min-width: 768px) {
-        .error-text {
-            font-size: 220px;
-        }
-    }
+.far {
+    position: absolute;
+    font-size: 8.5rem;
+    left: 42%;
+    top: 15%;
+    color: #ffffff;
+}
 
+.err2 {
+    color: #ffffff;
+    font-family: 'Nunito Sans', sans-serif;
+    font-size: 11rem;
+    position:absolute;
+    left: 68%;
+    top: 8%;
+}
+
+.msg {
+    text-align: center;
+    font-family: 'Nunito Sans', sans-serif;
+    font-size: 1.6rem;
+    position:absolute;
+    left: 16%;
+    top: 45%;
+    width: 75%;
+}
+
+a {
+    text-decoration: none;
+    color: white;
+}
+
+a:hover {
+    text-decoration: underline;
+}
 </style>
-
-<div class="h-screen w-screen bg-blue-600 flex justify-center content-center flex-wrap">
-    <p class="font-sans text-white error-text">404</p>
-</div>
-
-<div class="absolute w-screen bottom-0 mb-6 text-white text-center font-sans text-xl">
-    <span class="opacity-50">Take me back to</span>
-    <a class="border-b" href="https://tailwindcomponents.com">tailwindcomponents.com</a>
-</div>
