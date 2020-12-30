@@ -1,16 +1,26 @@
-<!doctype html>
+<style>
 
-<html lang="en">
-<head class = "bg-blue-200">
-    <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@600;900&display=swap" rel="stylesheet">
-    <script src="https://kit.fontawesome.com/4b9ba14b0f.js" crossorigin="anonymous"></script>
-</head>
-<body class = "bg-blue-200">
-<div class="mainbox">
-    <div class="err">4</div>
-    <i class="far fa-question-circle fa-spin"></i>
-    <div class="err2">4</div>
-    <div class="msg">Yikes, something nest'd up. The page you're looking for doesn't eggsist. <p>Let's flock <a href="#">home</a> and try from there.</p></div>
+    * {
+    "Whitney SSm A", "Whitney SSm B", "Helvetica Neue", Helvetica, Arial, Sans-Serif;
+    }
+
+    .error-text {
+        font-size: 130px;
+    }
+
+    @media (min-width: 768px) {
+        .error-text {
+            font-size: 220px;
+        }
+    }
+
+</style>
+
+<div class="h-screen w-screen bg-blue-600 flex justify-center content-center flex-wrap">
+    <p class="font-sans text-white error-text">404</p>
 </div>
 
-
+<div class="absolute w-screen bottom-0 mb-6 text-white text-center font-sans text-xl">
+    <span class="opacity-50">Take me back to</span>
+    <a class="border-b" href="https://tailwindcomponents.com">tailwindcomponents.com</a>
+</div>
