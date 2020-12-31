@@ -2,7 +2,7 @@
 Filename : exploding-chickens/services/card-actions.js
 Desc     : all actions and helper functions
            related to card interaction
-Author(s): RAk3rman, vmdo3
+Author(s): RAk3rman, vmdo3, SengdowJones
 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\*/
 
 //Packages
