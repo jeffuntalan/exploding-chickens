@@ -38,6 +38,7 @@
     </div>
 </nav>
 
+
 {{! Logo }}
 <div class="m-3 block text-center">
     <div class="flex flex-col items-center -space-y-3">
@@ -52,7 +53,7 @@
     <div class="flex flex-col items-center">
 
         <p class="text-7xl" style="font-family: Bebas Neue">EXPLODING <a class="text-yellow-500">CHICKENS</a></p>
-        <p class="italic">Placeholder text: An online alternative to a card game inspired by Russian Roulette.</p>
+        <p class="italic">An online alternative to a card game inspired by Russian Roulette.</p>
 
     </div>
 </div>
@@ -62,19 +63,20 @@
     <div class="flex flex-col items-center">
 	    <div class="m-0.25 grid gap-2">
             <form class="my-3 flex w-full max-w-sm mx-auto space-x-3">
-                <input class="flex-1 appearance-none border border-transparent w-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 shadow rounded-sm text-base focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent" type="username" placeholder="Your name">
-                    <div x-data="{ dropdownOpen: false }" class="relative">
-                        <div @click="dropdownOpen = !dropdownOpen" class="text-sm flex-shrink-0 bg-purple-600 text-white text-base font-semibold py-2 px-2 rounded-xl shadow-md hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-purple-200">
-                        Select a Gamemode
-                        </div>
-                        <div x-show="dropdownOpen" @click="dropdownOpen = false" class="fixed inset-0 h-full w-full z-10"></div>
-                        <div x-show="dropdownOpen" class="absolute left-0 mt-2 w-full bg-white rounded-md overflow-hidden shadow-xl z-20">
-                            <a href="#" class="block px-4 py-2 text-sm text-gray-800 border-b hover:bg-gray-200">New Lobby <span class="text-gray-600"></span></a>
-                            <a href="#" class="block px-4 py-2 text-sm text-gray-800 border-b hover:bg-gray-200">Join Lobby <span class="text-gray-600"></span></a>
-                            <a href="#" class="block px-4 py-2 text-sm text-gray-800 border-b hover:bg-gray-200">Ranked Game<span class="text-gray-600"></span></a>
-                        </div>
-                    </div>
+                <input class="text-center flex-1 appearance-none border border-transparent w-full py-2 px-10 bg-white text-gray-700 placeholder-gray-400 shadow rounded-sm text-base focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent" type="username" placeholder="Your name">
             </form>
+        </div>
+        <div x-data="{ dropdownOpen: false }" class="relative">
+
+            <button @click="dropdownOpen = !dropdownOpen" class="text-sm flex-shrink-0 bg-purple-600 text-white text-base font-semibold py-2 px-9 rounded-xl shadow-md hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-purple-200">
+            Play
+            </button>
+
+                <div x-show="dropdownOpen" @click="dropdownOpen = false" class="fixed inset-0 h-full w-full z-10"></div>
+                <div x-show="dropdownOpen" class="absolute left-0 mt-2 w-full bg-white rounded-md overflow-hidden shadow-xl z-20">
+                    <a href="#" class="block px-4 py-2 text-sm text-gray-800 border-b hover:bg-gray-200">New Lobby <span class="text-gray-600"></span></a>
+                    <a href="#" class="block px-4 py-2 text-sm text-gray-800 border-b hover:bg-gray-200">Join Lobby <span class="text-gray-600"></span></a>
+                </div>
         </div>
     </div>
 </div>
