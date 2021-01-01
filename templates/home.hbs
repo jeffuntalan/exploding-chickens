@@ -1,5 +1,9 @@
 <!doctype html>
+{{!-- begin --}}
 <html class='h-full'>
+<script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.min.js" defer></script>
+
+{{!-- import tailwind css and bebas neue font     --}}
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -7,11 +11,73 @@
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
 </head>
-<!-- Exploding Chickens, home landing page // SengdowJones -->
-<!-- animation -->
 
-<div class="m-8">
-<p class="text-7xl" style="font-family: Bebas Neue">EXPLODING <a class="text-yellow-500">CHICKENS</a></p>
-<p class="italic">Placeholder text: An online alternative to a card game inspired by Russian Roulette.</p>
+<!-- Exploding Chickens, home landing page // SengdowJones -->
+
+{{! Navigation bar }}
+<nav class="">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between h-16">
+            {{! Exploding Chickens header }}
+            <div class="flex items-center">
+            </div>
+            {{! Right sidebar actions }}
+            <div class="block">
+                <div class="ml-4 flex items-center md:ml-6">
+                    <span class="relative inline-flex">
+                        {{! Slide over button }}
+                        <button class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-yellow-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white">
+                            <svg class="block h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                            </svg>
+                        </button>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+
+{{! Logo }}
+<div class="m-3 block text-center">
+    <div class="flex flex-col items-center -space-y-3">
+     
+        <img class="h-36 w-36" src="public\css\assets\logo.png" alt="">
+    
+    </div>
 </div>
+
+<!-- Title Text -->
+<div class="my-6 block text-center">
+    <div class="flex flex-col items-center">
+
+        <p class="text-7xl" style="font-family: Bebas Neue">EXPLODING <a class="text-yellow-500">CHICKENS</a></p>
+        <p class="italic">Placeholder text: An online alternative to a card game inspired by Russian Roulette.</p>
+
+    </div>
+</div>
+
+{{!-- Interactive buttons --}}
+<div class="block text-center">
+    <div class="flex flex-col items-center">
+	    <div class="m-0.25 grid gap-2">
+            <form class="my-3 flex w-full max-w-sm mx-auto space-x-3">
+                <input class="flex-1 appearance-none border border-transparent w-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 shadow rounded-sm text-base focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent" type="username" placeholder="Your name">
+                    <div x-data="{ dropdownOpen: false }" class="relative">
+                        <button @click="dropdownOpen = !dropdownOpen" class="text-sm flex-shrink-0 bg-purple-600 text-white text-base font-semibold py-2 px-2 rounded-xl shadow-md hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-purple-200">
+                        Select a Gamemode
+                        </button>
+                        <div x-show="dropdownOpen" @click="dropdownOpen = false" class="fixed inset-0 h-full w-full z-10"></div>
+                        <div x-show="dropdownOpen" class="absolute left-0 mt-2 w-full bg-white rounded-md overflow-hidden shadow-xl z-20">
+                            <a href="#" class="block px-4 py-2 text-sm text-gray-800 border-b hover:bg-gray-200">New Lobby <span class="text-gray-600"></span></a>
+                            <a href="#" class="block px-4 py-2 text-sm text-gray-800 border-b hover:bg-gray-200">Join Lobby <span class="text-gray-600"></span></a>
+                            <a href="#" class="block px-4 py-2 text-sm text-gray-800 border-b hover:bg-gray-200">Ranked Game<span class="text-gray-600"></span></a>
+                        </div>
+                    </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{{!-- end --}}
 </html>
