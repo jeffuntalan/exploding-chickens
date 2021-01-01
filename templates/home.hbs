@@ -64,9 +64,9 @@
             <form class="my-3 flex w-full max-w-sm mx-auto space-x-3">
                 <input class="flex-1 appearance-none border border-transparent w-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 shadow rounded-sm text-base focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent" type="username" placeholder="Your name">
                     <div x-data="{ dropdownOpen: false }" class="relative">
-                        <button @click="dropdownOpen = !dropdownOpen" class="text-sm flex-shrink-0 bg-purple-600 text-white text-base font-semibold py-2 px-2 rounded-xl shadow-md hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-purple-200">
+                        <div @click="dropdownOpen = !dropdownOpen" class="text-sm flex-shrink-0 bg-purple-600 text-white text-base font-semibold py-2 px-2 rounded-xl shadow-md hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-purple-200">
                         Select a Gamemode
-                        </button>
+                        </div>
                         <div x-show="dropdownOpen" @click="dropdownOpen = false" class="fixed inset-0 h-full w-full z-10"></div>
                         <div x-show="dropdownOpen" class="absolute left-0 mt-2 w-full bg-white rounded-md overflow-hidden shadow-xl z-20">
                             <a href="#" class="block px-4 py-2 text-sm text-gray-800 border-b hover:bg-gray-200">New Lobby <span class="text-gray-600"></span></a>
