@@ -6,9 +6,10 @@
     <link href="/public/css/tailwind.css" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.min.js" defer></script>
 </head>
 <!-- Exploding Chickens, game interface // RAk3rman -->
-<body class='flex flex-col h-full'>
+<body class='flex flex-col h-full' x-data="{ sidebar_open: false }" @keydown.window.escape="sidebar_open = false">
 {{! Navigation bar }}
 <nav class="">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -31,11 +32,13 @@
                             <img class="inline-block h-6 w-6 rounded-full ring-2 ring-white" src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="">
                         </div>
                         {{! Slide over button }}
-                        <button class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-yellow-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white">
-                            <svg class="block h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-                            </svg>
-                        </button>
+                        <div class="">
+                            <button @click="sidebar_open = true; setTimeout(() => console.log(sidebar_open), 1000);" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-yellow-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white">
+                                <svg class="block h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                                </svg>
+                            </button>
+                        </div>
                         {{! Status ping }}
                         <span class="flex absolute h-2 w-2 top-2 right-2 -mt-1 -mr-1">
                             <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
@@ -101,10 +104,8 @@
                 <div class="flex flex-col items-center -space-y-3">
                     <img class="h-12 w-12 rounded-full" src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="">
                     <div class="-space-x-4 rotate-12">
-                        <div class="transform inline-block rounded-md bg-gray-700 shadow-md h-5 w-4 -rotate-12"><h1 class="text-gray-700 text-sm">1</h1></div>
-                        <div class="transform inline-block rounded-md bg-gray-600 shadow-md h-5 w-4"><h1 class="text-gray-600 text-sm">1</h1></div>
-                        <div class="transform inline-block rounded-md bg-gray-500 shadow-md h-5 w-4 rotate-12">
-                            <h1 class="text-white text-sm">3</h1>
+                        <div class="transform inline-block rounded-md bg-red-500 shadow-md h-5 w-4">
+                            <h1 class="text-white text-sm">X</h1>
                         </div>
                     </div>
                 </div>
@@ -146,5 +147,36 @@
         </div>
     </div>
 </footer>
+<div class="fixed inset-0 overflow-hidden pointer-events-none">
+    <div class="absolute inset-0 overflow-hidden">
+        <div x-show="sidebar_open" x-description="Background overlay, show/hide based on slide-over state." x-transition:enter="ease-in-out duration-500" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="ease-in-out duration-500" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" class="absolute inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true"></div>
+        <section @click.away="sidebar_open = false" class="absolute inset-y-0 right-0 pl-10 max-w-full flex" aria-labelledby="slide-over-heading">
+            <div class="relative w-screen max-w-md" x-description="Slide-over panel, show/hide based on slide-over state." x-show="sidebar_open" x-transition:enter="transform transition ease-in-out duration-500 sm:duration-700" x-transition:enter-start="translate-x-full" x-transition:enter-end="translate-x-0" x-transition:leave="transform transition ease-in-out duration-500 sm:duration-700" x-transition:leave-start="translate-x-0" x-transition:leave-end="translate-x-full">
+                <div x-description="Close button, show/hide based on slide-over state." x-show="sidebar_open" x-transition:enter="ease-in-out duration-500" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="ease-in-out duration-500" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" class="absolute top-0 left-0 -ml-8 pt-4 pr-2 flex sm:-ml-10 sm:pr-4">
+                    <button @click="sidebar_open = false" class="rounded-md text-gray-300 hover:text-white focus:outline-none focus:ring-2 focus:ring-white">
+                        <span class="sr-only">Close panel</span>
+                        <svg class="h-6 w-6" x-description="Heroicon name: x" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+                <div class="h-full flex flex-col py-6 bg-white shadow-xl overflow-y-scroll">
+                    <div class="px-4 sm:px-6">
+                        <h2 id="slide-over-heading" class="text-lg font-medium text-gray-900">
+                            Panel title
+                        </h2>
+                    </div>
+                    <div class="mt-6 relative flex-1 px-4 sm:px-6">
+                        <!-- Replace with your content -->
+                        <div class="absolute inset-0 px-4 sm:px-6">
+                            <div class="h-full border-2 border-dashed border-gray-200" aria-hidden="true"></div>
+                        </div>
+                        <!-- /End replace -->
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
 </body>
 </html>
