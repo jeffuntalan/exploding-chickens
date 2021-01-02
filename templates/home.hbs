@@ -40,12 +40,13 @@
 
 
 {{! Logo }}
-<div class="m-auto mx-auto p-16 sm:p-24 lg:p-48 bg-gray-200">
-<div class="absolute rounded-lg items-center bg-white shadow-xl"> 
+<div class="m-auto mx-auto p-16 sm:p-24 lg:p-48 bg-white">
+<div class="relative rounded-2xl items-center bg-white"> 
+    
 <div class="m-auto block text-center">
     <div class="flex flex-col items-center -space-y-3">
      
-        <img class="mt-10 h-36 w-36" src="public\css\assets\logo.png" alt="">
+        <img class="mt-5 h-36 w-36" src="public\css\assets\logo.png" alt="">
     
     </div>
 </div>
@@ -68,14 +69,21 @@
                 <input class="text-center flex-1 appearance-none border border-transparent w-full py-2 px-10 bg-white text-gray-700 placeholder-gray-400 shadow rounded-sm text-base focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent" type="username" placeholder="What's your name?">
             </form>
         </div>
-        <div x-data="{ dropdownOpen: false }" class="relative">
-            <div x-show="dropdownOpen" @click="dropdownOpen = false" class="fixed inset-0 h-full w-full z-10"></div>
-            <button @click="dropdownOpen = !dropdownOpen" class="mb-10 text-sm flex-shrink-0 bg-purple-600 text-white text-base font-semibold py-2 px-9 rounded-xl shadow-md hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-purple-200">
-            Play
-            </button>
+            <div x-data="{ dropdownOpen: false }" class="relative">
+
+                <button @click="dropdownOpen = !dropdownOpen" class="text-sm flex-shrink-0 bg-purple-600 text-white text-base font-semibold py-2 px-9 rounded-xl shadow-md hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-purple-200">
+                Play
+                </button>
+
+            <div x-show="dropdownOpen" @click="dropdownOpen = false" class="fixed inset-0 h-full w-full z-10" style="display: none;"></div>
+            <div x-show="dropdownOpen" class="absolute left-0 mt-2 w-full bg-white rounded-md overflow-hidden shadow-xl z-20" style="display: none;">
+                <a href="#" class="block px-4 py-2 text-sm text-gray-800 border-b hover:bg-gray-200">New Lobby <span class="text-gray-600"></span></a>
+                <a href="#" class="block px-4 py-2 text-sm text-gray-800 border-b hover:bg-gray-200">Join Lobby <span class="text-gray-600"></span></a>
+            </div>
         </div>
     </div>
 </div>
+
 </div>
 </div>
 
