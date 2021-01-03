@@ -42,50 +42,52 @@
 
 {{! Logo }}
 <div class="m-auto sm:mx-10 p-19 sm:p-19 md:p-16 lg:p-32 bg-white">
-<div class="relative rounded-2xl items-center bg-white"> 
+    <div class="relative rounded-2xl items-center bg-white">
 
-<div class="m-auto block text-center">
-    <div class="flex flex-col items-center -space-y-3">
-     
-        <img class="h-36 w-36" src="public\css\assets\logo.png" alt="">
-    
-    </div>
-</div>
+        <div class="m-auto block text-center">
+            <div class="flex flex-col items-center -space-y-3">
 
-<!-- Title Text -->
-<div class="my-4 block text-center">
-    <div class="m-auto mx-auto flex flex-col items-center">
+                <img class="h-36 w-36" src="public\css\assets\logo.png" alt="">
 
-        <p class="text-4xl md:text-7xl" style="font-family: Bebas Neue">EXPLODING <a class="text-yellow-500">CHICKENS</a></p>
-        <p class="text-sm md:text-lg font-sans">An online alternative to a card game inspired by Russian Roulette.</p>
-
-    </div>
-</div>
-
-{{!-- Interactive buttons --}}
-<div class="my-5 block text-center">
-    <div class="flex flex-col items-center">
-	    <div class="m-auto grid gap-2">
-            <form class="my-3 flex w-full max-w-sm mx-auto space-x-3">
-                <input class="text-center flex-1 appearance-none border border-transparent w-full py-2 px-10 bg-white text-gray-700 placeholder-gray-400 shadow rounded-sm text-base focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent" type="username" placeholder="What's your name?">
-            </form>
-        </div>
-            <div x-data="{ dropdownOpen: false }" class="relative">
-
-                <button @click="dropdownOpen = !dropdownOpen" class="text-sm flex-shrink-0 bg-purple-600 text-white text-base font-semibold py-2 px-9 rounded-xl shadow-md hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-purple-200">
-                Play  
-                </button>
-
-            <div x-show="dropdownOpen" @click="dropdownOpen = false" class="fixed inset-0 h-full w-full z-10" style="display: none;"></div>
-            <div x-show="dropdownOpen" class="absolute left-0 mt-2 w-full bg-white rounded-md overflow-hidden shadow-xl z-20" style="display: none;">
-                <a href="#" class="block px-4 py-2 text-sm text-gray-800 border-b hover:bg-gray-200">New Game <span class="text-gray-600"></span></a>
-                <a href="#" class="block px-4 py-2 text-sm text-gray-800 border-b hover:bg-gray-200">Join Game <span class="text-gray-600"></span></a>
             </div>
         </div>
-    </div>
-</div>
 
-</div>
+        <!-- Title Text -->
+        <div class="my-4 block text-center">
+            <div class="m-auto mx-auto flex flex-col items-center">
+
+                <p class="text-4xl md:text-7xl" style="font-family: Bebas Neue">EXPLODING <a class="text-yellow-500">CHICKENS</a></p>
+                <p class="text-sm md:text-lg font-sans">An online alternative to a card game inspired by Russian Roulette.</p>
+
+            </div>
+        </div>
+
+        {{!-- Interactive buttons --}}
+        <div class="my-5 block text-center">
+            <div class="flex flex-col items-center">
+                <form action="/game/create" method="POST" enctype="application/x-www-form-urlencoded">
+                    <div class="m-auto grid gap-2">
+                        <div class="my-3 flex w-full max-w-sm mx-auto space-x-3">
+                            <input class="text-center flex-1 appearance-none border border-transparent w-full py-2 px-10 bg-white text-gray-700 placeholder-gray-400 shadow rounded-sm text-base focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent" type="text" name="nickname" placeholder="What's your name?">
+                        </div>
+                    </div>
+                    <div x-data="{ dropdownOpen: false }" class="relative">
+
+                        <button @click="dropdownOpen = !dropdownOpen" type="submit" class="text-sm flex-shrink-0 bg-purple-600 text-white text-base font-semibold py-2 px-9 rounded-xl shadow-md hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-purple-200">
+                            Play
+                        </button>
+
+                        <div x-show="dropdownOpen" @click="dropdownOpen = false" class="fixed inset-0 h-full w-full z-10" style="display: none;"></div>
+                        <div x-show="dropdownOpen" class="absolute left-0 mt-2 w-full bg-white rounded-md overflow-hidden shadow-xl z-20" style="display: none;">
+                            <a href="#" class="block px-4 py-2 text-sm text-gray-800 border-b hover:bg-gray-200">New Game <span class="text-gray-600"></span></a>
+                            <a href="#" class="block px-4 py-2 text-sm text-gray-800 border-b hover:bg-gray-200">Join Game <span class="text-gray-600"></span></a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+    </div>
 </div>
 
 {{!-- Footer Status --}}

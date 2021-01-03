@@ -55,15 +55,14 @@ fastify.register(require('fastify-static'), {
     root: path.join(__dirname, 'public'),
     prefix: '/public/', // optional: default '/'
 })
+fastify.register(require('fastify-formbody'))
 
 //Routers
 let game_actions_api = require('./routes/game-actions-api.js');
-let game_info_api = require('./routes/game-info-api.js');
 let error_routes = require('./routes/error-routes.js');
 
 //Import routes
 game_actions_api(fastify);
-game_info_api(fastify);
 error_routes(fastify);
 
 //Home page

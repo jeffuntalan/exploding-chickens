@@ -17,16 +17,12 @@ module.exports = function (fastify) {
     let game_actions = require('../services/game-actions.js');
     let player_handler = require('../services/player-handler.js');
 
-    //Example API route
-    fastify.get('/api/example-1', (req, reply) => {
-        game.find({bib_number: req.query.bib_number}, function (err, details) {
-            if (err) {
-                console.log("ENTRY Resolver: Retrieve failed: " + err);
-                reply.send(err);
-            } else {
-                console.log("ENTRY Resolver: Entry Sent: " + JSON.stringify(details))
-            }
-            reply.json(details);
-        });
+    //Create game route, expecting a player nickname
+    fastify.post('/game/create', (req, reply) => {
+        console.log(req.body.nickname);
+        //Call function to create game
+        // -- do stuff and redirect with game url
+        reply.redirect("/game/" + "slug");
+        //Create player
     })
 };
