@@ -18,11 +18,13 @@ module.exports = function (fastify) {
     let player_handler = require('../services/player-handler.js');
 
     //Create game route, expecting a player nickname
-    fastify.post('/game/create', (req, reply) => {
+    fastify.post('/game/create', async function (req, reply) {
         console.log(req.body.nickname);
         //Call function to create game
+        let game_data = await game_actions.create_game()
         // -- do stuff and redirect with game url
         reply.redirect("/game/" + "slug");
         //Create player
+        player_handler.modify_player()
     })
 };
