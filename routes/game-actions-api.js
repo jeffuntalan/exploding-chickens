@@ -25,6 +25,6 @@ module.exports = function (fastify) {
         // -- do stuff and redirect with game url
         reply.redirect("/game/" + "slug");
         //Create player
-        player_handler.modify_player()
+        await player_handler.modify_player(game_data[0].slug, undefined, req.body.nickname, 0, "online")
     })
 };
