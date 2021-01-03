@@ -53,8 +53,9 @@ fastify.register(require('point-of-view'), {
 })
 fastify.register(require('fastify-static'), {
     root: path.join(__dirname, 'public'),
-    prefix: '/public/', // optional: default '/'
+    prefix: '/public/',
 })
+fastify.register(require('fastify-socket.io'), {})
 fastify.register(require('fastify-formbody'))
 
 //Routers
@@ -72,6 +73,7 @@ fastify.get('/', (req, reply) => {
 
 //Game page
 fastify.get('/game/:_id', (req, reply) => {
+    fastify.io.on('connect', () => console.log('Socket connected!'))
     reply.view('/templates/game.hbs', { active_games: 0 })
 })
 
