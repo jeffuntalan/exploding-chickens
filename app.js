@@ -27,7 +27,8 @@ let evaluation = require('./config/evaluation.js');
 //Services
 let card_actions = require('./services/card-actions.js');
 let game_actions = require('./services/game-actions.js');
-let player_handler = require('./services/player-handler.js');
+let player_actions = require('./services/player-actions.js');
+let socket_handler = require('./services/socket-handler.js');
 
 //Print header to console
 console.log(chalk.blue.bold('\nExploding Chickens v' + pkg.version + ' | ' + pkg.author));
@@ -43,7 +44,7 @@ setup.check_values(config_storage);
 //Fastify and main functions - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 //Declare fastify
-const fastify = require('fastify')({logger: {prettyPrint: true}});
+const fastify = require('fastify')({logger: false});
 
 //Prepare rendering template
 fastify.register(require('point-of-view'), {
@@ -73,7 +74,6 @@ fastify.get('/', (req, reply) => {
 
 //Game page
 fastify.get('/game/:_id', (req, reply) => {
-    fastify.io.on('connect', () => console.log('Socket connected!'))
     reply.view('/templates/game.hbs', { active_games: 0 })
 })
 
@@ -96,12 +96,14 @@ mongoose.set('useFindAndModify', false);
 function mongoose_connected() {
     spinner.succeed(`${chalk.bold.yellow('Mongoose')}: Connected successfully at ` + config_storage.get('mongodb_url'));
     //Start webserver using config values
-    spinner.info(`${chalk.bold.blue('Fastify')}: Attempting to start http webserver on port ` + config_storage.get('webserver_port'));
+    spinner.info(`${chalk.bold.magenta('Fastify')}: Attempting to start http webserver on port ` + config_storage.get('webserver_port'));
     fastify.listen(config_storage.get('webserver_port'), function (err, address) {
         if (err) {
             fastify.log.error(err)
             process.exit(1)
         }
+        //Open socket.io connection
+        socket_handler(fastify);
         //Check if we are in testing environment
         if (!(process.env.testENV || process.argv[2] !== "test")) {
             spinner.info(`${chalk.bold.red('Evaluation')}: ${chalk.bold.underline('Starting evaluation suite')}`);

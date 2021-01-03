@@ -14,7 +14,7 @@ const spinner = ora('');
 //Services
 let card_actions = require('../services/card-actions.js');
 let game_actions = require('../services/game-actions.js');
-let player_handler = require('../services/player-handler.js');
+let player_actions = require('../services/player-actions.js');
 
 //Variables
 let sample_game_id = "";
@@ -32,7 +32,7 @@ exports.game_creation = async function () {
     spinner.succeed(console_head + `Created sample game with parameters: ` + JSON.stringify(game_details));
     sample_game_id = game_details["_id"];
     //Import cards
-    spinner.info(console_head + `Importing cards from base.json`);
+    spinner.info(console_head + `Importing base cards from base.json`);
     let card_count = await game_actions.import_cards(sample_game_id, '../packs/eval.json').catch(e => {failed_test(e)});
     spinner.succeed(console_head + `Imported ` + chalk.bold(card_count) + ` cards from base.json`);
 }
@@ -46,19 +46,19 @@ exports.player_test = async function () {
     spinner.info(console_head + `${chalk.bold('Evaluating player actions')}`);
     //Create 4 sample players
     spinner.info(console_head + `Creating sample players (4 total)`);
-    let player_a = await player_handler.modify_player(sample_game_id, undefined, "Player X", 0, "offline").catch(e => {failed_test(e)});
+    let player_a = await player_actions.modify_player(sample_game_id, undefined, "Player X", 0, "offline").catch(e => {failed_test(e)});
     spinner.succeed(console_head + `Created Player X (aka A) (1 of 4) with id: ` + player_a);
-    let player_b = await player_handler.modify_player(sample_game_id, undefined, "Player B", 2, "online").catch(e => {failed_test(e)});
+    let player_b = await player_actions.modify_player(sample_game_id, undefined, "Player B", 2, "online").catch(e => {failed_test(e)});
     spinner.succeed(console_head + `Created Player B (2 of 4) with id: ` + player_b);
-    let player_c = await player_handler.modify_player(sample_game_id, undefined, "Player C", 3, "online").catch(e => {failed_test(e)});
+    let player_c = await player_actions.modify_player(sample_game_id, undefined, "Player C", 3, "online").catch(e => {failed_test(e)});
     spinner.succeed(console_head + `Created Player C (3 of 4) with id: ` + player_c);
-    let player_d = await player_handler.modify_player(sample_game_id, undefined, "Player D", 4, "online").catch(e => {failed_test(e)});
+    let player_d = await player_actions.modify_player(sample_game_id, undefined, "Player D", 4, "online").catch(e => {failed_test(e)});
     spinner.succeed(console_head + `Created Player D (4 of 4) with id: ` + player_d);
     //Test player modification
     spinner.info(console_head + `Modifying Player X (aka A) and verifying changes with id: ` + player_a);
-    await player_handler.modify_player(sample_game_id, player_a, "Player A", 1, "online").catch(e => {failed_test(e)});
+    await player_actions.modify_player(sample_game_id, player_a, "Player A", 1, "online").catch(e => {failed_test(e)});
     spinner.succeed(console_head + `Modified Player X (aka A) with id: ` + player_a);
-    let game_details = await game_actions.game_details(sample_game_id);
+    let game_details = await game_actions.game_details_id(sample_game_id);
     if (game_details.players.id(player_a).nickname === "Player A" || game_details.players.id(player_a).seat === 1 || game_details.players.id(player_a).status === "online") {
         spinner.succeed(console_head + `Verified Player A's changes with id: ` + player_a);
     } else {
@@ -66,8 +66,8 @@ exports.player_test = async function () {
     }
     //Assign cards to all players and print assignment
     spinner.info(console_head + `Assigning initial cards to all players`);
-    await player_handler.create_hand(sample_game_id).catch(e => {failed_test(e)});
-    game_details = await game_actions.game_details(sample_game_id);
+    await player_actions.create_hand(sample_game_id).catch(e => {failed_test(e)});
+    game_details = await game_actions.game_details_id(sample_game_id);
     for (let i = 0; i <= game_details.players.length - 1; i++) {
         let cards_assigned = "";
         for (let j = 0; j <= game_details.cards.length - 1; j++) {
@@ -80,8 +80,8 @@ exports.player_test = async function () {
     //spinner.succeed(console_head + `Assigned ` + chalk.bold(defuse_count) + ` defuse cards to ` + chalk.bold(defuse_count) + ` players`);
     //Test seat randomization
     spinner.info(console_head + `Randomizing seat positions for all players`);
-    await player_handler.randomize_seats(sample_game_id).catch(e => {failed_test(e)});
-    game_details = await game_actions.game_details(sample_game_id);
+    await player_actions.randomize_seats(sample_game_id).catch(e => {failed_test(e)});
+    game_details = await game_actions.game_details_id(sample_game_id);
     // For every player, express updated seat position to console
     for (let i = 0; i <= game_details.players.length - 1; i++) {
         spinner.succeed(console_head +

@@ -14,7 +14,7 @@ let verbose_debug_mode = config_storage.get('verbose_debug_mode');
 //Services
 let card_actions = require('../services/card-actions.js');
 let game_actions = require('../services/game-actions.js');
-let player_handler = require('../services/player-handler.js');
+let player_actions = require('./player-actions.js');
 
 // Name : card_actions.skip(game_id, card_id)
 // Desc : skips the current turn, returns next player_id
@@ -32,7 +32,7 @@ exports.skip = async function (game_id, card_id) {
 // Author(s) : RAk3rman
 exports.reverse = async function (game_id, card_id) {
     //Get game details
-    let game_details = await game_actions.game_details(game_id);
+    let game_details = await game_actions.game_details_id(game_id);
     //Switch to forwards or backwards
     if (game_details.turn_direction === "forward") {
         game_details.turn_direction = "backward";
@@ -61,7 +61,7 @@ exports.reverse = async function (game_id, card_id) {
 // Author(s) : RAk3rman
 exports.shuffle_draw_deck = async function (game_id, card_id) {
     //Get game details
-    let game_details = await game_actions.game_details(game_id);
+    let game_details = await game_actions.game_details_id(game_id);
     //Loop through each card to create array
     let bucket = [];
     let cards_in_deck = 0;
@@ -107,7 +107,7 @@ exports.shuffle_draw_deck = async function (game_id, card_id) {
 // Author(s) : RAk3rman
 exports.attack = async function (game_id, card_id) {
     //Get game details
-    let game_details = await game_actions.game_details(game_id);
+    let game_details = await game_actions.game_details_id(game_id);
     //Check if we are going forward or backward
     if (game_details.turn_direction === "forward") {
         if (!(game_details.players.length <= game_details.seat_playing + 1)) { //Player seat advances by one
@@ -155,7 +155,7 @@ exports.attack = async function (game_id, card_id) {
 // Author(s) : SengdowJones
 exports.drawfromthebottom = async function (game_id, card_id) {
     //Get game details
-    let game_details = await game_actions.game_details(game_id);
+    let game_details = await game_actions.game_details_id(game_id);
     //Create new promise and return created_game after saved
     return await new Promise((resolve, reject) => {
         //Change bottom card of draw deck's position to player's hand
@@ -173,7 +173,7 @@ exports.drawfromthebottom = async function (game_id, card_id) {
 // Author(s) : SengdowJones
 exports.see_the_future = async function (game_id) {
     //Get game details
-    let game_details = await game_actions.game_details(game_id);
+    let game_details = await game_actions.game_details_id(game_id);
     //Loop through each card to create array
     let bucket = [];
     let bucket_length = 0;
@@ -207,7 +207,7 @@ exports.see_the_future = async function (game_id) {
 // Author(s) : Vincent Do
 exports.defuse = async function (game_id, card_id, player_id) {
     //Get game details
-    let game_details = await game_actions.game_details(game_id);
+    let game_details = await game_actions.game_details_id(game_id);
     //Create new promise and return created_game after saved
     return await new Promise((resolve, reject) => {
         //Loop through each card
@@ -251,7 +251,7 @@ exports.defuse = async function (game_id, card_id, player_id) {
 // Author(s) : Vincent Do
 exports.favor = async function (game_id, card_id, player_id) {
     //Get game details
-    let game_details = await game_actions.game_details(game_id);
+    let game_details = await game_actions.game_details_id(game_id);
     let bucket = [];
     //To be inputted by UI
     let target_id = "";
@@ -280,7 +280,7 @@ exports.favor = async function (game_id, card_id, player_id) {
 // Author(s) : Vincent Do
 exports.double = async function (game_id, card_id, card_id1, player_id) {
     //Get game details
-    let game_details = await game_actions.game_details(game_id);
+    let game_details = await game_actions.game_details_id(game_id);
     let bucket = [];
     //To be inputted by UI
     let target_id = "";

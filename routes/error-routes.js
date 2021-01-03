@@ -9,7 +9,7 @@ module.exports = function (fastify) {
     //Services
     let card_actions = require('../services/card-actions.js');
     let game_actions = require('../services/game-actions.js');
-    let player_handler = require('../services/player-handler.js');
+    let player_actions = require('../services/player-actions.js');
 
     //404 error handler
     fastify.setNotFoundHandler({

@@ -11,20 +11,39 @@ module.exports = function (fastify) {
     const dataStore = require('data-store');
     const config_storage = new dataStore({path: './config/config.json'});
     let verbose_debug_mode = config_storage.get('verbose_debug_mode');
+    const chalk = require('chalk');
+    const ora = require('ora');
+    const spinner = ora('');
 
     //Services
     let card_actions = require('../services/card-actions.js');
     let game_actions = require('../services/game-actions.js');
-    let player_handler = require('../services/player-handler.js');
+    let player_actions = require('../services/player-actions.js');
 
     //Create game route, expecting a player nickname
     fastify.post('/game/create', async function (req, reply) {
-        console.log(req.body.nickname);
-        //Call function to create game
-        let game_data = await game_actions.create_game()
-        // -- do stuff and redirect with game url
-        reply.redirect("/game/" + "slug");
-        //Create player
-        await player_handler.modify_player(game_data[0].slug, undefined, req.body.nickname, 0, "online")
+        //Console header
+        let console_head = `${chalk.bold.red('API')}: ${chalk.dim.green('G-ADD')} `;
+        //Create sample game
+        spinner.info(console_head + `Creating sample game`);
+        let game_details = await game_actions.create_game().catch(e => {failed_step(e, reply)});
+        spinner.succeed(console_head + `Created sample game with parameters: ` + JSON.stringify(game_details));
+        let sample_game_id = game_details["_id"];
+        //Import cards
+        spinner.info(console_head + `Importing base cards from base.json`);
+        let card_count = await game_actions.import_cards(sample_game_id, '../packs/eval.json').catch(e => {failed_step(e, reply)});
+        spinner.succeed(console_head + `Imported ` + chalk.bold(card_count) + ` cards from base.json`);
+        //Create host player
+        spinner.info(console_head + `Creating host player`);
+        let player_host = await player_actions.modify_player(sample_game_id, undefined, req.body.nickname, 0, "disconnected").catch(e => {failed_step(e, reply)});
+        spinner.succeed(console_head + `Created host player with id: ` + player_host);
+        //Redirect to game url
+        reply.redirect("/game/" + game_details["slug"]);
     })
+
+    //Failed step in api
+    function failed_step (desc, reply) {
+        spinner.fail(`${chalk.bold.red('API')}: ${chalk.red('FAIL')} Failed previous step with error message: "` + desc + `"`);
+        reply.code(500);
+    }
 };

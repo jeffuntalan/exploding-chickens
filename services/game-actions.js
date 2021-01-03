@@ -14,7 +14,7 @@ let verbose_debug_mode = config_storage.get('verbose_debug_mode');
 //Services
 let card_actions = require('../services/card-actions.js');
 let game_actions = require('../services/game-actions.js');
-let player_handler = require('../services/player-handler.js');
+let player_actions = require('./player-actions.js');
 
 // Name : game_actions.create_game()
 // Desc : creates a new game in mongodb, returns game details
@@ -32,13 +32,29 @@ exports.create_game = async function () {
     });
 }
 
-// Name : game_actions.game_details()
-// Desc : returns the details for a game
+// Name : game_actions.game_details_id(game_id)
+// Desc : returns the details for a game id
 // Author(s) : RAk3rman
-exports.game_details = async function (game_id) {
+exports.game_details_id = async function (game_id) {
     //Create new promise and return created_game after saved
     return await new Promise((resolve, reject) => {
         game.findById({ _id: game_id }, function (err, found_game) {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(found_game);
+            }
+        });
+    });
+}
+
+// Name : game_actions.game_details_slug(slug)
+// Desc : returns the details for a game id
+// Author(s) : RAk3rman
+exports.game_details_slug = async function (slug) {
+    //Create new promise and return created_game after saved
+    return await new Promise((resolve, reject) => {
+        game.findOne({ slug: slug }, function (err, found_game) {
             if (err) {
                 reject(err);
             } else {
@@ -69,7 +85,7 @@ exports.delete_game = async function (game_id) {
 // Author(s) : RAk3rman
 exports.import_cards = async function (game_id, pack_loc) {
     //Get game details
-    let game_details = await game_actions.game_details(game_id);
+    let game_details = await game_actions.game_details_id(game_id);
     //Get json array of cards
     let pack_array = require(pack_loc);
     //Loop through each json value and add card
@@ -95,7 +111,7 @@ exports.import_cards = async function (game_id, pack_loc) {
 // Author(s) : RAk3rman, Vincent Do
 exports.advance_turn = async function (game_id) {
     //Get game details
-    let game_details = await game_actions.game_details(game_id);
+    let game_details = await game_actions.game_details_id(game_id);
     //Check how many turns we have left
     if (game_details.turns_remaining <= 1) { //Only one turn left, player seat advances
         //Check if we are going forward or backward
@@ -143,7 +159,7 @@ exports.advance_turn = async function (game_id) {
 // Author(s) : Vincent Do
 exports.discard_card = async function (game_id, card_id) {
     //Get game details
-    let game_details = await game_actions.game_details(game_id);
+    let game_details = await game_actions.game_details_id(game_id);
     //Find greatest position in discard deck
     let value = -1;
     for (let i = 0; i <= game_details.cards.length - 1; i++) {
@@ -170,7 +186,7 @@ exports.discard_card = async function (game_id, card_id) {
 // Author(s) : Vincent Do, SengdowJones
 exports.draw_card = async function (game_id, card_id, player_id) {
     //Get game details
-    let game_details = await game_actions.game_details(game_id);
+    let game_details = await game_actions.game_details_id(game_id);
     //Find current player hand
     let hand = -1;
     //if the card drawn is a chicken, call defuse
@@ -209,7 +225,7 @@ exports.draw_card = async function (game_id, card_id, player_id) {
 // Author(s) : Vincent Do & Richie
 exports.chicken = async function (game_id, card_id, draw_deck) {
     //Get game details
-    let game_details = await game_actions.game_details(game_id);
+    let game_details = await game_actions.game_details_id(game_id);
     let new_position = prompt("Where would you like to place the card?", "1");
     if (new_position === null || new_position < 0) {
         console.log("invalid position");
@@ -249,7 +265,7 @@ exports.chicken = async function (game_id, card_id, draw_deck) {
 // Author(s) : Vincent Do & Richie
 exports.card_call = async function (game_id, card_id, player_id) {
     //Get game details
-    let game_details = await game_actions.game_details(game_id);
+    let game_details = await game_actions.game_details_id(game_id);
     //Create new promise
     if (card_id.includes("shuffle")) {
         await card_actions.shuffle_draw_deck(game_id, card_id);

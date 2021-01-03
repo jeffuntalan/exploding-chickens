@@ -6,7 +6,6 @@
     <link href="/public/css/tailwind.css" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.min.js" defer></script>
 </head>
 <!-- Exploding Chickens, game interface // RAk3rman -->
 <body class='flex flex-col h-full' x-data="{ sidebar_open: false }" @keydown.window.escape="sidebar_open = false">
@@ -392,5 +391,13 @@
         </section>
     </div>
 </div>
+{{! JS scripts }}
+<script src="/socket.io/socket.io.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+<script src="/public/js/game.js"></script>
+<script>
+    setup_game();
+</script>
 </body>
 </html>

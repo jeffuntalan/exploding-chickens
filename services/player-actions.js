@@ -1,5 +1,5 @@
 /*\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
-Filename : exploding-chickens/services/player-handler.js
+Filename : exploding-chickens/services/player-actions.js
 Desc     : handles all player actions
            and modifies players in game db
 Author(s): RAk3rman, SengdowJones
@@ -15,9 +15,9 @@ let verbose_debug_mode = config_storage.get('verbose_debug_mode');
 //Services
 let card_actions = require('../services/card-actions.js');
 let game_actions = require('../services/game-actions.js');
-let player_handler = require('../services/player-handler.js');
+let player_actions = require('./player-actions.js');
 
-// Name : player_handler.modify_player()
+// Name : player_actions.modify_player()
 // Desc : modifies an existing player, if it doesn't exist, make new player
 // Author(s) : RAk3rman
 exports.modify_player = async function (game_id, player_id, player_nickname, player_seat, player_status) {
@@ -36,7 +36,7 @@ exports.modify_player = async function (game_id, player_id, player_nickname, pla
         })
     } else { //Create new player
         //Get game details
-        let game_details = await game_actions.game_details(game_id);
+        let game_details = await game_actions.game_details_id(game_id);
         //Create new promise and return player id after saved
         return await new Promise((resolve, reject) => {
             //Create new player id
@@ -57,12 +57,12 @@ exports.modify_player = async function (game_id, player_id, player_nickname, pla
     }
 };
 
-// Name : player_handler.create_hand(game)
+// Name : player_actions.create_hand(game)
 // Desc : given a game_id, gives each player a defuse card and 4 random cards from the draw_deck
 // Author(s) : RAk3rman
 exports.create_hand = async function (game_id) {
     //Get game details
-    let game_details = await game_actions.game_details(game_id);
+    let game_details = await game_actions.game_details_id(game_id);
     //Create array containing the position of each defuse card and regular card
     let defuseBucket = [];
     let cardBucket = [];
@@ -108,12 +108,12 @@ exports.create_hand = async function (game_id) {
 }
 
 
-// Name : player_handler.randomize_seats(game_id)
+// Name : player_actions.randomize_seats(game_id)
 // Desc : given a game_id, gives each player a random seat position (without replacement)
 // Author(s) : SengdowJones, RAk3rman
 exports.randomize_seats = async function (game_id) {
     //Get game details
-    let game_details = await game_actions.game_details(game_id);
+    let game_details = await game_actions.game_details_id(game_id);
     //Create array containing each available seat
     let bucket = [];
     for (let i = 0; i <= game_details.players.length - 1; i++) {
