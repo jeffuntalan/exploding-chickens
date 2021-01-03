@@ -17,7 +17,7 @@
             {{! Exploding Chickens header }}
             <div class="flex items-center">
                 <div class="flex-shrink-0">
-                    <h1 class="h-8 text-3xl text-gray-700" style="font-family: Bebas Neue">EXPLODING <a class="text-yellow-500">CHICKENS</a></h1>
+                    <h1 class="h-8 text-3xl text-gray-700" style="font-family: Bebas Neue">EXPLODING <a class="text-yellow-400">CHICKENS</a></h1>
                 </div>
             </div>
             {{! Right sidebar actions }}
@@ -111,11 +111,9 @@
         </div>
     </div>
     <div class="flex align-bottom">
+        <div class="rounded-xl shadow-lg h-64 w-52 mx-1 bg-center bg-contain" style="background-image: url('/public/cards/base/card_back.png')"></div>
         <div class="rounded-xl border-dashed border-4 border-gray-400 shadow-lg h-64 w-52 mx-1">
-            <h1 class="text-gray-400 font-bold flex items-center justify-center h-64">Draw Deck</h1>
-        </div>
-        <div class="rounded-xl border-dashed border-4 border-gray-400 shadow-lg h-64 w-52 mx-1">
-            <h1 class="text-gray-400 font-bold flex items-center justify-center h-64">Discard Deck</h1>
+            <h1 class="text-gray-400 font-bold flex items-center justify-center h-64">Discard Pile</h1>
         </div>
     </div>
 </div>
@@ -174,7 +172,7 @@
                                     <span class="animate-pulse inline-flex rounded-full h-1.5 w-1.5 mb-0.5 align-middle bg-green-500"></span> Radison, Host
                                 </h3>
                                 <div class="mt-1 flex flex-col sm:flex-row sm:flex-wrap sm:mt-0 sm:space-x-6">
-                                    <div class="flex items-center text-sm text-gray-500">
+                                    <div class="flex items-center text-sm text-gray-500 hover:underline">
                                         https://exploding-chickens.com/game/fluffy-chicken
                                     </div>
                                 </div>
@@ -188,6 +186,43 @@
                                             Active
                                       </button>
                                 </span>
+                            </div>
+                        </div>
+                        <div class="flex flex-row w-full space-x-2 space-y-0 mb-4">
+                            <div class="w-1/2">
+                                <div class="widget w-full p-4 rounded-lg bg-white border border-gray-100 dark:bg-gray-900 dark:border-gray-800">
+                                    <div class="flex flex-row items-center justify-between">
+                                        <div class="flex flex-col">
+                                            <div class="text-xs uppercase font-light text-gray-500">
+                                                Cards in Deck
+                                            </div>
+                                            <div class="text-xl font-bold">
+                                                50
+                                            </div>
+                                        </div>
+                                        <svg class="stroke-current text-gray-500" height="24" width="24" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                                        </svg>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="w-1/2">
+                                <div class="widget w-full p-4 rounded-lg bg-white border border-gray-100 dark:bg-gray-900 dark:border-gray-800">
+                                    <div class="flex flex-row items-center justify-between">
+                                        <div class="flex flex-col">
+                                            <div class="text-xs uppercase font-light text-gray-500">
+                                                Exploding Chickens
+                                            </div>
+                                            <div class="text-xl font-bold">
+                                                4
+                                            </div>
+                                        </div>
+                                        <svg class="stroke-current text-gray-500" height="24" width="24" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z" />
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.879 16.121A3 3 0 1012.015 11L11 14H9c0 .768.293 1.536.879 2.121z" />
+                                        </svg>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
