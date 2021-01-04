@@ -7,6 +7,7 @@ Author(s): RAk3rman
 //Packages and configuration - - - - - - - - - - - - - - - - - - - - - - - - -
 
 //Declare packages
+let game = require('./models/game.js');
 const pino = require('pino');
 const path = require('path')
 let mongoose = require('mongoose');
@@ -73,8 +74,13 @@ fastify.get('/', (req, reply) => {
 })
 
 //Game page
-fastify.get('/game/:_id', (req, reply) => {
-    reply.view('/templates/game.hbs', { active_games: 0 })
+fastify.get('/game/:_id', async function (req, reply) {
+    //Make sure game exists
+    if (await game.exists({ slug: req.params._id })) {
+        reply.view('/templates/game.hbs')
+    } else {
+        reply.status(404).view('/templates/error_game.hbs')
+    }
 })
 
 //End of Fastify and main functions - - - - - - - - - - - - - - - - - - - - - -

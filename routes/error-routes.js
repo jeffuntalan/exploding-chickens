@@ -22,7 +22,7 @@ module.exports = function (fastify) {
             done()
         }
     }, function (request, reply) {
-        reply.status(404).view('/templates/error.hbs', {});
+        reply.status(404).view('/templates/error_page.hbs', {});
     })
 
     //Other error code handler
@@ -30,6 +30,6 @@ module.exports = function (fastify) {
         // Log error
         this.log.error(error);
         // Send error response
-        reply.status(error.statusCode).view('/templates/error.hbs', { error_code: error.statusCode });
+        reply.status(error.statusCode).view('/templates/error_internal.hbs', { error_code: error.statusCode });
     })
 };
