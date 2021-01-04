@@ -3,45 +3,25 @@
 <html class='h-full'>
 <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.min.js" defer></script>
 
-{{!-- import tailwind css and bebas neue font     --}}
+{{!-- import tailwind css and bebas neue font --}}
+
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link href="/public/css/tailwind.css" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css"
+        integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
 </head>
 
 <!-- Exploding Chickens, home landing page // SengdowJones -->
 
-{{! Navigation bar }}
-<nav class="">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex items-center justify-between h-16">
-            {{! Exploding Chickens header }}
-            <div class="flex items-center">
-            </div>
-            {{! Right sidebar actions }}
-            <div class="block">
-                <div class="ml-4 flex items-center md:ml-6">
-                    <span class="relative inline-flex">
-                        {{! Slide over button }}
-                        <button class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-yellow-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white">
-                            <svg class="block h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-                            </svg>
-                        </button>
-                    </span>
-                </div>
-            </div>
-        </div>
-    </div>
-</nav>
-
+<body class='flex flex-col h-full' x-data="{ sidebar_open: false }" @keydown.window.escape="sidebar_open = false">
+</body>
 
 {{! Logo }}
-<div class="m-auto sm:mx-10 p-19 sm:p-19 md:p-16 lg:p-32 bg-white">
+<div class="mt-20 sm:mx-10 p-19 sm:p-19 md:p-16 lg:p-32 bg-white">
     <div class="relative rounded-2xl items-center bg-white">
 
         <div class="m-auto block text-center">
@@ -56,8 +36,10 @@
         <div class="my-4 block text-center">
             <div class="m-auto mx-auto flex flex-col items-center">
 
-                <p class="text-4xl md:text-7xl" style="font-family: Bebas Neue">EXPLODING <a class="text-yellow-500">CHICKENS</a></p>
-                <p class="text-sm md:text-lg font-sans">An online alternative to a card game inspired by Russian Roulette.</p>
+                <p class="text-4xl md:text-7xl" style="font-family: Bebas Neue">EXPLODING <a
+                        class="text-yellow-500">CHICKENS</a></p>
+                <p class="text-sm md:text-lg font-sans">An online alternative to a card game inspired by Russian
+                    Roulette.</p>
 
             </div>
         </div>
@@ -65,88 +47,171 @@
         {{!-- Interactive buttons --}}
         <div class="my-5 block text-center">
             <div class="flex flex-col items-center">
-                <form action="/game/create" method="POST" enctype="application/x-www-form-urlencoded">
-                    <div class="m-auto grid gap-2">
-                        <div class="my-3 flex w-full max-w-sm mx-auto space-x-3">
-                            <input class="text-center flex-1 appearance-none border border-transparent w-full py-2 px-10 bg-white text-gray-700 placeholder-gray-400 shadow rounded-sm text-base focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent" type="text" name="nickname" placeholder="What's your name?">
+                {{!-- <div action="/game/create" method="POST" enctype="application/x-www-form-urlencoded"> --}}
+                    <div>
+                        <div class="m-auto grid gap-2">
+                            <div class="my-3 flex w-full max-w-sm mx-auto space-x-3">
+                                <input
+                                    class="text-center flex-1 appearance-none border border-transparent w-full py-2 px-10 bg-white text-gray-700 placeholder-gray-400 shadow rounded-sm text-base focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent"
+                                    type="text" name="nickname" placeholder="What's your name?">
+                            </div>
                         </div>
-                    </div>
-                    <div x-data="{ dropdownOpen: false }" class="relative">
-
-                        <button @click="dropdownOpen = !dropdownOpen" type="submit" class="text-sm flex-shrink-0 bg-purple-600 text-white text-base font-semibold py-2 px-9 rounded-xl shadow-md hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-purple-200">
+                        <button @click="sidebar_open = true"
+                            class="text-sm flex-shrink-0 bg-purple-600 text-white text-base font-semibold py-2 px-9 rounded-xl shadow-md hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-purple-200">
                             Play
                         </button>
-
-                        <div x-show="dropdownOpen" @click="dropdownOpen = false" class="fixed inset-0 h-full w-full z-10" style="display: none;"></div>
-                        <div x-show="dropdownOpen" class="absolute left-0 mt-2 w-full bg-white rounded-md overflow-hidden shadow-xl z-20" style="display: none;">
-                            <a href="#" class="block px-4 py-2 text-sm text-gray-800 border-b hover:bg-gray-200">New Game <span class="text-gray-600"></span></a>
-                            <a href="#" class="block px-4 py-2 text-sm text-gray-800 border-b hover:bg-gray-200">Join Game <span class="text-gray-600"></span></a>
-                        </div>
                     </div>
-                </form>
-            </div>
-        </div>
-
-    </div>
-</div>
-
-{{!-- Playing Now Status --}}
-<div class="p-24 flex flex-wrap items-center justify-center">
-
-    <div class="flex-shrink-0 m-6 relative overflow-hidden bg-orange-500 rounded-lg max-w-xs shadow-lg">
-        <svg class="absolute bottom-0 left-0 mb-8" viewBox="0 0 375 283" fill="none" style="transform: scale(1.5); opacity: 0.1;">
-            <rect x="159.52" y="175" width="152" height="152" rx="8" transform="rotate(-45 159.52 175)" fill="white"/>
-            <rect y="107.48" width="152" height="152" rx="8" transform="rotate(-45 0 107.48)" fill="white"/>
-        </svg>
-        <div class="relative pt-10 px-10 flex items-center justify-center">
-            <div class="block absolute w-48 h-48 bottom-0 left-0 -mb-24 ml-3" style="background: radial-gradient(black, transparent 60%); transform: rotate3d(0, 0, 1, 20deg) scale3d(1, 0.6, 1); opacity: 0.2;"></div>
-            <img class="relative w-40" src="https://user-images.githubusercontent.com/2805249/64069899-8bdaa180-cc97-11e9-9b19-1a9e1a254c18.png" alt="">
-        </div>
-        <div class="relative text-white px-6 pb-6 mt-6">
-            <span class="block opacity-75 -mb-1">Indoor</span>
-            <div class="flex justify-between">
-                <span class="block font-semibold text-xl">Peace Lily</span>
-                <span class="block bg-white rounded-full text-orange-500 text-xs font-bold px-3 py-2 leading-none flex items-center">$36.00</span>
-            </div>
-        </div>
-    </div>
-    <div class="flex-shrink-0 m-6 relative overflow-hidden bg-teal-500 rounded-lg max-w-xs shadow-lg">
-        <svg class="absolute bottom-0 left-0 mb-8" viewBox="0 0 375 283" fill="none" style="transform: scale(1.5); opacity: 0.1;">
-            <rect x="159.52" y="175" width="152" height="152" rx="8" transform="rotate(-45 159.52 175)" fill="white"/>
-            <rect y="107.48" width="152" height="152" rx="8" transform="rotate(-45 0 107.48)" fill="white"/>
-        </svg>
-        <div class="relative pt-10 px-10 flex items-center justify-center">
-            <div class="block absolute w-48 h-48 bottom-0 left-0 -mb-24 ml-3" style="background: radial-gradient(black, transparent 60%); transform: rotate3d(0, 0, 1, 20deg) scale3d(1, 0.6, 1); opacity: 0.2;"></div>
-            <img class="relative w-40" src="https://user-images.githubusercontent.com/2805249/64069998-305de300-cc9a-11e9-8ae7-5a0fe00299f2.png" alt="">
-        </div>
-        <div class="relative text-white px-6 pb-6 mt-6">
-            <span class="block opacity-75 -mb-1">Outdoor</span>
-            <div class="flex justify-between">
-                <span class="block font-semibold text-xl">Monstera</span>
-                <span class="block bg-white rounded-full text-teal-500 text-xs font-bold px-3 py-2 leading-none flex items-center">$45.00</span>
-            </div>
-        </div>
-    </div>
-    <div class="flex-shrink-0 m-6 relative overflow-hidden bg-purple-500 rounded-lg max-w-xs shadow-lg">
-        <svg class="absolute bottom-0 left-0 mb-8" viewBox="0 0 375 283" fill="none" style="transform: scale(1.5); opacity: 0.1;">
-            <rect x="159.52" y="175" width="152" height="152" rx="8" transform="rotate(-45 159.52 175)" fill="white"/>
-            <rect y="107.48" width="152" height="152" rx="8" transform="rotate(-45 0 107.48)" fill="white"/>
-        </svg>
-        <div class="relative pt-10 px-10 flex items-center justify-center">
-            <div class="block absolute w-48 h-48 bottom-0 left-0 -mb-24 ml-3" style="background: radial-gradient(black, transparent 60%); transform: rotate3d(0, 0, 1, 20deg) scale3d(1, 0.6, 1); opacity: 0.2;"></div>
-            <img class="relative w-40" src="https://user-images.githubusercontent.com/2805249/64069899-8bdaa180-cc97-11e9-9b19-1a9e1a254c18.png" alt="">
-        </div>
-        <div class="relative text-white px-6 pb-6 mt-6">
-            <span class="block opacity-75 -mb-1">Outdoor</span>
-            <div class="flex justify-between">
-                <span class="block font-semibold text-xl">Oak Tree</span>
-                <span class="block bg-white rounded-full text-purple-500 text-xs font-bold px-3 py-2 leading-none flex items-center">$68.50</span>
+                </div>
             </div>
         </div>
     </div>
 
-</div>
+    {{!-- Playing Now Status --}}
+    <div class="p-24 flex flex-wrap items-center justify-center">
 
+        <div class="flex-shrink-0 m-2 relative overflow-hidden bg-purple-500 rounded-lg max-w-xs shadow-lg">
+            <svg class="absolute bottom-0 left-0 mb-8" viewBox="0 0 375 283" fill="none"
+                style="transform: scale(1.5); opacity: 0.1;">
+                <rect x="159.52" y="175" width="152" height="152" rx="8" transform="rotate(-45 159.52 175)"
+                    fill="white" />
+                <rect y="107.48" width="152" height="152" rx="8" transform="rotate(-45 0 107.48)" fill="white" />
+            </svg>
+            <div class="relative pt-10 px-10 flex items-center justify-center">
+                <div class="block absolute w-48 h-48 bottom-0 left-0 -mb-24 ml-3"
+                    style="background: radial-gradient(black, transparent 60%); transform: rotate3d(0, 0, 1, 20deg) scale3d(1, 0.6, 1); opacity: 0.2;">
+                </div>
+                <span
+                    class="block bg-white rounded-full text-purple-500 text-2xl font-bold px-3 py-2 leading-none flex items-center">1337</span>
+            </div>
+            <div class="relative text-white px-6 pb-6 mt-6">
+                <span class="block opacity-75 -mb-1">All-Time</span>
+                <div class="flex justify-between">
+                    <span class="block font-semibold text-xl">Games Played</span>
+                </div>
+            </div>
+        </div>
+        <div class="flex-shrink-0 m-2 relative overflow-hidden bg-purple-500 rounded-lg max-w-xs shadow-lg">
+            <svg class="absolute bottom-0 left-0 mb-8" viewBox="0 0 375 283" fill="none"
+                style="transform: scale(1.5); opacity: 0.1;">
+                <rect x="159.52" y="175" width="152" height="152" rx="8" transform="rotate(-45 159.52 175)"
+                    fill="white" />
+                <rect y="107.48" width="152" height="152" rx="8" transform="rotate(-45 0 107.48)" fill="white" />
+            </svg>
+            <div class="relative pt-10 px-10 flex items-center justify-center">
+                <div class="block absolute w-48 h-48 bottom-0 left-0 -mb-24 ml-3"
+                    style="background: radial-gradient(black, transparent 60%); transform: rotate3d(0, 0, 1, 20deg) scale3d(1, 0.6, 1); opacity: 0.2;">
+                </div>
+                <span
+                    class="block bg-white rounded-full text-purple-500 text-2xl font-bold px-3 py-2 leading-none flex items-center">1337</span>
+            </div>
+            <div class="relative text-white px-6 pb-6 mt-6">
+                <span class="block opacity-75 -mb-1">All-Time</span>
+                <div class="flex justify-between">
+                    <span class="block font-semibold text-xl">Games Played</span>
+                </div>
+            </div>
+        </div>
+        <div class="flex-shrink-0 m-2 relative overflow-hidden bg-purple-500 rounded-lg max-w-xs shadow-lg">
+            <svg class="absolute bottom-0 left-0 mb-8" viewBox="0 0 375 283" fill="none"
+                style="transform: scale(1.5); opacity: 0.1;">
+                <rect x="159.52" y="175" width="152" height="152" rx="8" transform="rotate(-45 159.52 175)"
+                    fill="white" />
+                <rect y="107.48" width="152" height="152" rx="8" transform="rotate(-45 0 107.48)" fill="white" />
+            </svg>
+            <div class="relative pt-10 px-10 flex items-center justify-center">
+                <div class="block absolute w-48 h-48 bottom-0 left-0 -mb-24 ml-3"
+                    style="background: radial-gradient(black, transparent 60%); transform: rotate3d(0, 0, 1, 20deg) scale3d(1, 0.6, 1); opacity: 0.2;">
+                </div>
+                <span
+                    class="block bg-white rounded-full text-purple-500 text-2xl font-bold px-3 py-2 leading-none flex items-center">1337</span>
+            </div>
+            <div class="relative text-white px-6 pb-6 mt-6">
+                <span class="block opacity-75 -mb-1">All-Time</span>
+                <div class="flex justify-between">
+                    <span class="block font-semibold text-xl">Games Played</span>
+                </div>
+            </div>
+        </div>
+        <div class="flex-shrink-0 m-2 relative overflow-hidden bg-purple-500 rounded-lg max-w-xs shadow-lg">
+            <svg class="absolute bottom-0 left-0 mb-8" viewBox="0 0 375 283" fill="none"
+                style="transform: scale(1.5); opacity: 0.1;">
+                <rect x="159.52" y="175" width="152" height="152" rx="8" transform="rotate(-45 159.52 175)"
+                    fill="white" />
+                <rect y="107.48" width="152" height="152" rx="8" transform="rotate(-45 0 107.48)" fill="white" />
+            </svg>
+            <div class="relative pt-10 px-10 flex items-center justify-center">
+                <div class="block absolute w-48 h-48 bottom-0 left-0 -mb-24 ml-3"
+                    style="background: radial-gradient(black, transparent 60%); transform: rotate3d(0, 0, 1, 20deg) scale3d(1, 0.6, 1); opacity: 0.2;">
+                </div>
+                <span
+                    class="block bg-white rounded-full text-purple-500 text-2xl font-bold px-3 py-2 leading-none flex items-center">1337</span>
+            </div>
+            <div class="relative text-white px-6 pb-6 mt-6">
+                <span class="block opacity-75 -mb-1">All-Time</span>
+                <div class="flex justify-between">
+                    <span class="block font-semibold text-xl">Games Played</span>
+                </div>
+            </div>
+        </div>
+        <div class="flex-shrink-0 m-2 relative overflow-hidden bg-purple-500 rounded-lg max-w-xs shadow-lg">
+            <svg class="absolute bottom-0 left-0 mb-8" viewBox="0 0 375 283" fill="none"
+                style="transform: scale(1.5); opacity: 0.1;">
+                <rect x="159.52" y="175" width="152" height="152" rx="8" transform="rotate(-45 159.52 175)"
+                    fill="white" />
+                <rect y="107.48" width="152" height="152" rx="8" transform="rotate(-45 0 107.48)" fill="white" />
+            </svg>
+            <div class="relative pt-10 px-10 flex items-center justify-center">
+                <div class="block absolute w-48 h-48 bottom-0 left-0 -mb-24 ml-3"
+                    style="background: radial-gradient(black, transparent 60%); transform: rotate3d(0, 0, 1, 20deg) scale3d(1, 0.6, 1); opacity: 0.2;">
+                </div>
+                <span
+                    class="block bg-white rounded-full text-purple-500 text-2xl font-bold px-3 py-2 leading-none flex items-center">1337</span>
+            </div>
+            <div class="relative text-white px-6 pb-6 mt-6">
+                <span class="block opacity-75 -mb-1">All-Time</span>
+                <div class="flex justify-between">
+                    <span class="block font-semibold text-xl">Games Played</span>
+                </div>
+            </div>
+        </div>
+        <div class="flex-shrink-0 m-2 relative overflow-hidden bg-purple-500 rounded-lg max-w-xs shadow-lg">
+            <svg class="absolute bottom-0 left-0 mb-8" viewBox="0 0 375 283" fill="none"
+                style="transform: scale(1.5); opacity: 0.1;">
+                <rect x="159.52" y="175" width="152" height="152" rx="8" transform="rotate(-45 159.52 175)"
+                    fill="white" />
+                <rect y="107.48" width="152" height="152" rx="8" transform="rotate(-45 0 107.48)" fill="white" />
+            </svg>
+            <div class="relative pt-10 px-10 flex items-center justify-center">
+                <div class="block absolute w-48 h-48 bottom-0 left-0 -mb-24 ml-3"
+                    style="background: radial-gradient(black, transparent 60%); transform: rotate3d(0, 0, 1, 20deg) scale3d(1, 0.6, 1); opacity: 0.2;">
+                </div>
+                <span
+                    class="block bg-white rounded-full text-purple-500 text-2xl font-bold px-3 py-2 leading-none flex items-center">1337</span>
+            </div>
+            <div class="relative text-white px-6 pb-6 mt-6">
+                <span class="block opacity-75 -mb-1">All-Time</span>
+                <div class="flex justify-between">
+                    <span class="block font-semibold text-xl">Games Played</span>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+<<<<<<< HEAD
+    <!-- This example requires Tailwind CSS v2.0+ -->
+    <div class="py-12 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="lg:text-center">
+                <h2 class="text-base text-indigo-600 font-semibold tracking-wide uppercase">Simple Beginner's Guide</h2>
+                <p class="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">
+                    How to Play Exploding Chickens
+                </p>
+                <p class="mt-4 max-w-2xl text-xl text-gray-500 lg:mx-auto">
+                    In the deck of cards are some Exploding Chickens. You take turns drawing cards until someone draws
+                    an Exploding Chickens. Without a defuse, that person explodes and is out of the game. This process
+                    continues until there’s only 1 player left, who wins the game.
+=======
 <!-- This example requires Tailwind CSS v2.0+ -->
 <div class="py-12 bg-white">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -157,10 +222,36 @@
             </p>
             <p class="mt-4 max-w-2xl text-xl text-gray-500 lg:mx-auto">
                 In the deck of cards are some Exploding Chickens. You take turns drawing cards until someone draws an Exploding Chicken. Without a defuse, that person explodes and is out of the game. This process continues until there’s only 1 player left, who wins the game.
+>>>>>>> 3f88c71c417849f37190e03aac9d10f9cf63dcee
 
-            </p>
-        </div>
+                </p>
+            </div>
 
+<<<<<<< HEAD
+            <div class="mt-10">
+                <dl class="space-y-10 md:space-y-0 md:grid md:grid-cols-2 md:gap-x-8 md:gap-y-10">
+                    <div class="flex">
+                        <div class="flex-shrink-0">
+                            <div class="flex items-center justify-center h-12 w-12 rounded-md bg-indigo-500 text-white">
+                                <!-- Heroicon name: globe-alt -->
+                                <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                    stroke="currentColor" aria-hidden="true">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="ml-4">
+                            <dt class="text-lg leading-6 font-medium text-gray-900">
+                                Phase 1 of Turn
+                            </dt>
+                            <dd class="mt-2 text-base text-gray-500">
+                                Choose either to pass (play no cards) or play (Play a card by placing it FACE UP on top
+                                of the Discard Pile and following the instructions on the card.
+                                After you follow the instructions on the card, you can play more cards. You can play as
+                                many cards as you’d like.
+                            </dd>
+=======
         <div class="mt-10">
             <dl class="space-y-10 md:space-y-0 md:grid md:grid-cols-2 md:gap-x-8 md:gap-y-10">
                 <div class="flex">
@@ -170,19 +261,31 @@
                             <i class="fas fa-dice-one fa-2x"> </i>
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
                             </svg>
+>>>>>>> 3f88c71c417849f37190e03aac9d10f9cf63dcee
                         </div>
                     </div>
-                    <div class="ml-4">
-                        <dt class="text-lg leading-6 font-medium text-gray-900">
-                            Phase 1 of Turn
-                        </dt>
-                        <dd class="mt-2 text-base text-gray-500">
-                            Choose either to pass (play no cards) or play (Play a card by placing it FACE UP on top of the Discard Pile and following the instructions on the card.
-                            After you follow the instructions on the card, you can play more cards. You can play as many cards as you’d like.
-                        </dd>
-                    </div>
-                </div>
 
+<<<<<<< HEAD
+                    <div class="flex">
+                        <div class="flex-shrink-0">
+                            <div class="flex items-center justify-center h-12 w-12 rounded-md bg-indigo-500 text-white">
+                                <!-- Heroicon name: scale -->
+                                <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                    stroke="currentColor" aria-hidden="true">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3" />
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="ml-4">
+                            <dt class="text-lg leading-6 font-medium text-gray-900">
+                                Phase 2 of turn
+                            </dt>
+                            <dd class="mt-2 text-base text-gray-500">
+                                End your turn by drawing a card from the top of the Draw Pile into your hand and hoping
+                                it’s not an Exploding Chicken. The next player then plays.
+                            </dd>
+=======
                 <div class="flex">
                     <div class="flex-shrink-0">
                         <div class="flex items-center justify-center h-12 w-12 rounded-md bg-indigo-500 text-white">
@@ -190,18 +293,31 @@
                             <i class="fas fa-dice-two fa-2x"> </i>
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3" />
                             </svg>
+>>>>>>> 3f88c71c417849f37190e03aac9d10f9cf63dcee
                         </div>
                     </div>
-                    <div class="ml-4">
-                        <dt class="text-lg leading-6 font-medium text-gray-900">
-                            Phase 2 of turn
-                        </dt>
-                        <dd class="mt-2 text-base text-gray-500">
-                            End your turn by drawing a card from the top of the Draw Pile into your hand and hoping it’s not an Exploding Chicken. The next player then plays.
-                        </dd>
-                    </div>
-                </div>
 
+<<<<<<< HEAD
+                    <div class="flex">
+                        <div class="flex-shrink-0">
+                            <div class="flex items-center justify-center h-12 w-12 rounded-md bg-indigo-500 text-white">
+                                <!-- Heroicon name: lightning-bolt -->
+                                <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                    stroke="currentColor" aria-hidden="true">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M13 10V3L4 14h7v7l9-11h-7z" />
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="ml-4">
+                            <dt class="text-lg leading-6 font-medium text-gray-900">
+                                Ending the Game
+                            </dt>
+                            <dd class="mt-2 text-base text-gray-500">
+                                The last player who hasn't exploded wins the game. You won't ever run out of cards in
+                                the Draw Pile because there are enough Exploding Chickens to kill all but 1 player.
+                            </dd>
+=======
                 <div class="flex">
                     <div class="flex-shrink-0">
                         <div class="flex items-center justify-center h-12 w-12 rounded-md bg-indigo-500 text-white">
@@ -209,18 +325,30 @@
                             <i class="fas fa-dice-three fa-2x"> </i>
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
                             </svg>
+>>>>>>> 3f88c71c417849f37190e03aac9d10f9cf63dcee
                         </div>
                     </div>
-                    <div class="ml-4">
-                        <dt class="text-lg leading-6 font-medium text-gray-900">
-                            Ending the Game
-                        </dt>
-                        <dd class="mt-2 text-base text-gray-500">
-                            The last player who hasn't exploded wins the game. You won't ever run out of cards in the Draw Pile because there are enough Exploding Chickens to kill all but 1 player.
-                        </dd>
-                    </div>
-                </div>
 
+<<<<<<< HEAD
+                    <div class="flex">
+                        <div class="flex-shrink-0">
+                            <div class="flex items-center justify-center h-12 w-12 rounded-md bg-indigo-500 text-white">
+                                <!-- Heroicon name: annotation -->
+                                <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                    stroke="currentColor" aria-hidden="true">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="ml-4">
+                            <dt class="text-lg leading-6 font-medium text-gray-900">
+                                That's all, Good Luck!
+                            </dt>
+                            <dd class="mt-2 text-base text-gray-500">
+                                I believe in you. And unicorns too. But especially you.
+                            </dd>
+=======
                 <div class="flex">
                     <div class="flex-shrink-0">
                         <div class="flex items-center justify-center h-12 w-12 rounded-md bg-indigo-500 text-white">
@@ -228,21 +356,78 @@
                             <i class="fas fa-dice-four fa-2x"> </i>
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
                             </svg>
+>>>>>>> 3f88c71c417849f37190e03aac9d10f9cf63dcee
                         </div>
                     </div>
-                    <div class="ml-4">
-                        <dt class="text-lg leading-6 font-medium text-gray-900">
-                            That's all, Good Luck!
-                        </dt>
-                        <dd class="mt-2 text-base text-gray-500">
-                            I believe in you. And unicorns too. But especially you.
-                        </dd>
-                    </div>
-                </div>
-            </dl>
+                </dl>
+            </div>
         </div>
     </div>
-</div>
 
-{{!-- end --}}
+
+    {{! Sidebar }}
+    <div class="fixed inset-0 overflow-hidden" x-show="sidebar_open">
+        <div class="absolute inset-0 overflow-hidden" x-show="sidebar_open">
+            <div x-show="sidebar_open" x-description="Background overlay, show/hide based on slide-over state."
+                x-transition:enter="ease-in-out duration-500" x-transition:enter-start="opacity-0"
+                x-transition:enter-end="opacity-100" x-transition:leave="ease-in-out duration-500"
+                x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
+                class="absolute inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true"></div>
+            <section @click.away="sidebar_open = false" class="absolute inset-y-0 right-0 pl-10 max-w-full flex"
+                aria-labelledby="slide-over-heading">
+                <div class="relative w-screen ml-4 max-w-3xl"
+                    x-description="Slide-over panel, show/hide based on slide-over state." x-show="sidebar_open"
+                    x-transition:enter="transform transition ease-in-out duration-500 sm:duration-700"
+                    x-transition:enter-start="translate-x-full" x-transition:enter-end="translate-x-0"
+                    x-transition:leave="transform transition ease-in-out duration-500 sm:duration-700"
+                    x-transition:leave-start="translate-x-0" x-transition:leave-end="translate-x-full">
+                    <div x-description="Close button, show/hide based on slide-over state." x-show="sidebar_open"
+                        x-transition:enter="ease-in-out duration-500" x-transition:enter-start="opacity-0"
+                        x-transition:enter-end="opacity-100" x-transition:leave="ease-in-out duration-500"
+                        x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
+                        class="absolute top-0 left-0 -ml-8 pt-4 pr-2 flex sm:-ml-10 sm:pr-4">
+                        <button @click="sidebar_open = false"
+                            class="rounded-md text-gray-300 hover:text-white focus:outline-none focus:ring-2 focus:ring-white">
+                            <span class="sr-only">Close panel</span>
+                            <svg class="h-6 w-6" x-description="Heroicon name: x" xmlns="http://www.w3.org/2000/svg"
+                                fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                        </button>
+                    </div>
+                    {{! Content }}
+                    <div class="h-full flex flex-col py-6 bg-white shadow-xl">
+                        <div class="mx-10 pt-15">
+                            <div class="grid gap-6 mb-8 md:grid-cols-2">
+                                <div
+                                    class="min-w-0 p-4 text-white bg-purple-600 rounded-xl shadow-md hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-purple-200">
+                                    <h4 class="mb-4 font-semibold">
+                                        Create a New Game
+                                    </h4>
+                                    <p>
+                                        Lorem ipsum dolor sit, amet consectetur adipisicing elit.
+                                        Fuga, cum commodi a omnis numquam quod? Totam exercitationem
+                                        quos hic ipsam at qui cum numquam, sed amet ratione!
+                                    </p>
+                                </div>
+                                <div
+                                    class="min-w-0 p-4 text-white bg-gray-50 rounded-xl shadow-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 focus:ring-offset-gray-200">
+                                    <h4 class="mb-4 font-semibold text-gray-600">
+                                        Join a Lobby
+                                    </h4>
+                                    <p class="text-gray-600">
+                                        Lorem ipsum dolor sit, amet consectetur adipisicing elit.
+                                        Fuga, cum commodi a omnis numquam quod? Totam exercitationem
+                                        quos hic ipsam at qui cum numquam, sed amet ratione!
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+            </section>
+        </div>
+    </div>
+
+    {{!-- end --}}
+
 </html>
