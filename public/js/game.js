@@ -138,6 +138,9 @@ function update_players() {
             "    </div>\n" +
             actions +
             "</div>";
+        //Append to topbar, players
+        let topbar_players_payload = "";
+        topbar_players_payload += "<img class=\"inline-block h-6 w-6 rounded-full ring-2 ring-white\" src=\"https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80\" alt=\"\">";
         //Append to center
         let center_players_payload = "";
         center_players_payload += "<div class=\"block text-center\">\n" +
@@ -174,6 +177,7 @@ function update_players() {
         }
         //Replace old elements with payloads
         document.getElementById("sidebar_players").innerHTML = sidebar_players_payload;
+        document.getElementById("topbar_players").innerHTML = topbar_players_payload;
         document.getElementById("center_players").innerHTML = center_players_payload;
     }
 }
