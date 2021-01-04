@@ -46,20 +46,20 @@ exports.player_test = async function () {
     spinner.info(console_head + `${chalk.bold('Evaluating player actions')}`);
     //Create 4 sample players
     spinner.info(console_head + `Creating sample players (4 total)`);
-    let player_a = await player_actions.modify_player(sample_game_id, undefined, "Player X", 0, "offline").catch(e => {failed_test(e)});
+    let player_a = await player_actions.modify_player(sample_game_id, undefined, "Player X", 0, "host", "offline").catch(e => {failed_test(e)});
     spinner.succeed(console_head + `Created Player X (aka A) (1 of 4) with id: ` + player_a);
-    let player_b = await player_actions.modify_player(sample_game_id, undefined, "Player B", 2, "online").catch(e => {failed_test(e)});
+    let player_b = await player_actions.modify_player(sample_game_id, undefined, "Player B", 2, "player", "online").catch(e => {failed_test(e)});
     spinner.succeed(console_head + `Created Player B (2 of 4) with id: ` + player_b);
-    let player_c = await player_actions.modify_player(sample_game_id, undefined, "Player C", 3, "online").catch(e => {failed_test(e)});
+    let player_c = await player_actions.modify_player(sample_game_id, undefined, "Player C", 3, "player", "online").catch(e => {failed_test(e)});
     spinner.succeed(console_head + `Created Player C (3 of 4) with id: ` + player_c);
-    let player_d = await player_actions.modify_player(sample_game_id, undefined, "Player D", 4, "online").catch(e => {failed_test(e)});
+    let player_d = await player_actions.modify_player(sample_game_id, undefined, "Player D", 4, "player", "online").catch(e => {failed_test(e)});
     spinner.succeed(console_head + `Created Player D (4 of 4) with id: ` + player_d);
     //Test player modification
     spinner.info(console_head + `Modifying Player X (aka A) and verifying changes with id: ` + player_a);
-    await player_actions.modify_player(sample_game_id, player_a, "Player A", 1, "online").catch(e => {failed_test(e)});
+    await player_actions.modify_player(sample_game_id, player_a, "Player A", 1, "host", "online").catch(e => {failed_test(e)});
     spinner.succeed(console_head + `Modified Player X (aka A) with id: ` + player_a);
     let game_details = await game_actions.game_details_id(sample_game_id);
-    if (game_details.players.id(player_a).nickname === "Player A" || game_details.players.id(player_a).seat === 1 || game_details.players.id(player_a).status === "online") {
+    if (game_details.players.id(player_a).nickname === "Player A" || game_details.players.id(player_a).seat === 1 || game_details.players.id(player_a).connection === "online") {
         spinner.succeed(console_head + `Verified Player A's changes with id: ` + player_a);
     } else {
         failed_test("Modified sample player values do not match");

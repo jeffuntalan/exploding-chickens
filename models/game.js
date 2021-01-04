@@ -26,7 +26,11 @@ let playerSchema = mongoose.Schema({
     },
     status: {
         type: String,
-        default: "connected"
+        default: "player"
+    },
+    connection: {
+        type: String,
+        default: "online"
     }
 });
 

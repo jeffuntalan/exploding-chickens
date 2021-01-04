@@ -20,13 +20,13 @@ let player_actions = require('./player-actions.js');
 // Name : player_actions.modify_player()
 // Desc : modifies an existing player, if it doesn't exist, make new player
 // Author(s) : RAk3rman
-exports.modify_player = async function (game_id, player_id, player_nickname, player_seat, player_status) {
+exports.modify_player = async function (game_id, player_id, player_nickname, player_seat, player_status, player_connection) {
     //Check if player exists
     if (await game.exists({ _id: game_id, "players._id": player_id })) { //Modify existing player
         //Create new promise and return player id after saved
         return await new Promise((resolve, reject) => {
             //Update existing player and return player_id
-            game.findOneAndUpdate({ _id: game_id, "players._id": player_id }, {"$set": { "players.$.nickname": player_nickname, "players.$.seat": player_seat, "players.$.status": player_status }}, function (err) {
+            game.findOneAndUpdate({ _id: game_id, "players._id": player_id }, {"$set": { "players.$.nickname": player_nickname, "players.$.seat": player_seat, "players.$.status": player_status, "players.$.connection": player_connection }}, function (err) {
                 if (err) {
                     reject(err);
                 } else {
@@ -44,7 +44,7 @@ exports.modify_player = async function (game_id, player_id, player_nickname, pla
                 player_id = uuidv4();
             }
             //Push new player into existing game
-            game_details.players.push({ _id: player_id, nickname: player_nickname, seat: player_seat, status: player_status });
+            game_details.players.push({ _id: player_id, nickname: player_nickname, seat: player_seat, status: player_status, connection: player_connection });
             //Save existing game and return player_id
             game_details.save(function (err) {
                 if (err) {
