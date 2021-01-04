@@ -1,10 +1,6 @@
 <!doctype html>
-{{!-- begin --}}
 <html class='h-full'>
-<script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.min.js" defer></script>
-
 {{!-- import tailwind css and bebas neue font --}}
-
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -14,36 +10,25 @@
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css"
         integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
 </head>
-
 <!-- Exploding Chickens, home landing page // SengdowJones -->
-
 <body class='flex flex-col h-full' x-data="{ sidebar_open: false }" @keydown.window.escape="sidebar_open = false">
-</body>
-
 {{! Logo }}
 <div class="mt-20 sm:mx-10 p-19 sm:p-19 md:p-16 lg:p-32 bg-white">
     <div class="relative rounded-2xl items-center bg-white">
-
         <div class="m-auto block text-center">
             <div class="flex flex-col items-center -space-y-3">
-
                 <img class="h-36 w-36" src="public\css\assets\logo.png" alt="">
-
             </div>
         </div>
-
-        <!-- Title Text -->
+        {{!-- Title --}}
         <div class="my-4 block text-center">
             <div class="m-auto mx-auto flex flex-col items-center">
-
                 <p class="text-4xl md:text-7xl" style="font-family: Bebas Neue">EXPLODING <a
                         class="text-yellow-500">CHICKENS</a></p>
                 <p class="text-sm md:text-lg font-sans">An online alternative to a card game inspired by Russian
                     Roulette.</p>
-
             </div>
         </div>
-
         {{!-- Interactive buttons --}}
         <div class="my-5 block text-center">
             <div class="flex flex-col items-center">
@@ -65,10 +50,8 @@
             </div>
         </div>
     </div>
-
     {{!-- Playing Now Status --}}
     <div class="p-24 flex flex-wrap items-center justify-center">
-
         <div class="flex-shrink-0 m-2 relative overflow-hidden bg-purple-500 rounded-lg max-w-xs shadow-lg">
             <svg class="absolute bottom-0 left-0 mb-8" viewBox="0 0 375 283" fill="none"
                 style="transform: scale(1.5); opacity: 0.1;">
@@ -195,9 +178,7 @@
                 </div>
             </div>
         </div>
-
     </div>
-
 <div class="py-12 bg-white">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="lg:text-center">
@@ -210,7 +191,6 @@
 
             </p>
         </div>
-
         <div class="mt-10">
             <dl class="space-y-10 md:space-y-0 md:grid md:grid-cols-2 md:gap-x-8 md:gap-y-10">
                 <div class="flex">
@@ -293,7 +273,6 @@
         </div>
     </div>
 </div>
-
-    {{!-- end --}}
-
+<script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.min.js" defer></script>
+</body>
 </html>
