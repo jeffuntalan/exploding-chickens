@@ -19,6 +19,7 @@ let game_data;
 //Setup game variables
 let in_setup = true;
 let current_player_host = false;
+let selected_avatar = "dog.jpg";
 //Session player_id
 let session_player_id = undefined;
 
@@ -94,7 +95,7 @@ function setup_prompt() {
             "</div>" +
             "<div class=\"flex flex-col items-center justify-center\">\n" +
             "    <div class=\"inline-flex items-center p-2\">\n" +
-            "        <div class=\"block text-center mx-2\">\n" +
+            "        <div class=\"block text-center mx-2\" onclick=\"pick_avatar('dog')\">\n" +
             "            <img class=\"h-16 w-16 rounded-full ring-2 ring-offset-2 ring-green-500\" src=\"/public/avatars/dog.jpg\" alt=\"\">\n" +
             "        </div>\n" +
             "        <div class=\"block text-center mx-2\">\n" +
@@ -117,6 +118,22 @@ function setup_prompt() {
             )
         }
     })
+}
+
+//Update avatar options on join game swal
+function update_avatar_options() {
+    let options = ["dog.jpg", "bunny.jpg"];
+    for (let i = 0; i < game_data.players.length; i++) {
+        if (game_data.players[i]._id) {
+
+        }
+    }
+}
+
+//Select avatar on join
+function pick_avatar(selection) {
+    selected_avatar = selection;
+    update_avatar_options();
 }
 
 //Update players
