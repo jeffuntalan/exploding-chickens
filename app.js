@@ -25,6 +25,7 @@ const ip = require('ip');
 let setup = require('./config/setup.js');
 let evaluation = require('./config/evaluation.js');
 
+
 //Services
 let card_actions = require('./services/card-actions.js');
 let game_actions = require('./services/game-actions.js');
@@ -133,5 +134,25 @@ function mongoose_disconnected() {
     spinner.succeed(`${chalk.cyan('Fastify')}: Stopping http webserver on port ` + config_storage.get('webserver_port'));
     //server.close();
 }
+// Name : game_actions.mongoose_deletes()
+// Desc : Calls another function when 4 hours has passed
+// Author(s) : Vincent Do
+async function mongoose_deletes() {
+    let map = new Map()
+    let i = 0;
+    game.find({} , (err, users) => {
+        if (!err) {
+            users.map(user => {
+                map.set(i, {user})
+                i++;
+            })
+        }
+
+    })
+    for (let j = 0; j === i; j++) {
+        setInterval(await game_actions.delete_game(map.get(i)._id), 14400000);
+    }
+}
+
 
 //End of Setup external connections - - - - - - - - - - - - - - - - - - - - - -

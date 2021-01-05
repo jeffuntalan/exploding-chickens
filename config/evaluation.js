@@ -2,7 +2,7 @@
 Filename : exploding-chickens/config/evaluation.js
 Desc     : evaluation suite for testing game,
            player, and card interactions
-Author(s): RAk3rman, SengdowJones
+Author(s): RAk3rman, SengdowJones, Vincent Do
 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\*/
 
 //Packages
@@ -159,6 +159,12 @@ exports.game_deletion = async function () {
     //Console header
     let console_head = `${chalk.bold.red('Evaluation')}: ${chalk.dim.redBright('G-DEL')} `;
     spinner.info(console_head + `${chalk.bold('Evaluating game deletion')}`);
+    //Calling delete_game
+    /**
+    spinner.info(console_head + `Checking if game is 4 hours old`);
+    let sample_game1 = await mongoose_deletes().catch(e => {failed_test(e)});
+    spinner.succeed(console_head + `Deleted game with id: ` + sample_game1);
+     **/
     //Delete sample game
     spinner.info(console_head + `Deleting sample game (1 of 1)`);
     let sample_game = await game_actions.delete_game(sample_game_id).catch(e => {failed_test(e)});
