@@ -19,7 +19,7 @@ let game_data;
 //Setup game variables
 let in_setup = true;
 let current_player_host = false;
-let selected_avatar = "dog.jpg";
+let selected_avatar = "default.png";
 //Session player_id
 let session_player_id = undefined;
 
@@ -84,31 +84,26 @@ function setup_game() {
 }
 
 //Prompt to set player settings
-function setup_prompt() {
+function setup_prompt(err) {
     Swal.fire({
         html: "<h1 class=\"text-4xl text-gray-700 mt-3\" style=\"font-family: Bebas Neue\">Welcome to <a class=\"text-yellow-400\">EXPLODING</a> CHICKENS</h1>\n" +
-            "<h1 class=\"text-sm text-gray-700\">Game ID: " + game_data.slug + " | Created: " + game_data.created + "</a></h1>\n" +
+            "<h1 class=\"text-sm text-gray-700\">Game ID: " + game_data.slug + " | Created: " + game_data.created + "</a><br><br>a class=\"text-red-500\">Error</bra></h1>\n" +
             "<div class=\"my-3 flex w-full max-w-sm mx-auto space-x-3 shadow-md\">\n" +
             "    <input\n" +
             "        class=\"text-center flex-1 appearance-none border border-transparent w-full py-2 px-10 bg-white text-gray-700 placeholder-gray-400 rounded-sm text-base border-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500\"\n" +
             "        type=\"text\" name=\"nickname\" placeholder=\"What's your name?\">\n" +
             "</div>" +
-            "<div class=\"flex flex-col items-center justify-center\">\n" +
-            "    <div class=\"inline-flex items-center p-2\">\n" +
-            "        <div class=\"block text-center mx-2\" onclick=\"pick_avatar('dog')\">\n" +
-            "            <img class=\"h-16 w-16 rounded-full ring-2 ring-offset-2 ring-green-500\" src=\"/public/avatars/dog.jpg\" alt=\"\">\n" +
-            "        </div>\n" +
-            "        <div class=\"block text-center mx-2\">\n" +
-            "            <img class=\"h-16 w-16 rounded-full\" src=\"https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80\" alt=\"\">\n" +
-            "        </div>\n" +
-            "    </div>\n" +
-            "</div>",
+            "<div class=\"flex flex-wrap justify-center items-center py-2\" id=\"avatar_options_swal\">\n" +
+            "</div>\n",
         showCancelButton: true,
         confirmButtonColor: '#fbbf24',
         cancelButtonColor: '#374151',
         cancelButtonText: 'Spectate',
         confirmButtonText: 'Join Game',
-        allowOutsideClick: false
+        allowOutsideClick: false,
+        didOpen: function() {
+            update_avatar_options();
+        }
     }).then((result) => {
         if (result.isConfirmed) {
             Swal.fire(
@@ -122,12 +117,35 @@ function setup_prompt() {
 
 //Update avatar options on join game swal
 function update_avatar_options() {
-    let options = ["dog.jpg", "bunny.jpg"];
-    for (let i = 0; i < game_data.players.length; i++) {
-        if (game_data.players[i]._id) {
-
+    let options = ["bear.png", "bull.png", "cat.png", "elephant.png", "lion.png", "mandrill.png", "monkey.png", "panda.png", "puma.png", "raccoon.png", "wolf.png"];
+    let options_payload = "";
+    //Loop through each avatar to see if in use or not
+    for (let i = 0; i < options.length; i++) {
+        //Loop through each player
+        let found_match = false;
+        for (let j = 0; j < game_data.players.length; j++) {
+            if (game_data.players[j].avatar === options[i]) {
+                found_match = true;
+                break;
+            }
+        }
+        //Append to payload
+        if (found_match) { //Grayed out
+            options_payload += "<div class=\"flex-none block text-center m-2\">\n" +
+                "    <img class=\"h-16 w-16 rounded-full ring-2 ring-offset-2 ring-yellow-400 opacity-30\" src=\"/public/avatars/" + options[i] + "\" alt=\"\">\n" +
+                "</div>\n";
+        } else if (selected_avatar === options[i]) { //Current selection, green halo
+            options_payload += "<div class=\"flex-none block text-center m-2\">\n" +
+                "    <img class=\"h-16 w-16 rounded-full ring-2 ring-offset-2 ring-green-500\" src=\"/public/avatars/" + options[i] + "\" alt=\"\">\n" +
+                "</div>\n";
+        } else { //Available for selection
+            options_payload += "<div class=\"flex-none block text-center m-2\" onclick=\"pick_avatar('" + options[i] + "')\">\n" +
+                "    <img class=\"h-16 w-16 rounded-full\" src=\"/public/avatars/" + options[i] + "\" alt=\"\">\n" +
+                "</div>\n";
         }
     }
+    //Append to swal
+    document.getElementById("avatar_options_swal").innerHTML = options_payload;
 }
 
 //Select avatar on join

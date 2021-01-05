@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css"
         integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
 </head>
+<body>
 <!-- Exploding Chickens, home landing page // SengdowJones -->
 
 {{! Logo }}
@@ -290,9 +291,14 @@
         </div>
     </div>
 </dialog>
-
+<script src="/socket.io/socket.io.js"></script>
 <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+<script src="/public/js/home.js"></script>
 <script>
+    //Fire sample modal
+    sample_modal();
+
     function openModal(key) {
         document.getElementById(key).showModal();
         document.body.setAttribute('style', 'overflow: hidden;');
