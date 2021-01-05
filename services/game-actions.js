@@ -294,19 +294,3 @@ exports.card_call = async function (game_id, card_id, player_id) {
         await card_actions.double(game_id, bucket[0], bucket[1], player_id);
     }
 }
-
-// Name : game_actions.delete_game(game_id, card_id, player_seat)
-// Desc : Deletes games that are 4 hours old
-// Author(s) : Vincent Do
-exports.delete_game = async function (game_id) {
-    //Get game details
-    let game_details = await game_actions.game_details_id(game_id);
-    //Create new promise
-    return await new Promise((resolve, reject) => {
-        //Delete Game
-        game.deleteOne({ _id: game_id }, function (err) {
-            if (err) reject(err);
-        });
-    });
-
-}
