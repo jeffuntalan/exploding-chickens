@@ -9,6 +9,7 @@ Author(s): RAk3rman
 const chalk = require('chalk');
 const ora = require('ora');
 const spinner = ora('');
+const moment = require('moment');
 
 //Export to app.js file
 module.exports = function (fastify) {
@@ -35,7 +36,7 @@ module.exports = function (fastify) {
                 players: [],
                 discard_deck: [],
                 slug: raw_game_details["slug"],
-                created: raw_game_details["created"],
+                created: moment(raw_game_details["created"]).calendar(),
                 status: raw_game_details["status"],
                 seat_playing: raw_game_details["seat_playing"],
                 turn_direction: raw_game_details["turn_direction"],

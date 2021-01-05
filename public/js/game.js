@@ -74,8 +74,49 @@ function setup_game() {
             break;
         }
     }
+    //If session_player_id is undefined, setup new player
+    if (session_player_id === undefined) {
+        setup_prompt();
+    }
     //Update players on UI
     update_players();
+}
+
+//Prompt to set player settings
+function setup_prompt() {
+    Swal.fire({
+        html: "<h1 class=\"text-4xl text-gray-700 mt-3\" style=\"font-family: Bebas Neue\">Welcome to <a class=\"text-yellow-400\">EXPLODING</a> CHICKENS</h1>\n" +
+            "<h1 class=\"text-sm text-gray-700\">Game ID: " + game_data.slug + " | Created: " + game_data.created + "</a></h1>\n" +
+            "<div class=\"my-3 flex w-full max-w-sm mx-auto space-x-3 shadow-md\">\n" +
+            "    <input\n" +
+            "        class=\"text-center flex-1 appearance-none border border-transparent w-full py-2 px-10 bg-white text-gray-700 placeholder-gray-400 rounded-sm text-base border-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500\"\n" +
+            "        type=\"text\" name=\"nickname\" placeholder=\"What's your name?\">\n" +
+            "</div>" +
+            "<div class=\"flex flex-col items-center justify-center\">\n" +
+            "    <div class=\"inline-flex items-center p-2\">\n" +
+            "        <div class=\"block text-center mx-2\">\n" +
+            "            <img class=\"h-16 w-16 rounded-full ring-2 ring-offset-2 ring-green-500\" src=\"/public/avatars/dog.jpg\" alt=\"\">\n" +
+            "        </div>\n" +
+            "        <div class=\"block text-center mx-2\">\n" +
+            "            <img class=\"h-16 w-16 rounded-full\" src=\"https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80\" alt=\"\">\n" +
+            "        </div>\n" +
+            "    </div>\n" +
+            "</div>",
+        showCancelButton: true,
+        confirmButtonColor: '#fbbf24',
+        cancelButtonColor: '#374151',
+        cancelButtonText: 'Spectate',
+        confirmButtonText: 'Join Game',
+        allowOutsideClick: false
+    }).then((result) => {
+        if (result.isConfirmed) {
+            Swal.fire(
+                'Deleted!',
+                'Your file has been deleted.',
+                'success'
+            )
+        }
+    })
 }
 
 //Update players
