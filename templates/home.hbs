@@ -15,7 +15,7 @@
 
 <body class='flex flex-col h-full' x-data="{ sidebar_open: false }" @keydown.window.escape="sidebar_open = false">
     {{! Logo }}
-    <div class="mt-20 sm:mx-10 p-19 sm:p-19 md:p-16 lg:p-32 bg-white">
+    <div class="mt-20 sm:mx-10 p-19 sm:p-19 md:p-16 lg:p-48 bg-white">
         <div class="relative rounded-2xl items-center bg-white">
             <div class="m-auto block text-center">
                 <div class="flex flex-col items-center -space-y-3">
@@ -32,7 +32,7 @@
                 </div>
             </div>
             {{!-- Interactive buttons --}}
-            <div class="my-5 block text-center">
+            <div class="my-4 block text-center">
                 <div class="flex flex-col items-center">
                     {{!-- <div action="/game/create" method="POST" enctype="application/x-www-form-urlencoded"> --}}
                         <div>
@@ -53,7 +53,7 @@
             </div>
         </div>
         {{!-- Playing Now Status --}}
-        <div class="p-24 flex flex-wrap items-center justify-center">
+        <div class="p-60 flex flex-wrap items-center justify-center">
             <div class="flex-shrink-0 m-2 relative overflow-hidden bg-purple-500 rounded-lg max-w-xs shadow-lg">
                 <svg class="absolute bottom-0 left-0 mb-8" viewBox="0 0 375 283" fill="none"
                     style="transform: scale(1.5); opacity: 0.1;">
@@ -66,12 +66,12 @@
                         style="background: radial-gradient(black, transparent 60%); transform: rotate3d(0, 0, 1, 20deg) scale3d(1, 0.6, 1); opacity: 0.2;">
                     </div>
                     <span
-                        class="block bg-white rounded-full text-purple-500 text-2xl font-bold px-3 py-2 leading-none flex items-center">1337</span>
+                        class="block bg-white rounded-full text-purple-500 text-2xl font-bold px-3 py-2 leading-none flex items-center">0</span>
                 </div>
                 <div class="relative text-white px-6 pb-6 mt-6">
-                    <span class="block opacity-75 -mb-1">All-Time</span>
+                    <span class="block opacity-75 -mb-1">Online</span>
                     <div class="flex justify-between">
-                        <span class="block font-semibold text-xl">Games Played</span>
+                        <span class="block font-semibold text-xl">Players</span>
                     </div>
                 </div>
             </div>
@@ -87,12 +87,12 @@
                         style="background: radial-gradient(black, transparent 60%); transform: rotate3d(0, 0, 1, 20deg) scale3d(1, 0.6, 1); opacity: 0.2;">
                     </div>
                     <span
-                        class="block bg-white rounded-full text-purple-500 text-2xl font-bold px-3 py-2 leading-none flex items-center">1337</span>
+                        class="block bg-white rounded-full text-purple-500 text-2xl font-bold px-3 py-2 leading-none flex items-center">0</span>
                 </div>
                 <div class="relative text-white px-6 pb-6 mt-6">
-                    <span class="block opacity-75 -mb-1">Current</span>
+                    <span class="block opacity-75 -mb-1">Active</span>
                     <div class="flex justify-between">
-                        <span class="block font-semibold text-xl">Games In Session</span>
+                        <span class="block font-semibold text-xl">Lobbies</span>
                     </div>
                 </div>
             </div>
@@ -108,12 +108,12 @@
                         style="background: radial-gradient(black, transparent 60%); transform: rotate3d(0, 0, 1, 20deg) scale3d(1, 0.6, 1); opacity: 0.2;">
                     </div>
                     <span
-                        class="block bg-white rounded-full text-purple-500 text-2xl font-bold px-3 py-2 leading-none flex items-center">1337</span>
+                        class="block bg-white rounded-full text-purple-500 text-2xl font-bold px-3 py-2 leading-none flex items-center">0</span>
                 </div>
                 <div class="relative text-white px-6 pb-6 mt-6">
-                    <span class="block opacity-75 -mb-1">Current</span>
+                    <span class="block opacity-75 -mb-1">Online</span>
                     <div class="flex justify-between">
-                        <span class="block font-semibold text-xl">Number of Players</span>
+                        <span class="block font-semibold text-xl">Players</span>
                     </div>
                 </div>
             </div>
@@ -129,54 +129,12 @@
                         style="background: radial-gradient(black, transparent 60%); transform: rotate3d(0, 0, 1, 20deg) scale3d(1, 0.6, 1); opacity: 0.2;">
                     </div>
                     <span
-                        class="block bg-white rounded-full text-purple-500 text-2xl font-bold px-3 py-2 leading-none flex items-center">1337</span>
+                        class="block bg-white rounded-full text-purple-500 text-2xl font-bold px-3 py-2 leading-none flex items-center">0</span>
                 </div>
                 <div class="relative text-white px-6 pb-6 mt-6">
                     <span class="block opacity-75 -mb-1">Most</span>
                     <div class="flex justify-between">
-                        <span class="block font-semibold text-xl">Common Name</span>
-                    </div>
-                </div>
-            </div>
-            <div class="flex-shrink-0 m-2 relative overflow-hidden bg-purple-500 rounded-lg max-w-xs shadow-lg">
-                <svg class="absolute bottom-0 left-0 mb-8" viewBox="0 0 375 283" fill="none"
-                    style="transform: scale(1.5); opacity: 0.1;">
-                    <rect x="159.52" y="175" width="152" height="152" rx="8" transform="rotate(-45 159.52 175)"
-                        fill="white" />
-                    <rect y="107.48" width="152" height="152" rx="8" transform="rotate(-45 0 107.48)" fill="white" />
-                </svg>
-                <div class="relative pt-10 px-10 flex items-center justify-center">
-                    <div class="block absolute w-48 h-48 bottom-0 left-0 -mb-24 ml-3"
-                        style="background: radial-gradient(black, transparent 60%); transform: rotate3d(0, 0, 1, 20deg) scale3d(1, 0.6, 1); opacity: 0.2;">
-                    </div>
-                    <span
-                        class="block bg-white rounded-full text-purple-500 text-2xl font-bold px-3 py-2 leading-none flex items-center">1337</span>
-                </div>
-                <div class="relative text-white px-6 pb-6 mt-6">
-                    <span class="block opacity-75 -mb-1">Next Expansion Pack</span>
-                    <div class="flex justify-between">
-                        <span class="block font-semibold text-xl">Rainbow chickens</span>
-                    </div>
-                </div>
-            </div>
-            <div class="flex-shrink-0 m-2 relative overflow-hidden bg-purple-500 rounded-lg max-w-xs shadow-lg">
-                <svg class="absolute bottom-0 left-0 mb-8" viewBox="0 0 375 283" fill="none"
-                    style="transform: scale(1.5); opacity: 0.1;">
-                    <rect x="159.52" y="175" width="152" height="152" rx="8" transform="rotate(-45 159.52 175)"
-                        fill="white" />
-                    <rect y="107.48" width="152" height="152" rx="8" transform="rotate(-45 0 107.48)" fill="white" />
-                </svg>
-                <div class="relative pt-10 px-10 flex items-center justify-center">
-                    <div class="block absolute w-48 h-48 bottom-0 left-0 -mb-24 ml-3"
-                        style="background: radial-gradient(black, transparent 60%); transform: rotate3d(0, 0, 1, 20deg) scale3d(1, 0.6, 1); opacity: 0.2;">
-                    </div>
-                    <span
-                        class="block bg-white rounded-full text-purple-500 text-2xl font-bold px-3 py-2 leading-none flex items-center">1337</span>
-                </div>
-                <div class="relative text-white px-6 pb-6 mt-6">
-                    <span class="block opacity-75 -mb-1">Most common</span>
-                    <div class="flex justify-between">
-                        <span class="block font-semibold text-xl">Card Stolen</span>
+                        <span class="block font-semibold text-xl">Common</span>
                     </div>
                 </div>
             </div>
