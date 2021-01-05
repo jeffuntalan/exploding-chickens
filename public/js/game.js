@@ -25,12 +25,13 @@ let session_player_id = undefined;
 //Update game_data
 function update_game() {
     socket.emit('retrieve-game', {
-        slug: window.location.pathname.substr(6)
+        slug: window.location.pathname.substr(6),
+        player_id: localStorage.getItem('ec_session').player_id
     })
 }
 
 //Socket.io on game-data
-socket.on('game-data', function (data) {
+socket.on(window.location.pathname.substr(6) + "_" + localStorage.getItem('ec_session').player_id, function (data) {
     console.log(data);
     game_data = data;
     //Check to see if we have to set up the game
@@ -40,37 +41,38 @@ socket.on('game-data', function (data) {
     }
 });
 
-//Setup game
-function setup_game() {
+//Local storage pre check
+function storage_check() {
     //Get browser session details
-    if (localStorage.getItem('ec_session')) {
-        //Check if game_id matches
-        if (localStorage.getItem('ec_session').game_id === game_data._id) {
-            for (let i = 0; i > game_data.players.length; i++) {
-                //Make sure player exists
-                if (game_data.players[i]._id ===  localStorage.getItem('ec_session').player_id) {
-                    session_player_id = game_data.players[i]._id;
-                    if (game_data.players[i].status === "host") {
-                        current_player_host = true;
-                    } else {
-                        current_player_host = false;
-                    }
-                    break;
-                }
-            }
-        } else {
-            //Reset local storage since game expired
-            localStorage.setItem('ec_session', JSON.stringify({
-                game_id: game_data._id,
-                player_id: undefined
-            }));
-        }
-    } else {
+    if (!localStorage.getItem('ec_session')) {
         //Reset local storage since game data doesn't exist
         localStorage.setItem('ec_session', JSON.stringify({
-            game_id: game_data._id,
+            slug: window.location.pathname.substr(6),
             player_id: undefined
         }));
+    } else if (localStorage.getItem('ec_session').slug !== window.location.pathname.substr(6)) {
+        //Reset local storage since slugs don't match
+        localStorage.setItem('ec_session', JSON.stringify({
+            slug: window.location.pathname.substr(6),
+            player_id: undefined
+        }));
+    }
+}
+
+//Setup game
+function setup_game() {
+    //Make sure the player exists in the game
+    for (let i = 0; i > game_data.players.length; i++) {
+        //Make sure player exists
+        if (game_data.players[i]._id ===  localStorage.getItem('ec_session').player_id) {
+            session_player_id = game_data.players[i]._id;
+            if (game_data.players[i].status === "host") {
+                current_player_host = true;
+            } else {
+                current_player_host = false;
+            }
+            break;
+        }
     }
     //Update players on UI
     update_players();
@@ -78,10 +80,6 @@ function setup_game() {
 
 //Update players
 function update_players() {
-    //Sort by player_seat
-    game_data.players.sort(function(a, b) {
-        return a.seat > b.seat;
-    });
     //For each player, append to respective positions
     for (let i = 0; i < game_data.players.length; i++) {
         console.log(game_data.players[i]);
@@ -148,13 +146,9 @@ function update_players() {
             "        " + game_data.players[i].nickname + " " + status_dot(game_data.players[i].status, game_data.players[i].connection) + "\n" +
             "    </h1>\n" +
             "    <div class=\"flex flex-col items-center -space-y-3\">\n" +
-            "        <img class=\"h-12 w-12 rounded-full\" src=\"https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80\" alt=\"\">\n" +
+            "        <img class=\"h-12 w-12 rounded-full\" src=\"" + game_data.players[i].avatar + "\" alt=\"\">\n" +
             "        <div class=\"-space-x-4 rotate-12\">\n" +
-            "            <div class=\"transform inline-block rounded-md bg-gray-700 shadow-md h-5 w-4 -rotate-12\"><h1 class=\"text-gray-700 text-sm\">1</h1></div>\n" +
-            "            <div class=\"transform inline-block rounded-md bg-gray-600 shadow-md h-5 w-4\"><h1 class=\"text-gray-600 text-sm\">1</h1></div>\n" +
-            "            <div class=\"transform inline-block rounded-md bg-gray-500 shadow-md h-5 w-4 rotate-12\">\n" +
-            "                <h1 class=\"text-white text-sm\">3</h1>\n" +
-            "            </div>\n" +
+            cards_icon(game_data.players[i].card_num) +
             "        </div>\n" +
             "    </div>\n" +
             "</div>";
@@ -179,6 +173,33 @@ function update_players() {
         document.getElementById("sidebar_players").innerHTML = sidebar_players_payload;
         document.getElementById("topbar_players").innerHTML = topbar_players_payload;
         document.getElementById("center_players").innerHTML = center_players_payload;
+    }
+}
+
+//Return avatar icon cards
+function cards_icon(card_num) {
+    if (card_num === 2) {
+        return "<div class=\"transform inline-block rounded-md bg-gray-600 shadow-md h-5 w-4 -rotate-6\"><h1 class=\"text-gray-600 text-sm\">1</h1></div>\n" +
+            "<div class=\"transform inline-block rounded-md bg-gray-500 shadow-md h-5 w-4 rotate-6\">\n" +
+            "    <h1 class=\"text-white text-sm\">" + card_num + "</h1>\n" +
+            "</div>\n";
+    } else if (card_num === 3) {
+        return "<div class=\"transform inline-block rounded-md bg-gray-700 shadow-md h-5 w-4 -rotate-12\"><h1 class=\"text-gray-700 text-sm\">1</h1></div>\n" +
+            "<div class=\"transform inline-block rounded-md bg-gray-600 shadow-md h-5 w-4\"><h1 class=\"text-gray-600 text-sm\">1</h1></div>\n" +
+            "<div class=\"transform inline-block rounded-md bg-gray-500 shadow-md h-5 w-4 rotate-12\">\n" +
+            "    <h1 class=\"text-white text-sm\">" + card_num + "</h1>\n" +
+            "</div>\n";
+    } else if (card_num >= 4) {
+        return "<div class=\"transform inline-block rounded-md bg-gray-800 shadow-md h-5 w-4\" style=\"--tw-rotate: -18deg\"><h1 class=\"text-gray-700 text-sm\">1</h1></div>\n" +
+            "<div class=\"transform inline-block rounded-md bg-gray-700 shadow-md h-5 w-4 -rotate-6\"><h1 class=\"text-gray-700 text-sm\">1</h1></div>\n" +
+            "<div class=\"transform inline-block rounded-md bg-gray-600 shadow-md h-5 w-4 rotate-6\"><h1 class=\"text-gray-600 text-sm\">1</h1></div>\n" +
+            "<div class=\"transform inline-block rounded-md bg-gray-500 shadow-md h-5 w-4\" style=\"--tw-rotate: 18deg\">\n" +
+            "    <h1 class=\"text-white text-sm\">" + card_num + "</h1>\n" +
+            "</div>\n";
+    } else {
+        return "<div class=\"transform inline-block rounded-md bg-gray-500 shadow-md h-5 w-4\">\n" +
+            "    <h1 class=\"text-white text-sm\">" + card_num + "</h1>\n" +
+            "</div>\n";
     }
 }
 

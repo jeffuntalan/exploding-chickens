@@ -35,7 +35,7 @@ module.exports = function (fastify) {
         spinner.succeed(console_head + `Imported ` + chalk.bold(card_count) + ` cards from base.json`);
         //Create host player
         spinner.info(console_head + `Creating host player`);
-        let player_host = await player_actions.modify_player(sample_game_id, undefined, req.body.nickname, 0, "host", "disconnected").catch(e => {failed_step(e, reply)});
+        let player_host = await player_actions.modify_player(sample_game_id, undefined, req.body.nickname, 0, "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80", "host", "disconnected").catch(e => {failed_step(e, reply)});
         spinner.succeed(console_head + `Created host player with id: ` + player_host);
         //Redirect to game url
         reply.redirect("/game/" + game_details["slug"]);
