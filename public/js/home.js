@@ -19,7 +19,6 @@ function join_game_modal() {
             "        type=\"text\" id=\"game_slug\" placeholder=\"Please enter a game code\">\n" +
             "</div>",
         showCancelButton: true,
-        allowEnterKey: true,
         confirmButtonColor: '#fbbf24',
         cancelButtonColor: '#374151',
         cancelButtonText: 'Spectate',
@@ -56,6 +55,19 @@ function invalid_game_slug() {
         cancelButtonText: 'Spectate',
         confirmButtonText: 'Join Game',
         icon: "error"
+    }).then((result) => {
+        if (result.isConfirmed) {
+            //Get game slug from input
+            let passed_slug = document.getElementById("game_slug").value;
+            //Input validation
+            if (passed_slug !== "" && /^[a-z-]+$/.test(passed_slug)) {
+                socket.emit('check-slug', {
+                    slug: passed_slug
+                });
+            } else {
+                invalid_game_slug();
+            }
+        }
     })
 }
 
