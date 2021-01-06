@@ -32,7 +32,7 @@ function update_game() {
 }
 
 //Socket.io on game-data
-socket.on(window.location.pathname.substr(6) + "_" + localStorage.getItem('ec_session').player_id, function (data) {
+socket.on(window.location.pathname.substr(6), function (data) {
     console.log(data);
     game_data = data;
     //Check to see if we have to set up the game
@@ -109,14 +109,18 @@ function setup_prompt(err, passed_nickname) {
     }).then((result) => {
         if (result.isConfirmed) {
             //Validate input
-            let nickname = document.getElementById("nickname_swal").value;
-            if (nickname === "" || !/^[a-zA-Z]/.test(nickname)) {
+            let selected_nickname = document.getElementById("nickname_swal").value;
+            if (selected_nickname === "" || !/^[a-zA-Z]/.test(selected_nickname)) {
                 setup_prompt("<i class=\"fas fa-exclamation-triangle\"></i> Please enter a valid nickname (letters only)", "");
             } else if (selected_avatar === "default.png") {
-                setup_prompt("<i class=\"fas fa-exclamation-triangle\"></i> Please select an avatar", nickname);
+                setup_prompt("<i class=\"fas fa-exclamation-triangle\"></i> Please select an avatar", selected_nickname);
             } else {
                 //Create new player
-
+                socket.emit('create-player', {
+                    slug: window.location.pathname.substr(6),
+                    nickname: selected_nickname,
+                    avatar: selected_avatar
+                })
             }
         }
     })
