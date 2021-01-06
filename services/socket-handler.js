@@ -30,7 +30,7 @@ module.exports = function (fastify) {
         // Desc : runs when game data is requested from the client
         // Author(s) : RAk3rman
         socket.on('retrieve-game', async function (data) {
-            spinner.start(`${chalk.bold.blue('Socket')}: ${chalk.dim.cyan('retrieve-game')} Preparing to send game data with slug: ` + data.slug  + ` and player_id: ` + data.player_id);
+            spinner.start(`${chalk.bold.blue('Socket')}: ${chalk.dim.cyan('retrieve-game')} Preparing to send game with slug: ` + data.slug);
             //Send updated game data
             await update_game(data.slug, socket.id, "retrieve-game");
         })
@@ -39,44 +39,21 @@ module.exports = function (fastify) {
         // Desc : runs when a new player to be created
         // Author(s) : RAk3rman
         socket.on('create-player', async function (data) {
-            spinner.start(`${chalk.bold.blue('Socket')}: ${chalk.dim.cyan('retrieve-game')} Preparing to send game data with slug: ` + data.slug  + ` and player_id: ` + data.player_id);
-            //Get raw game details from mongodb
+            spinner.start(`${chalk.bold.blue('Socket')}: ${chalk.dim.cyan('create-player')} Preparing to create player for game with slug: ` + data.slug + `, nickname: ` + data.nickname + `, avatar: ` + data.avatar);
+            //Get game details
             let raw_game_details = await game_actions.game_details_slug(data.slug);
-            //Prepare pretty game details
-            let pretty_game_details = {
-                players: [],
-                discard_deck: [],
-                slug: raw_game_details["slug"],
-                created: moment(raw_game_details["created"]).calendar(),
-                status: raw_game_details["status"],
-                seat_playing: raw_game_details["seat_playing"],
-                turn_direction: raw_game_details["turn_direction"],
-                turns_remaining: raw_game_details["turns_remaining"]
+            //Determine host assignment
+            let created_player;
+            if (raw_game_details["players"].length === 0) { //Add player as host
+                created_player = await player_actions.modify_player(raw_game_details["_id"], undefined, data.nickname, 0, data.avatar, "host", "idle", "offline");
+            } else { //Add as player
+                created_player = await player_actions.modify_player(raw_game_details["_id"], undefined, data.nickname, raw_game_details["players"].length, data.avatar, "player", "idle", "offline");
             }
-            //Sort and add players to json array
-            raw_game_details["players"].sort(function(a, b) {
-                return a.seat > b.seat;
-            });
-            //Loop through each player
-            for (let i = 0; i < raw_game_details["players"].length; i++) {
-                let card_array = filter_cards(raw_game_details["players"][i]._id, raw_game_details["cards"]);
-                //Found current player, return extended details
-                pretty_game_details.players.push({
-                    _id: raw_game_details["players"][i]._id,
-                    cards: card_array,
-                    card_num: card_array.length,
-                    avatar: raw_game_details["players"][i].avatar,
-                    status: raw_game_details["players"][i].status,
-                    connection: raw_game_details["players"][i].connection,
-                    nickname: raw_game_details["players"][i].nickname,
-                    seat: raw_game_details["players"][i].seat,
-                });
-            }
-            //Get discard deck
-            pretty_game_details.discard_deck = filter_cards("discard_deck", raw_game_details["cards"]);
-            //Send game-data
-            fastify.io.to(socket.id).emit(data.slug, pretty_game_details);
-            spinner.succeed(`${chalk.bold.blue('Socket')}: ${chalk.dim.cyan('retrieve-game')} Sent game data with slug: ` + data.slug + ` and player_id: ` + data.player_id);
+            //Return player_id to client
+            fastify.io.to(socket.id).emit("player-created", created_player);
+            spinner.succeed(`${chalk.bold.blue('Socket')}: ${chalk.dim.cyan('create-player')} Created new player for game with slug: ` + data.slug + ` and player_id: ` + created_player);
+            //Update clients
+            await update_game(data.slug, "", "create-player");
         })
     })
 
@@ -122,7 +99,7 @@ module.exports = function (fastify) {
         if (target === "") {
             fastify.io.emit(slug, pretty_game_details);
         } else {
-            fastify.io.to(socket.id).emit(slug, pretty_game_details);
+            fastify.io.to(target).emit(slug, pretty_game_details);
         }
         spinner.succeed(`${chalk.bold.blue('Socket')}: ${chalk.dim.cyan(source)} Sent game data with slug: ` + slug);
     }

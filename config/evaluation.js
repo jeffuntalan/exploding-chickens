@@ -46,17 +46,17 @@ exports.player_test = async function () {
     spinner.info(console_head + `${chalk.bold('Evaluating player actions')}`);
     //Create 4 sample players
     spinner.info(console_head + `Creating sample players (4 total)`);
-    let player_a = await player_actions.modify_player(sample_game_id, undefined, "Player X", 0, "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80", "host", "offline").catch(e => {failed_test(e)});
+    let player_a = await player_actions.modify_player(sample_game_id, undefined, "Player X", 0, "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80", "host", "idle", "offline").catch(e => {failed_test(e)});
     spinner.succeed(console_head + `Created Player X (aka A) (1 of 4) with id: ` + player_a);
-    let player_b = await player_actions.modify_player(sample_game_id, undefined, "Player B", 2, "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80", "player", "online").catch(e => {failed_test(e)});
+    let player_b = await player_actions.modify_player(sample_game_id, undefined, "Player B", 2, "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80", "player", "idle", "online").catch(e => {failed_test(e)});
     spinner.succeed(console_head + `Created Player B (2 of 4) with id: ` + player_b);
-    let player_c = await player_actions.modify_player(sample_game_id, undefined, "Player C", 3, "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80", "player", "online").catch(e => {failed_test(e)});
+    let player_c = await player_actions.modify_player(sample_game_id, undefined, "Player C", 3, "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80", "player", "idle", "online").catch(e => {failed_test(e)});
     spinner.succeed(console_head + `Created Player C (3 of 4) with id: ` + player_c);
-    let player_d = await player_actions.modify_player(sample_game_id, undefined, "Player D", 4, "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80", "player", "online").catch(e => {failed_test(e)});
+    let player_d = await player_actions.modify_player(sample_game_id, undefined, "Player D", 4, "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80", "player", "idle", "online").catch(e => {failed_test(e)});
     spinner.succeed(console_head + `Created Player D (4 of 4) with id: ` + player_d);
     //Test player modification
     spinner.info(console_head + `Modifying Player X (aka A) and verifying changes with id: ` + player_a);
-    await player_actions.modify_player(sample_game_id, player_a, "Player A", 1, "host", "online").catch(e => {failed_test(e)});
+    await player_actions.modify_player(sample_game_id, player_a, "Player A", 1, "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80", "host", "idle", "online").catch(e => {failed_test(e)});
     spinner.succeed(console_head + `Modified Player X (aka A) with id: ` + player_a);
     let game_details = await game_actions.game_details_id(sample_game_id);
     if (game_details.players.id(player_a).nickname === "Player A" || game_details.players.id(player_a).seat === 1 || game_details.players.id(player_a).connection === "online") {

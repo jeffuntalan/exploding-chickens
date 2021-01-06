@@ -20,14 +20,13 @@ let game_data;
 let in_setup = true;
 let current_player_host = false;
 let selected_avatar = "default.png";
-//Session player_id
+let prompt_open = false;
 let session_player_id = undefined;
 
 //Update game_data
-function update_game() {
+function request_game_update() {
     socket.emit('retrieve-game', {
-        slug: window.location.pathname.substr(6),
-        player_id: localStorage.getItem('ec_session').player_id
+        slug: window.location.pathname.substr(6)
     })
 }
 
@@ -39,7 +38,24 @@ socket.on(window.location.pathname.substr(6), function (data) {
     if (in_setup === true) {
         in_setup = false;
         setup_game();
+    } else {
+        //Update game
+        update_interface();
     }
+    //Check to see if prompt window is open to update avatars
+    if (prompt_open) {
+        update_avatar_options();
+    }
+});
+
+//Socket.io on player-created
+socket.on("player-created", function (data) {
+    console.log(data);
+    session_player_id = data;
+    localStorage.setItem('ec_session', JSON.stringify({
+        slug: window.location.pathname.substr(6),
+        player_id: data
+    }));
 });
 
 //Local storage pre check
@@ -51,7 +67,7 @@ function storage_check() {
             slug: window.location.pathname.substr(6),
             player_id: undefined
         }));
-    } else if (localStorage.getItem('ec_session').slug !== window.location.pathname.substr(6)) {
+    } else if (JSON.parse(localStorage.getItem('ec_session')).slug !== window.location.pathname.substr(6)) {
         //Reset local storage since slugs don't match
         localStorage.setItem('ec_session', JSON.stringify({
             slug: window.location.pathname.substr(6),
@@ -63,9 +79,9 @@ function storage_check() {
 //Setup game
 function setup_game() {
     //Make sure the player exists in the game
-    for (let i = 0; i > game_data.players.length; i++) {
+    for (let i = 0; i < game_data.players.length; i++) {
         //Make sure player exists
-        if (game_data.players[i]._id ===  localStorage.getItem('ec_session').player_id) {
+        if (game_data.players[i]._id === JSON.parse(localStorage.getItem('ec_session')).player_id) {
             session_player_id = game_data.players[i]._id;
             if (game_data.players[i].status === "host") {
                 current_player_host = true;
@@ -79,12 +95,19 @@ function setup_game() {
     if (session_player_id === undefined) {
         setup_prompt();
     }
+    //Update player interface
+    update_interface();
+}
+
+//Update player interface
+function update_interface() {
     //Update players on UI
     update_players();
 }
 
 //Prompt to set player settings
 function setup_prompt(err, passed_nickname) {
+    prompt_open = true;
     if (err === undefined) {err = "";}
     if (passed_nickname === undefined) {passed_nickname = "";}
     Swal.fire({
@@ -110,11 +133,23 @@ function setup_prompt(err, passed_nickname) {
         if (result.isConfirmed) {
             //Validate input
             let selected_nickname = document.getElementById("nickname_swal").value;
-            if (selected_nickname === "" || !/^[a-zA-Z]/.test(selected_nickname)) {
+            if (game_data.status === "in_game") {
+                prompt_open = false;
+                Swal.fire({
+                    html: "<h1 class=\"text-4xl text-gray-700 mt-3\" style=\"font-family: Bebas Neue\"><a class=\"text-yellow-400\"><i class=\"fas fa-exclamation-triangle\"></i> EXPLODING</a> CHICKENS</h1>\n" +
+                        "<h1 class=\"text-sm text-gray-700\">Game ID: " + game_data.slug + " | Created: " + game_data.created + "</a><br><br><a class=\"text-red-500\">" + err + "</a></h1>\n" +
+                        "<h1 class=\"text-md text-gray-700\">The game has already started. Please refresh this page when the lobby is open.</h1>\n",
+                    showConfirmButton: false,
+                    showCancelButton: true,
+                    cancelButtonColor: '#374151',
+                    cancelButtonText: 'Spectate'
+                })
+            } else if (selected_nickname === "" || !/^[a-zA-Z]/.test(selected_nickname)) {
                 setup_prompt("<i class=\"fas fa-exclamation-triangle\"></i> Please enter a valid nickname (letters only)", "");
             } else if (selected_avatar === "default.png") {
                 setup_prompt("<i class=\"fas fa-exclamation-triangle\"></i> Please select an avatar", selected_nickname);
             } else {
+                prompt_open = false;
                 //Create new player
                 socket.emit('create-player', {
                     slug: window.location.pathname.substr(6),
@@ -145,6 +180,9 @@ function update_avatar_options() {
             options_payload += "<div class=\"flex-none block text-center m-2\">\n" +
                 "    <img class=\"h-16 w-16 rounded-full ring-2 ring-offset-2 ring-yellow-400 opacity-30\" src=\"/public/avatars/" + options[i] + "\" alt=\"\">\n" +
                 "</div>\n";
+            if (selected_avatar === options[i]) {
+                selected_avatar = "default.png";
+            }
         } else if (selected_avatar === options[i]) { //Current selection, green halo
             options_payload += "<div class=\"flex-none block text-center m-2\">\n" +
                 "    <img class=\"h-16 w-16 rounded-full ring-2 ring-offset-2 ring-green-500\" src=\"/public/avatars/" + options[i] + "\" alt=\"\">\n" +
@@ -168,8 +206,10 @@ function pick_avatar(selection) {
 //Update players
 function update_players() {
     //For each player, append to respective positions
+    let sidebar_players_payload = "";
+    let topbar_players_payload = "";
+    let center_players_payload = "";
     for (let i = 0; i < game_data.players.length; i++) {
-        console.log(game_data.players[i]);
         //Append to sidebar, information
         let actions = "";
         if (game_data.players[i]._id === session_player_id) {
@@ -209,7 +249,6 @@ function update_players() {
                 "</div>";
         }
         //Append to sidebar, players
-        let sidebar_players_payload = "";
         sidebar_players_payload += "<div class=\"flex items-center justify-between mb-2\">\n" +
             "    <div class=\"flex-1 min-w-0\">\n" +
             "        <h3 class=\"text-md font-bold text-gray-900 truncate\">\n" +
@@ -224,16 +263,14 @@ function update_players() {
             actions +
             "</div>";
         //Append to topbar, players
-        let topbar_players_payload = "";
-        topbar_players_payload += "<img class=\"inline-block h-6 w-6 rounded-full ring-2 ring-white\" src=\"https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80\" alt=\"\">";
+        topbar_players_payload += "<img class=\"inline-block h-6 w-6 rounded-full ring-2 ring-white\" src=\"/public/avatars/" + game_data.players[i].avatar + "\" alt=\"\">";
         //Append to center
-        let center_players_payload = "";
         center_players_payload += "<div class=\"block text-center\">\n" +
             "    <h1 class=\"text-gray-600 font-medium text-sm\">\n" +
             "        " + game_data.players[i].nickname + " " + status_dot(game_data.players[i].status, game_data.players[i].connection) + "\n" +
             "    </h1>\n" +
             "    <div class=\"flex flex-col items-center -space-y-3\">\n" +
-            "        <img class=\"h-12 w-12 rounded-full\" src=\"" + game_data.players[i].avatar + "\" alt=\"\">\n" +
+            "        <img class=\"h-12 w-12 rounded-full\" src=\"/public/avatars/" + game_data.players[i].avatar + "\" alt=\"\">\n" +
             "        <div class=\"-space-x-4 rotate-12\">\n" +
             cards_icon(game_data.players[i].card_num) +
             "        </div>\n" +
