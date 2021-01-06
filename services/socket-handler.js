@@ -41,7 +41,6 @@ module.exports = function (fastify) {
         socket.on('check-slug', async function (data) {
             spinner.start(`${chalk.bold.blue('Socket')}: ${chalk.dim.cyan('retrieve-game')} Preparing to send game with slug: ` + data.slug);
             //Check to see if game exists
-            console.log(await game_actions.game_details_slug(data.slug));
             if (await game_actions.game_details_slug(data.slug) === null) {
                 fastify.io.to(socket.id).emit("slug-response", false)
             } else {
@@ -70,6 +69,13 @@ module.exports = function (fastify) {
             //Update clients
             await update_game(data.slug, "", "create-player");
         })
+
+        // Name : socket.on.disconnect
+        // Desc : runs when the client disconnects
+        // Author(s) : RAk3rman
+        socket.on('disconnect', function () {
+            console.log('socketHandler: User Disconnected');
+        });
     })
 
     // Name : update_game(slug, target, source)

@@ -81,7 +81,13 @@ function setup_game() {
     for (let i = 0; i < game_data.players.length; i++) {
         //Make sure player exists
         if (game_data.players[i]._id === JSON.parse(localStorage.getItem('ec_session')).player_id) {
+            //Update session_player_id
             session_player_id = game_data.players[i]._id;
+            //Tell server that a valid player connected
+            socket.emit('player-connected', {
+                player_id: window.location.pathname.substr(6)
+            })
+            //Check to see if the player is the host
             if (game_data.players[i].status === "host") {
                 current_player_host = true;
             } else {
@@ -332,7 +338,7 @@ function status_dot(status, connection) {
         return "<span class=\"animate-pulse inline-flex rounded-full h-1.5 w-1.5 mb-0.5 align-middle bg-red-500\"></span>"
     } else if (connection === "connected") {
         return "<span class=\"animate-pulse inline-flex rounded-full h-1.5 w-1.5 mb-0.5 align-middle bg-green-500\"></span>"
-    } else if (connection === "disconnected") {
+    } else if (connection === "offline") {
         return "<span class=\"animate-pulse inline-flex rounded-full h-1.5 w-1.5 mb-0.5 align-middle bg-yellow-400\"></span>"
     } else {
         return "<span class=\"animate-pulse inline-flex rounded-full h-1.5 w-1.5 mb-0.5 align-middle bg-gray-500\"></span>"
