@@ -84,14 +84,16 @@ function setup_game() {
 }
 
 //Prompt to set player settings
-function setup_prompt(err) {
+function setup_prompt(err, passed_nickname) {
+    if (err === undefined) {err = "";}
+    if (passed_nickname === undefined) {passed_nickname = "";}
     Swal.fire({
         html: "<h1 class=\"text-4xl text-gray-700 mt-3\" style=\"font-family: Bebas Neue\">Welcome to <a class=\"text-yellow-400\">EXPLODING</a> CHICKENS</h1>\n" +
-            "<h1 class=\"text-sm text-gray-700\">Game ID: " + game_data.slug + " | Created: " + game_data.created + "</a><br><br>a class=\"text-red-500\">Error</bra></h1>\n" +
+            "<h1 class=\"text-sm text-gray-700\">Game ID: " + game_data.slug + " | Created: " + game_data.created + "</a><br><br><a class=\"text-red-500\">" + err + "</a></h1>\n" +
             "<div class=\"my-3 flex w-full max-w-sm mx-auto space-x-3 shadow-md\">\n" +
             "    <input\n" +
             "        class=\"text-center flex-1 appearance-none border border-transparent w-full py-2 px-10 bg-white text-gray-700 placeholder-gray-400 rounded-sm text-base border-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500\"\n" +
-            "        type=\"text\" name=\"nickname\" placeholder=\"What's your name?\">\n" +
+            "        type=\"text\" id=\"nickname_swal\" maxlength=\"12\" value=\"" + passed_nickname + "\" placeholder=\"What's your name?\">\n" +
             "</div>" +
             "<div class=\"flex flex-wrap justify-center items-center py-2\" id=\"avatar_options_swal\">\n" +
             "</div>\n",
@@ -106,11 +108,16 @@ function setup_prompt(err) {
         }
     }).then((result) => {
         if (result.isConfirmed) {
-            Swal.fire(
-                'Deleted!',
-                'Your file has been deleted.',
-                'success'
-            )
+            //Validate input
+            let nickname = document.getElementById("nickname_swal").value;
+            if (nickname === "" || !/^[a-zA-Z]/.test(nickname)) {
+                setup_prompt("<i class=\"fas fa-exclamation-triangle\"></i> Please enter a valid nickname (letters only)", "");
+            } else if (selected_avatar === "default.png") {
+                setup_prompt("<i class=\"fas fa-exclamation-triangle\"></i> Please select an avatar", nickname);
+            } else {
+                //Create new player
+
+            }
         }
     })
 }
