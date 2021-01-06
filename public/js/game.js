@@ -50,7 +50,6 @@ socket.on(window.location.pathname.substr(6), function (data) {
 
 //Socket.io on player-created
 socket.on("player-created", function (data) {
-    console.log(data);
     session_player_id = data;
     localStorage.setItem('ec_session', JSON.stringify({
         slug: window.location.pathname.substr(6),

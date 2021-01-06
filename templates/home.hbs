@@ -31,14 +31,10 @@
                 <p class="my-15 text-sm md:text-lg font-sans">An online alternative to a card game inspired by Russian
                     Roulette.</p>
                 {{!-- Buttons --}}
-                <div>
-                    <button
-                        class="shadow-sm mt-5 py-2 px-28 bg-transparent text-gray-600 font-semibold border border-gray-600 rounded-2xl hover:bg-blue-600 hover:text-white hover:border-transparent transition ease-in duration-200 transform hover:-translate-y-1">New Game</button>
-                </div>
-                <div>
-                    <button type="button" onclick=sample_modal()
-                        class="shadow-sm mt-1.5 py-2 px-28 bg-transparent text-gray-600 font-semibold border border-gray-600 rounded-2xl hover:bg-blue-600 hover:text-white hover:border-transparent transition ease-in duration-200 transform hover:translate-y-1">Join Lobby</button>
-                </div>
+                <form action="/game/create" method="POST" enctype="application/x-www-form-urlencoded">
+                    <button type="submit" class="shadow-sm mt-5 py-2 px-28 bg-transparent text-gray-600 font-semibold border border-gray-600 rounded-2xl hover:bg-blue-600 hover:text-white hover:border-transparent transition ease-in duration-200 transform hover:-translate-y-1">New Game</button>
+                </form>
+                <button type="button" onclick=sample_modal() class="shadow-sm mt-1.5 py-2 px-28 bg-transparent text-gray-600 font-semibold border border-gray-600 rounded-2xl hover:bg-blue-600 hover:text-white hover:border-transparent transition ease-in duration-200 transform hover:translate-y-1">Join Lobby</button>
             </div>
         </div>
     </div>
