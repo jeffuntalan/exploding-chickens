@@ -57,6 +57,23 @@ exports.modify_player = async function (game_id, player_id, p_nickname, p_seat, 
     }
 };
 
+// Name : player_actions.update_connection()
+// Desc : updates the connection for a target player
+// Author(s) : RAk3rman
+exports.update_connection = async function (game_id, player_id, p_connection) {
+    //Create new promise and return player id after saved
+    return await new Promise((resolve, reject) => {
+        //Update existing player and return player_id
+        game.findOneAndUpdate({ _id: game_id, "players._id": player_id }, {"$set": { "players.$.connection": p_connection }}, function (err) {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(player_id);
+            }
+        });
+    })
+};
+
 // Name : player_actions.create_hand(game)
 // Desc : given a game_id, gives each player a defuse card and 4 random cards from the draw_deck
 // Author(s) : RAk3rman
