@@ -34,7 +34,7 @@
                 <form action="/game/create" method="POST" enctype="application/x-www-form-urlencoded">
                     <button type="submit" class="shadow-sm mt-5 py-2 px-28 bg-transparent text-gray-600 font-semibold border border-gray-600 rounded-2xl hover:bg-blue-600 hover:text-white hover:border-transparent transition ease-in duration-200 transform hover:-translate-y-1">New Game</button>
                 </form>
-                <button type="button" onclick=sample_modal() class="shadow-sm mt-1.5 py-2 px-28 bg-transparent text-gray-600 font-semibold border border-gray-600 rounded-2xl hover:bg-blue-600 hover:text-white hover:border-transparent transition ease-in duration-200 transform hover:translate-y-1">Join Lobby</button>
+                <button type="button" onclick=join_game_modal() class="shadow-sm mt-1.5 py-2 px-28 bg-transparent text-gray-600 font-semibold border border-gray-600 rounded-2xl hover:bg-blue-600 hover:text-white hover:border-transparent transition ease-in duration-200 transform hover:translate-y-1">Join Lobby</button>
             </div>
         </div>
     </div>
@@ -246,7 +246,7 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
 <script src="/public/js/home.js"></script>
 <script>
-
+    join_game_modal();
     function openModal(key) {
         document.getElementById(key).showModal();
         document.body.setAttribute('style', 'overflow: hidden;');

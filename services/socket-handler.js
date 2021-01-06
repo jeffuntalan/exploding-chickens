@@ -30,7 +30,7 @@ module.exports = function (fastify) {
         // Desc : runs when game data is requested from the client
         // Author(s) : RAk3rman
         socket.on('retrieve-game', async function (data) {
-            spinner.start(`${chalk.bold.blue('Socket')}: ${chalk.dim.cyan('retrieve-game')} Preparing to send game with slug: ` + data.slug);
+            spinner.start(`${chalk.bold.blue('Socket')}: ${chalk.dim.cyan('check-slug')} Checking to see if game exists with slug: ` + data.slug);
             //Send updated game data
             await update_game(data.slug, socket.id, "retrieve-game");
         })
@@ -40,8 +40,14 @@ module.exports = function (fastify) {
         // Author(s) : RAk3rman
         socket.on('check-slug', async function (data) {
             spinner.start(`${chalk.bold.blue('Socket')}: ${chalk.dim.cyan('retrieve-game')} Preparing to send game with slug: ` + data.slug);
-            //Send updated game data
-            await update_game(data.slug, socket.id, "retrieve-game");
+            //Check to see if game exists
+            console.log(await game_actions.game_details_slug(data.slug));
+            if (await game_actions.game_details_slug(data.slug) === null) {
+                fastify.io.to(socket.id).emit("slug-response", false)
+            } else {
+                fastify.io.to(socket.id).emit("slug-response", data.slug)
+            }
+            spinner.succeed(`${chalk.bold.blue('Socket')}: ${chalk.dim.cyan('retrieve-game')} Sent back validity for slug: ` + data.slug);
         })
 
         // Name : socket.on.create-player
