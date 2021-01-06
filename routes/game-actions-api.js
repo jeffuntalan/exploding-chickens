@@ -42,4 +42,11 @@ module.exports = function (fastify) {
         spinner.fail(`${chalk.bold.red('API')}: ${chalk.red('FAIL')} Failed previous step with error message: "` + desc + `"`);
         reply.code(500);
     }
+    //Spamming too many games
+    fastify.setErrorHandler(function (error, request, reply) {
+        if (reply.statusCode === 429) {
+            reply.status(error.statusCode).view('/templates/error_internal.hbs', { error_limit: error.statusCode });
+        }
+        reply.send(error)
+    })
 };
