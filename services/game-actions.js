@@ -267,30 +267,35 @@ exports.card_call = async function (game_id, card_id, player_id) {
     //Get game details
     let game_details = await game_actions.game_details_id(game_id);
     //Create new promise
-    if (card_id.includes("shuffle")) {
-        await card_actions.shuffle_draw_deck(game_id, card_id);
-    }
-    if (card_id.includes("attack")) {
-        await card_actions.attack(game_id, card_id);
-    }
-    if (card_id.includes("skip")) {
-        await card_actions.skip(game_id, card_id);
-    }
-    if (card_id.includes("reverse")) {
-        await card_actions.reverse(game_id, card_id);
-    }
-    if (card_id.includes("favor")) {
-        await card_actions.favor(game_id, card_id, player_id);
-    }
-    let count = 0;
-    let bucket = []
-    for (let i = 0; i <= game_details.cards.length - 1; i++) {
-        if (game_details.cards[i].assignment === player_id && game_details.cards[i].action === "chicken") {
-            bucket.push(game_details.cards[i]._id);
-            count++;
+    //Create new promise and return created_game after saved
+    return await new Promise((resolve, reject) => {
+        if (card_id.includes("shuffle")) {
+            card_actions.shuffle_draw_deck(game_id, card_id);
         }
-    }
-    if (count >= 2) {
-        await card_actions.double(game_id, bucket[0], bucket[1], player_id);
-    }
+        if (card_id.includes("attack")) {
+            card_actions.attack(game_id, card_id);
+        }
+        if (card_id.includes("skip")) {
+            card_actions.skip(game_id, card_id);
+        }
+        if (card_id.includes("reverse")) {
+            card_actions.reverse(game_id, card_id);
+        }
+        if (card_id.includes("favor")) {
+            card_actions.favor(game_id, card_id, player_id);
+        }
+        let count = 0;
+        let bucket = []
+        for (let i = 0; i <= game_details.cards.length - 1; i++) {
+            if (game_details.cards[i].assignment === player_id && game_details.cards[i].action === "chicken") {
+                bucket.push(game_details.cards[i]._id);
+                count++;
+            }
+        }
+        if (count >= 2) {
+            card_actions.double(game_id, bucket[0], bucket[1], player_id);
+        }
+        resolve();
+    });
+
 }
