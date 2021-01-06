@@ -85,7 +85,8 @@ function setup_game() {
             session_player_id = game_data.players[i]._id;
             //Tell server that a valid player connected
             socket.emit('player-connected', {
-                player_id: window.location.pathname.substr(6)
+                slug: window.location.pathname.substr(6),
+                player_id: session_player_id
             })
             //Check to see if the player is the host
             if (game_data.players[i].status === "host") {
