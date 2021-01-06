@@ -19,6 +19,7 @@ function join_game_modal() {
             "        type=\"text\" id=\"game_slug\" placeholder=\"Please enter a game code\">\n" +
             "</div>",
         showCancelButton: true,
+        allowEnterKey: true,
         confirmButtonColor: '#fbbf24',
         cancelButtonColor: '#374151',
         cancelButtonText: 'Spectate',
