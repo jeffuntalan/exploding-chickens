@@ -11,9 +11,8 @@ let socket = io();
 //Open join game modal
 function join_game_modal() {
     Swal.fire({
-        html: "<h1 class=\"text-4xl text-gray-700 mt-3\" style=\"font-family: Bebas Neue\">Welcome to <a class=\"text-yellow-400\">EXPLODING</a> CHICKENS</h1>\n" +
-            "<h1 class=\"text-sm text-gray-700\">Game ID: | Created: </a></h1>\n" +
-            "<div class=\"my-3 flex w-full max-w-sm mx-auto space-x-3 shadow-md\">\n" +
+        html: "<h1 class=\"text-5xl text-gray-700 mt-4\" style=\"font-family: Bebas Neue\">JOINING<a class=\"text-yellow-400\"> </a>GAME</h1>\n" +
+            "<div class=\"mt-4 flex w-full max-w-sm mx-auto space-x-3 shadow-md\">\n" +
             "    <input\n" +
             "        class=\"text-center flex-1 appearance-none border border-transparent w-full py-2 px-10 bg-white text-gray-700 placeholder-gray-400 rounded-sm text-base border-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500\"\n" +
             "        type=\"text\" id=\"game_slug\" placeholder=\"Please enter a game code\">\n" +
@@ -21,8 +20,8 @@ function join_game_modal() {
         showCancelButton: true,
         confirmButtonColor: '#fbbf24',
         cancelButtonColor: '#374151',
-        cancelButtonText: 'Spectate',
-        confirmButtonText: 'Join Game'
+        cancelButtonText: 'Cancel',
+        confirmButtonText: 'Join'
     }).then((result) => {
         if (result.isConfirmed) {
             //Get game slug from input
@@ -42,8 +41,7 @@ function join_game_modal() {
 //Invalid game slug
 function invalid_game_slug() {
     Swal.fire({
-        html: "<h1 class=\"text-4xl text-gray-700 mt-3\" style=\"font-family: Bebas Neue\">Welcome to <a class=\"text-yellow-400\">EXPLODING</a> CHICKENS</h1>\n" +
-            "<h1 class=\"text-sm text-gray-700\">Game ID: | Created: </a></h1>\n" +
+        html: "<h1 class=\"text-4xl text-gray-700 mt-3\" style=\"font-family: Bebas Neue\">JOINING<a class=\"text-yellow-400\"> </a>GAME</h1>\n" +
             "<div class=\"my-3 flex w-full max-w-sm mx-auto space-x-3 shadow-md\">\n" +
             "    <input\n" +
             "        class=\"text-center flex-1 appearance-none border border-transparent w-full py-2 px-10 bg-white text-gray-700 placeholder-gray-400 rounded-sm text-base border-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500\"\n" +
