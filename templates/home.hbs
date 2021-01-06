@@ -17,7 +17,7 @@
 
 {{! Logo }}
 <div class="bg-white">
-    <div class="relative rounded-2xl items-center bg-white">
+    <div class="py-5 relative rounded-2xl items-center bg-white">
         <div class="block text-center">
             <div class="mt-64 flex flex-col items-center -space-y-3">
                 <img class="h-36 w-36" src="public\css\assets\logo.png" alt="">
@@ -28,8 +28,9 @@
             <div class="flex flex-col items-center">
                 <p class="text-4xl md:text-7xl lg:text-8xl" style="font-family: Bebas Neue">EXPLODING <a
                         class="text-yellow-500">CHICKENS</a></p>
-                <p class="text-sm md:text-lg font-sans">An online alternative to a card game inspired by Russian
-                    Roulette.</p>
+                <p class="-mt-2 text-2xl md:text:3xl font-sans">An online alternative to a card game inspired by Russian
+                    Roulette</p>
+                    <p class="mt-3 text-md md:text-xl font-sans">Played<a class="font-semibold text-xl"> 0</a> times!</p>
                 {{!-- Buttons --}}
                 <div class="mt-7">
                 <form action="/game/create" method="POST" enctype="application/x-www-form-urlencoded">
@@ -42,70 +43,9 @@
     </div>
 </div>
 
-
-{{!-- Stats on Home Page --}}
-<div class="mt-56 flex items-center justify-center w-auto h-auto bg-transparent">
-<div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
-            <!-- Users chart card -->
-            <a href="#" class="w-56 text-center p-3 transition-shadow border rounded-lg shadow-sm hover:shadow-lg">
-              <div>
-                <div class="flex flex-col flex-shrink-0 space-y-0">
-                  <span class="self-center text-gray-400">Total Plays</span>
-                  <span class="text-xl self-center font-semibold">100,221</span>
-                </div>
-              </div>
-              <div>
-                <span class="inline-block mt-1 px-2 text-sm text-white bg-green-400 rounded">14%</span>
-                <span>from 2019</span>
-              </div>
-            </a>
-
-            <!-- Users chart card -->
-            <a href="#" class="w-56 text-center p-3 transition-shadow border rounded-lg shadow-sm hover:shadow-lg">
-              <div>
-                <div class="flex flex-col flex-shrink-0 space-y-0">
-                  <span class="self-center text-gray-400">Total Plays</span>
-                  <span class="text-xl self-center font-semibold">100,221</span>
-                </div>
-              </div>
-              <div>
-                <span class="inline-block mt-1 px-2 text-sm text-white bg-green-400 rounded">14%</span>
-                <span>from 2019</span>
-              </div>
-            </a>
-
-            <!-- Users chart card -->
-            <a href="#" class="w-56 text-center p-3 transition-shadow border rounded-lg shadow-sm hover:shadow-lg">
-              <div>
-                <div class="flex flex-col flex-shrink-0 space-y-0">
-                  <span class="self-center text-gray-400">Total Plays</span>
-                  <span class="text-xl self-center font-semibold">100,221</span>
-                </div>
-              </div>
-              <div>
-                <span class="inline-block mt-1 px-2 text-sm text-white bg-green-400 rounded">14%</span>
-                <span>from 2019</span>
-              </div>
-            </a>
-
-            <!-- Users chart card -->
-            <a href="#" class="w-56 text-center p-3 transition-shadow border rounded-lg shadow-sm hover:shadow-lg">
-              <div>
-                <div class="flex flex-col flex-shrink-0 space-y-0">
-                  <span class="self-center text-gray-400">Total Plays</span>
-                  <span class="text-xl self-center font-semibold">100,221</span>
-                </div>
-              </div>
-              <div>
-                <span class="inline-block mt-1 px-2 text-sm text-white bg-green-400 rounded">14%</span>
-                <span>from 2019</span>
-              </div>
-            </a>
-          </div>
-</div>
-
+{{!-- How to Play --}}
 <div class="py-12 bg-white">
-    <div class="mt-8 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="mt-80 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="lg:text-center">
             <h2 class="text-base text-indigo-600 font-semibold tracking-wide uppercase">Simple Beginner's Guide
             </h2>
