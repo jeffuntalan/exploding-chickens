@@ -35,6 +35,15 @@ module.exports = function (fastify) {
             await update_game(data.slug, socket.id, "retrieve-game");
         })
 
+        // Name : socket.on.check-slug
+        // Desc : runs when we need to see if a slug exists in the db
+        // Author(s) : RAk3rman
+        socket.on('check-slug', async function (data) {
+            spinner.start(`${chalk.bold.blue('Socket')}: ${chalk.dim.cyan('retrieve-game')} Preparing to send game with slug: ` + data.slug);
+            //Send updated game data
+            await update_game(data.slug, socket.id, "retrieve-game");
+        })
+
         // Name : socket.on.create-player
         // Desc : runs when a new player to be created
         // Author(s) : RAk3rman

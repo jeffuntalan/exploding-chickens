@@ -162,7 +162,7 @@ function setup_prompt(err, passed_nickname) {
 
 //Update avatar options on join game swal
 function update_avatar_options() {
-    let options = ["bear.png", "bull.png", "cat.png", "elephant.png", "lion.png", "mandrill.png", "monkey.png", "panda.png", "puma.png", "raccoon.png", "wolf.png"];
+    let options = ["bear.png", "bull.png", "cat.png", "dog.png", "elephant.png", "flamingo.png", "fox.png", "lion.png", "mandrill.png", "meerkat.png", "monkey.png", "panda.png", "puma.png", "raccoon.png", "wolf.png"];
     let options_payload = "";
     //Loop through each avatar to see if in use or not
     for (let i = 0; i < options.length; i++) {
