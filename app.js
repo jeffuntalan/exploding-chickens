@@ -63,8 +63,8 @@ fastify.register(require('fastify-static'), {
 fastify.register(require('fastify-socket.io'), {})
 fastify.register(require('fastify-formbody'))
 fastify.register(require('fastify-rate-limit'), {
-    max: 5,
-    timeWindow: '1 minute'
+    max: 15,
+    timeWindow: '5 minutes'
 })
 //Routers
 let game_actions_api = require('./routes/game-actions-api.js');

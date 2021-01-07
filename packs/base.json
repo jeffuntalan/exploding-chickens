@@ -146,6 +146,6 @@
   {
     "_id": "chicken-base-a",
     "name": "Exploding Chicken",
-    "action": "exploding"
+    "action": "chicken"
   }
 ]

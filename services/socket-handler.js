@@ -24,7 +24,7 @@ module.exports = function (fastify) {
     // Desc : runs when a new connection is created through socket.io
     // Author(s) : RAk3rman
     fastify.io.on('connection', function (socket) {
-        spinner.info(`${chalk.bold.blue('Socket')}: ${chalk.dim.green('connect         ')} Client connected with socket id: ` + socket.id );
+        spinner.info(`${chalk.bold.blue('Socket')}: ${chalk.dim.green('new-connection  ')} Socket ID: ` + socket.id );
         let player_data = {};
 
         // Name : socket.on.player-connected
@@ -87,12 +87,12 @@ module.exports = function (fastify) {
         // Desc : runs when the client disconnects
         // Author(s) : RAk3rman
         socket.on('disconnect', async function () {
-            spinner.info(`${chalk.bold.blue('Socket')}: ${chalk.dim.red('disconnect      ')} Client disconnected with socket id: ` + socket.id );
+            spinner.info(`${chalk.bold.blue('Socket')}: ${chalk.dim.red('new-disconnect  ')} Socket ID: ` + socket.id );
             //Mark player as disconnected if active
             if (player_data["slug"] && player_data["player_id"]) {
                 //Update connection and local player data
                 await player_actions.update_connection(player_data["slug"], player_data["player_id"], "offline");
-                spinner.succeed(`${chalk.bold.blue('Socket')}: ${chalk.dim.red('disconnect      ')} ${chalk.dim.yellow(player_data["slug"])} Player now ${chalk.dim.red('offline')} with player_id: ` + player_data["player_id"]);
+                spinner.succeed(`${chalk.bold.blue('Socket')}: ${chalk.dim.red('disconnect      ')} ${chalk.dim.yellow(player_data["slug"])} Player now ${chalk.dim.red('offline')}: ` + player_data["player_id"]);
                 //Update clients
                 await update_game_ui(player_data["slug"], "", "disconnect      ");
             }
@@ -105,6 +105,15 @@ module.exports = function (fastify) {
     async function update_game_ui(slug, target, source) {
         //Get raw game details from mongodb
         let raw_game_details = await game_actions.game_details_slug(slug);
+        //Determine number of exploding chickens
+        let ec_count = 0;
+        for (let i = 0; i < raw_game_details["cards"].length; i++) {
+            //If the card is assigned to this player, add to hand
+            if (raw_game_details["cards"][i].action === "chicken") {
+                ec_count += 1;
+            }
+        }
+        //console.log(ec_count);
         //Prepare pretty game details
         let pretty_game_details = {
             players: [],
@@ -114,7 +123,9 @@ module.exports = function (fastify) {
             status: raw_game_details["status"],
             seat_playing: raw_game_details["seat_playing"],
             turn_direction: raw_game_details["turn_direction"],
-            turns_remaining: raw_game_details["turns_remaining"]
+            turns_remaining: raw_game_details["turns_remaining"],
+            cards_remaining: filter_cards("draw_deck", raw_game_details["cards"]).length,
+            ec_remaining: ec_count
         }
         //Sort and add players to json array
         raw_game_details["players"].sort(function(a, b) {
@@ -129,6 +140,7 @@ module.exports = function (fastify) {
                 cards: card_array,
                 card_num: card_array.length,
                 avatar: raw_game_details["players"][i].avatar,
+                type: raw_game_details["players"][i].type,
                 status: raw_game_details["players"][i].status,
                 connection: raw_game_details["players"][i].connection,
                 nickname: raw_game_details["players"][i].nickname,
@@ -155,7 +167,7 @@ module.exports = function (fastify) {
         for (let i = 0; i < card_array.length; i++) {
             //If the card is assigned to this player, add to hand
             if (card_array[i].assignment === assignment) {
-                temp_deck.push(card_array[j]);
+                temp_deck.push(card_array[i]);
             }
         }
         //Sort card hand by position

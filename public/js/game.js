@@ -57,6 +57,19 @@ socket.on("player-created", function (data) {
     }));
 });
 
+//Socket.io on disconnect
+socket.on("connect", function (data) {
+    request_game_update();
+    document.getElementById("status_ping").innerHTML = "<span class=\"animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75\"></span>\n" +
+        "<span class=\"relative inline-flex rounded-full h-2 w-2 bg-green-500\"></span>"
+});
+
+//Socket.io on disconnect
+socket.on("disconnect", function (data) {
+    document.getElementById("status_ping").innerHTML = "<span class=\"animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75\"></span>\n" +
+        "<span class=\"relative inline-flex rounded-full h-2 w-2 bg-red-500\"></span>"
+});
+
 //Local storage pre check
 function storage_check() {
     //Get browser session details
@@ -89,7 +102,7 @@ function setup_game() {
                 player_id: session_player_id
             })
             //Check to see if the player is the host
-            if (game_data.players[i].status === "host") {
+            if (game_data.players[i].type === "host") {
                 current_player_host = true;
             } else {
                 current_player_host = false;
@@ -109,6 +122,8 @@ function setup_game() {
 function update_interface() {
     //Update players on UI
     update_players();
+    //Update sidebar stats
+    update_stats();
 }
 
 //Prompt to set player settings
@@ -219,7 +234,8 @@ function update_players() {
         //Append to sidebar, information
         let actions = "";
         if (game_data.players[i]._id === session_player_id) {
-
+            //Add nickname to the top of sidebar
+            document.getElementById("sidebar_top_nickname").innerHTML = game_data.players[i].nickname + status_dot(game_data.players[i].status, game_data.players[i].connection, "mx-1.5");
             //Add reset game button to player actions
             if (current_player_host) {
                 actions = "<div class=\"flex mt-0 ml-4\">\n" +
@@ -255,10 +271,16 @@ function update_players() {
                 "</div>";
         }
         //Append to sidebar, players
+        let player_nickname_msg = game_data.players[i].nickname;
+        if (current_player_host) {
+            player_nickname_msg += ", Host"
+        } else if (game_data.players[i]._id === session_player_id) {
+            player_nickname_msg += ", You"
+        }
         sidebar_players_payload += "<div class=\"flex items-center justify-between mb-2\">\n" +
             "    <div class=\"flex-1 min-w-0\">\n" +
             "        <h3 class=\"text-md font-bold text-gray-900 truncate\">\n" +
-            "            " + status_dot(game_data.players[i].status, game_data.players[i].connection) + " " + game_data.players[i].nickname + "\n" +
+            "            " + player_nickname_msg + " " + status_dot(game_data.players[i].status, game_data.players[i].connection, "mx-0.5") + "\n" +
             "        </h3>\n" +
             "        <div class=\"mt-1 flex flex-col sm:flex-row sm:flex-wrap sm:mt-0 sm:space-x-6\">\n" +
             "            <div class=\"flex items-center text-sm text-gray-500\">\n" +
@@ -273,7 +295,7 @@ function update_players() {
         //Append to center
         center_players_payload += "<div class=\"block text-center\">\n" +
             "    <h1 class=\"text-gray-600 font-medium text-sm\">\n" +
-            "        " + game_data.players[i].nickname + " " + status_dot(game_data.players[i].status, game_data.players[i].connection) + "\n" +
+            "        " + game_data.players[i].nickname + " " + status_dot(game_data.players[i].status, game_data.players[i].connection, "") + "\n" +
             "    </h1>\n" +
             "    <div class=\"flex flex-col items-center -space-y-3\">\n" +
             "        <img class=\"h-12 w-12 rounded-full\" src=\"/public/avatars/" + game_data.players[i].avatar + "\" alt=\"\">\n" +
@@ -306,6 +328,24 @@ function update_players() {
     }
 }
 
+//Update sidebar statistics
+function update_stats() {
+    //Game code
+    document.getElementById("sidebar_game_code").innerHTML = window.location.pathname.substr(6);
+    //Game status
+    if (game_data.status === "in_lobby") {
+        document.getElementById("sidebar_status").innerHTML = "In lobby";
+    } else if (game_data.status === "in_game") {
+        document.getElementById("sidebar_status").innerHTML = "In game";
+    }
+    //Cards remaining
+    document.getElementById("sidebar_cards_left").innerHTML = game_data.cards_remaining;
+    //EC remaining
+    document.getElementById("sidebar_ec_remaining").innerHTML = game_data.ec_remaining + ", " +  Math.floor((game_data.ec_remaining/game_data.cards_remaining)*100) + "% chance";
+}
+
+//HELPER FUNCTIONS
+
 //Return avatar icon cards
 function cards_icon(card_num) {
     if (card_num === 2) {
@@ -334,14 +374,14 @@ function cards_icon(card_num) {
 }
 
 //Return status dot
-function status_dot(status, connection) {
+function status_dot(status, connection, margin) {
     if (status === "exploded") {
-        return "<span class=\"animate-pulse inline-flex rounded-full h-1.5 w-1.5 mb-0.5 align-middle bg-red-500\"></span>"
+        return "<span class=\"animate-pulse inline-flex rounded-full h-1.5 w-1.5 mb-0.5 " + margin + " align-middle bg-red-500\"></span>"
     } else if (connection === "connected") {
-        return "<span class=\"animate-pulse inline-flex rounded-full h-1.5 w-1.5 mb-0.5 align-middle bg-green-500\"></span>"
+        return "<span class=\"animate-pulse inline-flex rounded-full h-1.5 w-1.5 mb-0.5 " + margin + " align-middle bg-green-500\"></span>"
     } else if (connection === "offline") {
-        return "<span class=\"animate-pulse inline-flex rounded-full h-1.5 w-1.5 mb-0.5 align-middle bg-yellow-400\"></span>"
+        return "<span class=\"animate-pulse inline-flex rounded-full h-1.5 w-1.5 mb-0.5 " + margin + " align-middle bg-yellow-400\"></span>"
     } else {
-        return "<span class=\"animate-pulse inline-flex rounded-full h-1.5 w-1.5 mb-0.5 align-middle bg-gray-500\"></span>"
+        return "<span class=\"animate-pulse inline-flex rounded-full h-1.5 w-1.5 mb-0.5 " + margin + " align-middle bg-gray-500\"></span>"
     }
 }
