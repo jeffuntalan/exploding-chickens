@@ -20,13 +20,13 @@ let player_actions = require('./player-actions.js');
 // Name : player_actions.modify_player()
 // Desc : modifies an existing player, if it doesn't exist, make new player
 // Author(s) : RAk3rman
-exports.modify_player = async function (game_id, player_id, p_nickname, p_seat, p_avatar, p_type, p_status, p_connection) {
+exports.modify_player = async function (game_slug, player_id, p_nickname, p_seat, p_avatar, p_type, p_status, p_connection) {
     //Check if player exists
-    if (await game.exists({ _id: game_id, "players._id": player_id })) { //Modify existing player
+    if (await game.exists({ slug: game_slug, "players._id": player_id })) { //Modify existing player
         //Create new promise and return player id after saved
         return await new Promise((resolve, reject) => {
             //Update existing player and return player_id
-            game.findOneAndUpdate({ _id: game_id, "players._id": player_id }, {"$set": { "players.$.nickname": p_nickname, "players.$.seat": p_seat, "players.$.avatar": p_avatar, "players.$.status": p_status, "players.$.type": p_type, "players.$.connection": p_connection }}, function (err) {
+            game.findOneAndUpdate({ slug: game_slug, "players._id": player_id }, {"$set": { "players.$.nickname": p_nickname, "players.$.seat": p_seat, "players.$.avatar": p_avatar, "players.$.status": p_status, "players.$.type": p_type, "players.$.connection": p_connection }}, function (err) {
                 if (err) {
                     reject(err);
                 } else {
@@ -36,7 +36,7 @@ exports.modify_player = async function (game_id, player_id, p_nickname, p_seat, 
         })
     } else { //Create new player
         //Get game details
-        let game_details = await game_actions.game_details_id(game_id);
+        let game_details = await game_actions.game_details_slug(game_slug);
         //Create new promise and return player id after saved
         return await new Promise((resolve, reject) => {
             //Create new player id
@@ -57,7 +57,7 @@ exports.modify_player = async function (game_id, player_id, p_nickname, p_seat, 
     }
 };
 
-// Name : player_actions.update_connection(game_id, player_id, p_connection))
+// Name : player_actions.update_connection(game_slug, player_id, p_connection))
 // Desc : updates the connection for a target player
 // Author(s) : RAk3rman
 exports.update_connection = async function (game_slug, player_id, p_connection) {
@@ -75,7 +75,7 @@ exports.update_connection = async function (game_slug, player_id, p_connection) 
 };
 
 // Name : player_actions.create_hand(game_slug)
-// Desc : given a game_id, gives each player a defuse card and 4 random cards from the draw_deck
+// Desc : given a game_slug, gives each player a defuse card and 4 random cards from the draw_deck
 // Author(s) : RAk3rman
 exports.create_hand = async function (game_slug) {
     //Get game details
@@ -126,7 +126,7 @@ exports.create_hand = async function (game_slug) {
 
 
 // Name : player_actions.randomize_seats(game_slug)
-// Desc : given a game_id, gives each player a random seat position (without replacement)
+// Desc : given a game_slug, gives each player a random seat position (without replacement)
 // Author(s) : SengdowJones, RAk3rman
 exports.randomize_seats = async function (game_slug) {
     //Get game details

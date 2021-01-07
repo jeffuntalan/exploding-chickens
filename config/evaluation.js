@@ -17,7 +17,7 @@ let game_actions = require('../services/game-actions.js');
 let player_actions = require('../services/player-actions.js');
 
 //Variables
-let sample_game_id = "";
+let sample_game_slug = "";
 
 // Name : evaluation.game_creation()
 // Desc : creates a test game and initializes to sample values
@@ -30,10 +30,10 @@ exports.game_creation = async function () {
     spinner.info(console_head + `Creating sample game`);
     let game_details = await game_actions.create_game().catch(e => {failed_test(e)});
     spinner.succeed(console_head + `Created sample game with parameters: ` + JSON.stringify(game_details));
-    sample_game_id = game_details["_id"];
+    sample_game_slug = game_details["slug"];
     //Import cards
     spinner.info(console_head + `Importing base cards from base.json`);
-    let card_count = await game_actions.import_cards(sample_game_id, '../packs/base.json').catch(e => {failed_test(e)});
+    let card_count = await game_actions.import_cards(sample_game_slug, '../packs/base.json').catch(e => {failed_test(e)});
     spinner.succeed(console_head + `Imported ` + chalk.bold(card_count) + ` cards from base.json`);
 }
 
@@ -46,28 +46,22 @@ exports.player_test = async function () {
     spinner.info(console_head + `${chalk.bold('Evaluating player actions')}`);
     //Create 4 sample players
     spinner.info(console_head + `Creating sample players (4 total)`);
-    let player_a = await player_actions.modify_player(sample_game_id, undefined, "Player X", 0, "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80", "host", "idle", "offline").catch(e => {failed_test(e)});
+    let player_a = await player_actions.modify_player(sample_game_slug, undefined, "Player X", 0, "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80", "host", "idle", "offline").catch(e => {failed_test(e)});
     spinner.succeed(console_head + `Created Player X (aka A) (1 of 4) with id: ` + player_a);
-    let player_b = await player_actions.modify_player(sample_game_id, undefined, "Player B", 2, "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80", "player", "idle", "online").catch(e => {failed_test(e)});
+    let player_b = await player_actions.modify_player(sample_game_slug, undefined, "Player B", 2, "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80", "player", "idle", "online").catch(e => {failed_test(e)});
     spinner.succeed(console_head + `Created Player B (2 of 4) with id: ` + player_b);
-    let player_c = await player_actions.modify_player(sample_game_id, undefined, "Player C", 3, "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80", "player", "idle", "online").catch(e => {failed_test(e)});
+    let player_c = await player_actions.modify_player(sample_game_slug, undefined, "Player C", 3, "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80", "player", "idle", "online").catch(e => {failed_test(e)});
     spinner.succeed(console_head + `Created Player C (3 of 4) with id: ` + player_c);
-    let player_d = await player_actions.modify_player(sample_game_id, undefined, "Player D", 4, "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80", "player", "idle", "online").catch(e => {failed_test(e)});
+    let player_d = await player_actions.modify_player(sample_game_slug, undefined, "Player D", 4, "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80", "player", "idle", "online").catch(e => {failed_test(e)});
     spinner.succeed(console_head + `Created Player D (4 of 4) with id: ` + player_d);
     //Test player modification
     spinner.info(console_head + `Modifying Player X (aka A) and verifying changes with id: ` + player_a);
-    await player_actions.modify_player(sample_game_id, player_a, "Player A", 1, "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80", "host", "idle", "online").catch(e => {failed_test(e)});
+    await player_actions.modify_player(sample_game_slug, player_a, "Player A", 1, "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80", "host", "idle", "online").catch(e => {failed_test(e)});
     spinner.succeed(console_head + `Modified Player X (aka A) with id: ` + player_a);
-    let game_details = await game_actions.game_details_id(sample_game_id);
-    if (game_details.players.id(player_a).nickname === "Player A" || game_details.players.id(player_a).seat === 1 || game_details.players.id(player_a).connection === "online") {
-        spinner.succeed(console_head + `Verified Player A's changes with id: ` + player_a);
-    } else {
-        failed_test("Modified sample player values do not match");
-    }
     //Assign cards to all players and print assignment
     spinner.info(console_head + `Assigning initial cards to all players`);
-    await player_actions.create_hand(sample_game_id).catch(e => {failed_test(e)});
-    game_details = await game_actions.game_details_id(sample_game_id);
+    await player_actions.create_hand(sample_game_slug).catch(e => {failed_test(e)});
+    game_details = await game_actions.game_details_slug(sample_game_slug);
     for (let i = 0; i <= game_details.players.length - 1; i++) {
         let cards_assigned = "";
         for (let j = 0; j <= game_details.cards.length - 1; j++) {
@@ -80,8 +74,8 @@ exports.player_test = async function () {
     //spinner.succeed(console_head + `Assigned ` + chalk.bold(defuse_count) + ` defuse cards to ` + chalk.bold(defuse_count) + ` players`);
     //Test seat randomization
     spinner.info(console_head + `Randomizing seat positions for all players`);
-    await player_actions.randomize_seats(sample_game_id).catch(e => {failed_test(e)});
-    game_details = await game_actions.game_details_id(sample_game_id);
+    await player_actions.randomize_seats(sample_game_slug).catch(e => {failed_test(e)});
+    game_details = await game_actions.game_details_slug(sample_game_slug);
     // For every player, express updated seat position to console
     for (let i = 0; i <= game_details.players.length - 1; i++) {
         spinner.succeed(console_head +
@@ -101,22 +95,22 @@ exports.card_test = async function () {
     spinner.info(console_head + `${chalk.bold('Evaluating card actions')}`);
     //Skip a players turn
     // spinner.info(console_head + `${chalk.italic('Skip:')} Skipping current turn`);
-    // let next_player = await card_actions.skip(sample_game_id, "").catch(e => {failed_test(e)});
+    // let next_player = await card_actions.skip(sample_game_slug, "").catch(e => {failed_test(e)});
     // spinner.succeed(console_head + `${chalk.italic('Skip:')} Skipped the current turn`);
     //Shuffle all cards in draw_deck
     spinner.info(console_head + `${chalk.italic('Shuffle:')} Shuffling all cards in draw deck`);
-    let cards_in_deck = await card_actions.shuffle_draw_deck(sample_game_id, "shuffle-base-a").catch(e => {failed_test(e)});
+    let cards_in_deck = await card_actions.shuffle_draw_deck(sample_game_slug, "shuffle-base-a").catch(e => {failed_test(e)});
     spinner.succeed(console_head + `${chalk.italic('Shuffle:')} Shuffled ` + chalk.bold(cards_in_deck) + ` cards in draw deck`);
     spinner.info(console_head + `${chalk.italic('Exploding Chicken:')} Use a defuse or die`);
-    await card_actions.defuse(sample_game_id, "chicken-base-a", "aea35f36-cf9c-44f1-b4a5-3718658d3964").catch(e => {failed_test(e)});
+    await card_actions.defuse(sample_game_slug, "chicken-base-a", "aea35f36-cf9c-44f1-b4a5-3718658d3964").catch(e => {failed_test(e)});
     spinner.succeed(console_head + `${chalk.italic('Exploding Chicken:')} successfully dealt with`);
-    let the_future = await card_actions.see_the_future(sample_game_id).catch(e => {failed_test(e)});
+    let the_future = await card_actions.see_the_future(sample_game_slug).catch(e => {failed_test(e)});
     spinner.succeed(console_head + `${chalk.italic('See the Future:')}` + the_future);
     spinner.info(console_head + `${chalk.italic('Exploding Chicken:')} Doing a favor`);
-    await card_actions.favor(sample_game_id, "chicken-base-a", "aea35f36-cf9c-44f1-b4a5-3718658d3964").catch(e => {failed_test(e)});
+    await card_actions.favor(sample_game_slug, "chicken-base-a", "aea35f36-cf9c-44f1-b4a5-3718658d3964").catch(e => {failed_test(e)});
     spinner.succeed(console_head + `${chalk.italic('Favor:')} successfully dealt with`);
     spinner.info(console_head + `${chalk.italic('Exploding Chicken:')} Combining chicken to a favor`);
-    await card_actions.double(sample_game_id, "chicken-base-a", "aea35f36-cf9c-44f1-b4a5-3718658d3964").catch(e => {failed_test(e)});
+    await card_actions.double(sample_game_slug, "chicken-base-a", "aea35f36-cf9c-44f1-b4a5-3718658d3964").catch(e => {failed_test(e)});
     spinner.succeed(console_head + `${chalk.italic('Favor:')} successfully dealt with`);
 }
 
@@ -129,26 +123,26 @@ exports.game_test = async function () {
     spinner.info(console_head + `${chalk.bold('Evaluating game actions')}`);
     //Advance forward 4 turns
     spinner.info(console_head + `Advancing forward 4 turns`);
-    let next_player_id = await game_actions.advance_turn(sample_game_id).catch(e => {failed_test(e)});
+    let next_player_id = await game_actions.advance_turn(sample_game_slug).catch(e => {failed_test(e)});
     spinner.succeed(console_head + `Advanced turn to player with id: ` + next_player_id);
-    next_player_id = await game_actions.advance_turn(sample_game_id).catch(e => {failed_test(e)});
+    next_player_id = await game_actions.advance_turn(sample_game_slug).catch(e => {failed_test(e)});
     spinner.succeed(console_head + `Advanced turn to player with id: ` + next_player_id);
-    next_player_id = await game_actions.advance_turn(sample_game_id).catch(e => {failed_test(e)});
+    next_player_id = await game_actions.advance_turn(sample_game_slug).catch(e => {failed_test(e)});
     spinner.succeed(console_head + `Advanced turn to player with id: ` + next_player_id);
-    next_player_id = await game_actions.advance_turn(sample_game_id).catch(e => {failed_test(e)});
+    next_player_id = await game_actions.advance_turn(sample_game_slug).catch(e => {failed_test(e)});
     spinner.succeed(console_head + `Advanced turn to player with id: ` + next_player_id);
     //TODO tests game functions and interaction
     spinner.info(console_head + `Discarding card`);
-    let discard = await game_actions.discard_card(sample_game_id, "skip-base-a").catch(e => {failed_test(e)});
+    let discard = await game_actions.discard_card(sample_game_slug, "skip-base-a").catch(e => {failed_test(e)});
     spinner.succeed(console_head + `New card position is: ` + discard);
     spinner.info(console_head + `Drawing card`);
-    let draw = await game_actions.draw_card(sample_game_id, "skip-base-a").catch(e => {failed_test(e)});
+    let draw = await game_actions.draw_card(sample_game_slug, "skip-base-a").catch(e => {failed_test(e)});
     spinner.succeed(console_head + `New card position is: ` + draw);
     spinner.info(console_head + `Putting Chicken back into deck`);
-    let chicken = await game_actions.draw_card(sample_game_id, "skip-base-a").catch(e => {failed_test(e)});
+    let chicken = await game_actions.draw_card(sample_game_slug, "skip-base-a").catch(e => {failed_test(e)});
     spinner.succeed(console_head + `New chicken position is: ` + chicken);
     spinner.info(console_head + `Calling card function`);
-    await game_actions.card_call(sample_game_id, "skip-base-a", "aea35f36-cf9c-44f1-b4a5-3718658d3964").catch(e => {failed_test(e)});
+    await game_actions.card_call(sample_game_slug, "skip-base-a", "aea35f36-cf9c-44f1-b4a5-3718658d3964").catch(e => {failed_test(e)});
     spinner.succeed(console_head + `Called successfully `);
     }
 
@@ -167,7 +161,7 @@ exports.game_deletion = async function () {
      **/
     //Delete sample game
     spinner.info(console_head + `Deleting sample game (1 of 1)`);
-    let sample_game = await game_actions.delete_game(sample_game_id).catch(e => {failed_test(e)});
+    let sample_game = await game_actions.delete_game(sample_game_slug).catch(e => {failed_test(e)});
     spinner.succeed(console_head + `Deleted game with id: ` + sample_game);
 }
 
