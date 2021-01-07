@@ -251,7 +251,7 @@ exports.chicken = async function (game_slug, card_id, draw_deck) {
             }
         }
         game.findOneAndUpdate({ slug: game_slug, "cards._id": card_id},
-            {"$set": { "cards.$.assignment": draw_deck, "cards.$.position": new_position }}, function (err) {
+            {"$set": { "cards.$.assignment": "draw_deck", "cards.$.position": new_position }}, function (err) {
                 if (err) {
                     reject(err);
                 } else {
@@ -297,6 +297,42 @@ exports.card_call = async function (game_slug, card_id, player_id) {
             card_actions.double(game_slug, bucket[0], bucket[1], player_id);
         }
         resolve();
+    });
+
+}
+// Name : game_actions.reset_game(game_id)
+// Desc : Calls the appropriate card function based on card id
+// Author(s) : Vincent Do
+exports.reset_game = async function (game_slug) {
+    //Get game details
+    let game_details = await game_actions.game_details_slug(game_slug);
+    await new Promise((resolve, reject) => {
+        for (let i = 0; i <= game_details.cards.length - 1; i++) {
+            game.findOneAndUpdate({ slug: game_slug, "cards._id": game_details.cards[i]._id},
+                {"$set": { "cards.$.assignment": "draw_deck"}}, function (err) {
+                    if (err) {
+                        reject(err);
+                    } else {
+                        resolve();
+                    }
+                });
+        }
+        game.findOneAndUpdate({ slug: game_slug},
+            {"$set": { "seat.$.playing": 0, "turn.$.direction": "forward", "turns.$.remaining": 1, }}, function (err) {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve();
+                }
+            });
+        //Save updated game
+        game_details.save({}, function (err) {
+            if (err) {
+                reject(err);
+            } else {
+                resolve();
+            }
+        });
     });
 
 }
