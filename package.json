@@ -1,6 +1,6 @@
 {
   "name": "exploding-chickens",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A bootleg game made by a group of friends",
   "main": "app.js",
   "scripts": {
@@ -9,14 +9,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/RAK3RMAN/exploding-chickens.git"
+    "url": "https://github.com/rak3rman/exploding-chickens.git"
   },
-  "author": "RAk3rman, Sengdao I, Vincent D",
+  "author": "RAk3rman, Sengdao, Vincent, & Richard",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/RAK3RMAN/exploding-chickens/issues"
+    "url": "https://github.com/rak3rman/exploding-chickens/issues"
   },
-  "homepage": "https://github.com/RAK3RMAN/exploding-chickens#readme",
+  "homepage": "https://github.com/rak3rman/exploding-chickens#readme",
   "dependencies": {
     "autoprefixer": "^10.1.0",
     "body-parser": "^1.18.3",
