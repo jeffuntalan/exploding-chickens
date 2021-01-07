@@ -155,12 +155,12 @@ exports.advance_turn = async function (game_id) {
     });
 }
 
-// Name : game_actions.discard_card(game_id)
+// Name : game_actions.discard_card(game_slug, card_id)
 // Desc : put card in discard deck
 // Author(s) : Vincent Do
-exports.discard_card = async function (game_id, card_id) {
+exports.discard_card = async function (game_slug, card_id) {
     //Get game details
-    let game_details = await game_actions.game_details_id(game_id);
+    let game_details = await game_actions.game_details_slug(game_slug);
     //Find greatest position in discard deck
     let value = -1;
     for (let i = 0; i <= game_details.cards.length - 1; i++) {
@@ -171,7 +171,7 @@ exports.discard_card = async function (game_id, card_id) {
     //Create new promise
     return await new Promise((resolve, reject) => {
         //Update card that was discarded
-        game.findOneAndUpdate({ _id: game_id, "cards._id": card_id},
+        game.findOneAndUpdate({ slug: game_slug, "cards._id": card_id},
             {"$set": { "cards.$.assignment": "discard_deck", "cards.$.position": value + 1 }}, function (err) {
                 if (err) {
                     reject(err);

@@ -1,5 +1,5 @@
 /*\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
-Filename : exploding-chickens/public/js/home.js
+Filename : exploding-chickens/public/js/game.js
 Desc     : handles socket.io connection
            related to game play
 Author(s): RAk3rman
@@ -23,15 +23,12 @@ let selected_avatar = "default.png";
 let prompt_open = false;
 let session_player_id = undefined;
 
-//Update game_data
-function request_game_update() {
-    socket.emit('retrieve-game', {
-        slug: window.location.pathname.substr(6)
-    })
-}
+/*\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
+ SOCKET.IO EVENTS
+\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\*/
 
 //Socket.io on game-data
-socket.on(window.location.pathname.substr(6), function (data) {
+socket.on(window.location.pathname.substr(6) + "-update", function (data) {
     console.log(data);
     game_data = data;
     //Check to see if we have to set up the game
@@ -57,6 +54,22 @@ socket.on("player-created", function (data) {
     }));
 });
 
+//Socket.io on game-start
+socket.on(window.location.pathname.substr(6) + "-start", function (data) {
+    //Check to see if we got an error
+    if (current_player_host && data !== "") {
+        Toast.fire({
+            icon: 'error',
+            html: '<h1 class="text-lg font-bold pl-2 pr-1">' + data + '</h1>'
+        });
+    } else {
+        Toast.fire({
+            icon: 'success',
+            html: '<h1 class="text-lg font-bold pl-2 pr-1">Game has started</h1>'
+        });
+    }
+});
+
 //Socket.io on disconnect
 socket.on("connect", function (data) {
     request_game_update();
@@ -69,6 +82,17 @@ socket.on("disconnect", function (data) {
     document.getElementById("status_ping").innerHTML = "<span class=\"animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75\"></span>\n" +
         "<span class=\"relative inline-flex rounded-full h-2 w-2 bg-red-500\"></span>"
 });
+
+/*\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
+ GAME UI CONFIGURATION
+\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\*/
+
+//Update game_data
+function request_game_update() {
+    socket.emit('retrieve-game', {
+        slug: window.location.pathname.substr(6)
+    })
+}
 
 //Local storage pre check
 function storage_check() {
@@ -92,7 +116,7 @@ function storage_check() {
 function setup_game() {
     //Make sure the player exists in the game
     for (let i = 0; i < game_data.players.length; i++) {
-        //Make sure player exists
+        //Check if individual player exists
         if (game_data.players[i]._id === JSON.parse(localStorage.getItem('ec_session')).player_id) {
             //Update session_player_id
             session_player_id = game_data.players[i]._id;
@@ -224,30 +248,39 @@ function pick_avatar(selection) {
     update_avatar_options();
 }
 
+/*\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
+ GAME UI ELEMENT UPDATERS
+\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\*/
+
 //Update players
 function update_players() {
     //For each player, append to respective positions
     let sidebar_players_payload = "";
     let topbar_players_payload = "";
     let center_players_payload = "";
+    let current_player_cards = "";
     for (let i = 0; i < game_data.players.length; i++) {
         //Append to sidebar, information
         let actions = "";
         if (game_data.players[i]._id === session_player_id) {
             //Add nickname to the top of sidebar
             document.getElementById("sidebar_top_nickname").innerHTML = game_data.players[i].nickname + status_dot(game_data.players[i].status, game_data.players[i].connection, "mx-1.5");
+            //Add cards to hand
+            for (let j = 0; j < game_data.players[i].cards.length; j++) {
+                document.getElementById("player_cards").innerHTML += "<div class=\"rounded-xl shadow-lg h-64 w-52 mx-1 bg-center bg-contain\" style=\"background-image: url('/public/cards/base/card_back.png')\"></div>";
+            }
             //Add reset game button to player actions
             if (current_player_host) {
-                actions = "<div class=\"flex mt-0 ml-4\">\n" +
-                    "    <span class=\"\">\n" +
-                    "          <button type=\"button\" class=\"inline-flex items-center px-2 py-1 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-yellow-500 hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-400\">\n" +
-                    "                <svg class=\"-ml-1 mr-1 h-5 w-5\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\">\n" +
-                    "                    <path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15\" />\n" +
-                    "                </svg>\n" +
-                    "                Reset Game\n" +
-                    "          </button>\n" +
-                    "    </span>\n" +
-                    "</div>";
+                // actions = "<div class=\"flex mt-0 ml-4\">\n" +
+                //     "    <span class=\"\">\n" +
+                //     "          <button type=\"button\" class=\"inline-flex items-center px-2 py-1 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-yellow-500 hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-400\">\n" +
+                //     "                <svg class=\"-ml-1 mr-1 h-5 w-5\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\">\n" +
+                //     "                    <path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15\" />\n" +
+                //     "                </svg>\n" +
+                //     "                Reset Game\n" +
+                //     "          </button>\n" +
+                //     "    </span>\n" +
+                //     "</div>";
             }
         } else if (current_player_host) {
             //Add make host and kick buttons to player actions
@@ -272,7 +305,7 @@ function update_players() {
         }
         //Append to sidebar, players
         let player_nickname_msg = game_data.players[i].nickname;
-        if (current_player_host) {
+        if (current_player_host && game_data.players[i]._id === session_player_id) {
             player_nickname_msg += ", Host"
         } else if (game_data.players[i]._id === session_player_id) {
             player_nickname_msg += ", You"
@@ -333,18 +366,95 @@ function update_stats() {
     //Game code
     document.getElementById("sidebar_game_code").innerHTML = window.location.pathname.substr(6);
     //Game status
-    if (game_data.status === "in_lobby") {
-        document.getElementById("sidebar_status").innerHTML = "In lobby";
-    } else if (game_data.status === "in_game") {
-        document.getElementById("sidebar_status").innerHTML = "In game";
+    if (current_player_host) {
+        if (game_data.status === "in_lobby") {
+            document.getElementById("sidebar_status").innerHTML = "<div class=\"widget w-full p-2.5 rounded-lg bg-white border border-gray-100 dark:bg-gray-900 dark:border-gray-800 bg-green-500\" onclick=\"start_game()\">\n" +
+                "    <div class=\"flex flex-row items-center justify-between\">\n" +
+                "        <div class=\"flex flex-col\">\n" +
+                "            <div class=\"text-xs uppercase text-white truncate\">\n" +
+                "                Status\n" +
+                "            </div>\n" +
+                "            <div class=\"text-lg font-bold text-white truncate\">\n" +
+                "                Start game\n" +
+                "            </div>\n" +
+                "        </div>\n" +
+                "        <svg class=\"stroke-current text-white\" height=\"24\" width=\"24\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\">\n" +
+                "           <path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M3 21v-4m0 0V5a2 2 0 012-2h6.5l1 1H21l-3 6 3 6h-8.5l-1-1H5a2 2 0 00-2 2zm9-13.5V9\" />\n" +
+                "        </svg>" +
+                "    </div>\n" +
+                "</div>";
+        } else if (game_data.status === "in_game") {
+            document.getElementById("sidebar_status").innerHTML = "<div class=\"widget w-full p-2.5 rounded-lg bg-white border border-gray-100 dark:bg-gray-900 dark:border-gray-800 bg-yellow-500\"  onclick=\"start_game()\">\n" +
+                "    <div class=\"flex flex-row items-center justify-between\">\n" +
+                "        <div class=\"flex flex-col\">\n" +
+                "            <div class=\"text-xs uppercase text-white truncate\">\n" +
+                "                Status\n" +
+                "            </div>\n" +
+                "            <div class=\"text-lg font-bold text-white truncate\">\n" +
+                "                Reset game\n" +
+                "            </div>\n" +
+                "        </div>\n" +
+                "        <svg class=\"stroke-current text-white\" height=\"24\" width=\"24\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\">\n" +
+                "           <path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15\" />\n" +
+                "        </svg>" +
+                "    </div>\n" +
+                "</div>";
+        }
+    } else {
+        if (game_data.status === "in_lobby") {
+            document.getElementById("sidebar_status").innerHTML = "<div class=\"widget w-full p-2.5 rounded-lg bg-white border border-gray-100 dark:bg-gray-900 dark:border-gray-800\">\n" +
+                "    <div class=\"flex flex-row items-center justify-between\">\n" +
+                "        <div class=\"flex flex-col\">\n" +
+                "            <div class=\"text-xs uppercase text-gray-500 truncate\">\n" +
+                "                Status\n" +
+                "            </div>\n" +
+                "            <div class=\"text-lg font-bold truncate\">\n" +
+                "                In lobby\n" +
+                "            </div>\n" +
+                "        </div>\n" +
+                "        <svg class=\"stroke-current text-blue-500\" height=\"24\" width=\"24\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\">\n" +
+                "            <path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z\" />\n" +
+                "        </svg>\n" +
+                "    </div>\n" +
+                "</div>";
+        } else if (game_data.status === "in_game") {
+            document.getElementById("sidebar_status").innerHTML = "<div class=\"widget w-full p-2.5 rounded-lg bg-white border border-gray-100 dark:bg-gray-900 dark:border-gray-800\">\n" +
+                "    <div class=\"flex flex-row items-center justify-between\">\n" +
+                "        <div class=\"flex flex-col\">\n" +
+                "            <div class=\"text-xs uppercase text-gray-500 truncate\">\n" +
+                "                Status\n" +
+                "            </div>\n" +
+                "            <div class=\"text-lg font-bold truncate\">\n" +
+                "                In game\n" +
+                "            </div>\n" +
+                "        </div>\n" +
+                "        <svg class=\"stroke-current text-blue-500\" height=\"24\" width=\"24\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\">\n" +
+                "            <path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z\" />\n" +
+                "        </svg>\n" +
+                "    </div>\n" +
+                "</div>";
+        }
     }
     //Cards remaining
     document.getElementById("sidebar_cards_left").innerHTML = game_data.cards_remaining;
     //EC remaining
-    document.getElementById("sidebar_ec_remaining").innerHTML = game_data.ec_remaining + "<a class=\"font-light\">, " +  Math.floor((game_data.ec_remaining/game_data.cards_remaining)*100) + "% chance</a>";
+    document.getElementById("sidebar_ec_remaining").innerHTML = game_data.ec_remaining + "<a class=\"font-light\"> / " +  Math.floor((game_data.ec_remaining/game_data.cards_remaining)*100) + "% chance</a>";
 }
 
-//HELPER FUNCTIONS
+/*\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
+ PLAYER ACTION FUNCTIONS
+\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\*/
+
+//Start game
+function start_game() {
+    socket.emit('start-game', {
+        slug: window.location.pathname.substr(6)
+    })
+}
+
+/*\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
+ GAME UI HELPER FUNCTIONS
+\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\*/
 
 //Return avatar icon cards
 function cards_icon(card_num) {
@@ -384,4 +494,18 @@ function status_dot(status, connection, margin) {
     } else {
         return "<span class=\"animate-pulse inline-flex rounded-full h-1.5 w-1.5 mb-0.5 " + margin + " align-middle bg-gray-500\"></span>"
     }
+}
+
+//Copy game url to clipboard
+function copy_game_url() {
+    let tempInput = document.createElement("input");
+    tempInput.value = window.location.href;
+    document.body.appendChild(tempInput);
+    tempInput.select();
+    document.execCommand("copy");
+    document.body.removeChild(tempInput);
+    Toast.fire({
+        icon: 'success',
+        html: '<h1 class="text-lg font-bold pl-2 pr-1">Copied game link</h1>'
+    });
 }

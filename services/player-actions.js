@@ -74,12 +74,12 @@ exports.update_connection = async function (game_slug, player_id, p_connection) 
     })
 };
 
-// Name : player_actions.create_hand(game)
+// Name : player_actions.create_hand(game_slug)
 // Desc : given a game_id, gives each player a defuse card and 4 random cards from the draw_deck
 // Author(s) : RAk3rman
-exports.create_hand = async function (game_id) {
+exports.create_hand = async function (game_slug) {
     //Get game details
-    let game_details = await game_actions.game_details_id(game_id);
+    let game_details = await game_actions.game_details_slug(game_slug);
     //Create array containing the position of each defuse card and regular card
     let defuseBucket = [];
     let cardBucket = [];
@@ -121,16 +121,16 @@ exports.create_hand = async function (game_id) {
         });
     });
     //Shuffle draw deck once we are done
-    await card_actions.shuffle_draw_deck(game_id);
+    await card_actions.shuffle_draw_deck(game_slug);
 }
 
 
-// Name : player_actions.randomize_seats(game_id)
+// Name : player_actions.randomize_seats(game_slug)
 // Desc : given a game_id, gives each player a random seat position (without replacement)
 // Author(s) : SengdowJones, RAk3rman
-exports.randomize_seats = async function (game_id) {
+exports.randomize_seats = async function (game_slug) {
     //Get game details
-    let game_details = await game_actions.game_details_id(game_id);
+    let game_details = await game_actions.game_details_slug(game_slug);
     //Create array containing each available seat
     let bucket = [];
     for (let i = 0; i <= game_details.players.length - 1; i++) {

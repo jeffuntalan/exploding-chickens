@@ -56,12 +56,12 @@ exports.reverse = async function (game_id, card_id) {
 
 }
 
-// Name : card_actions.shuffle_draw_deck(game_id, card_id)
+// Name : card_actions.shuffle_draw_deck(game_slug, card_id)
 // Desc : shuffles the positions of all cards in the draw deck, returns number of cards in draw deck
 // Author(s) : RAk3rman
-exports.shuffle_draw_deck = async function (game_id, card_id) {
+exports.shuffle_draw_deck = async function (game_slug, card_id) {
     //Get game details
-    let game_details = await game_actions.game_details_id(game_id);
+    let game_details = await game_actions.game_details_slug(game_slug);
     //Loop through each card to create array
     let bucket = [];
     let cards_in_deck = 0;
@@ -81,7 +81,7 @@ exports.shuffle_draw_deck = async function (game_id, card_id) {
     }
     if (card_id === null) {
         //Move card to discard pile
-        await game_actions.discard_card(game_id, card_id);
+        await game_actions.discard_card(game_slug, card_id);
     }
     //Create new promise
     return await new Promise((resolve, reject) => {
