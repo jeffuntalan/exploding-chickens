@@ -1,151 +1,210 @@
 [
   {
-    "pack_name": "Base",
+    "pack_name": "base",
     "type": "base"
   },
   {
-    "_id": "defuse-base-a",
-    "location": "Defuse",
-    "action": "defuse"
-  },
-  {
-    "_id": "defuse-base-b",
-    "location": "Defuse",
-    "action": "defuse"
-  },
-  {
-    "_id": "defuse-base-c",
-    "location": "Defuse",
-    "action": "defuse"
-  },
-  {
-    "_id": "defuse-base-d",
-    "location": "Defuse",
-    "action": "defuse"
-  },
-  {
-    "_id": "defuse-base-e",
-    "location": "Defuse",
-    "action": "defuse"
-  },
-  {
-    "_id": "defuse-base-f",
-    "location": "Defuse",
-    "action": "defuse"
-  },
-  {
-    "_id": "nope-base-a",
-    "location": "Nope",
-    "action": "nope"
-  },
-  {
-    "_id": "nope-base-b",
-    "location": "Nope",
-    "action": "nope"
-  },
-  {
-    "_id": "nope-base-c",
-    "location": "Nope",
-    "action": "nope"
-  },
-  {
-    "_id": "nope-base-d",
-    "location": "Nope",
-    "action": "nope"
-  },
-  {
-    "_id": "shuffle-base-a",
-    "location": "Shuffle",
-    "action": "shuffle"
-  },
-  {
-    "_id": "shuffle-base-b",
-    "location": "Shuffle",
-    "action": "shuffle"
-  },
-  {
-    "_id": "shuffle-base-c",
-    "location": "Shuffle",
-    "action": "shuffle"
-  },
-  {
-    "_id": "shuffle-base-d",
-    "location": "Shuffle",
-    "action": "shuffle"
-  },
-  {
-    "_id": "attack-base-a",
-    "location": "Attack",
+    "_id": "attack-1",
     "action": "attack"
   },
   {
-    "_id": "attack-base-b",
-    "location": "Attack",
+    "_id": "attack-2",
     "action": "attack"
   },
   {
-    "_id": "attack-base-c",
-    "location": "Attack",
+    "_id": "attack-3",
     "action": "attack"
   },
   {
-    "_id": "attack-base-d",
-    "location": "Attack",
+    "_id": "attack-4",
     "action": "attack"
   },
   {
-    "_id": "reverse-base-a",
-    "location": "Reverse",
-    "action": "reverse"
+    "_id": "chicken-1",
+    "action": "chicken"
   },
   {
-    "_id": "skip-base-a",
-    "location": "Skip",
-    "action": "skip"
+    "_id": "chicken-2",
+    "action": "chicken"
   },
   {
-    "_id": "favor-base-a",
-    "location": "Favor",
+    "_id": "chicken-3",
+    "action": "chicken"
+  },
+  {
+    "_id": "chicken-4",
+    "action": "chicken"
+  },
+  {
+    "_id": "defuse-1",
+    "action": "defuse"
+  },
+  {
+    "_id": "defuse-2",
+    "action": "defuse"
+  },
+  {
+    "_id": "defuse-3",
+    "action": "defuse"
+  },
+  {
+    "_id": "defuse-4",
+    "action": "defuse"
+  },
+  {
+    "_id": "defuse-5",
+    "action": "defuse"
+  },
+  {
+    "_id": "defuse-6",
+    "action": "defuse"
+  },
+  {
+    "_id": "favor-1",
     "action": "favor"
   },
   {
-    "_id": "chickovsky-base-a",
-    "location": "Chickovsky",
-    "action": "chicken"
+    "_id": "favor-2",
+    "action": "favor"
   },
   {
-    "_id": "funky-chicken-base-a",
-    "location": "Funky Chicken",
-    "action": "chicken"
+    "_id": "favor-3",
+    "action": "favor"
   },
   {
-    "_id": "dolphin-fowls-base-a",
-    "location": "Dolphin Fowls",
-    "action": "chicken"
+    "_id": "favor-4",
+    "action": "favor"
   },
   {
-    "_id": "big-chicken-base-a",
-    "location": "Big Chicken",
-    "action": "chicken"
+    "_id": "randchick-1-1",
+    "action": "randchick-1"
   },
   {
-    "_id": "hen-ry-stickman-base-a",
-    "location": "Hen-ry Stickman",
-    "action": "chicken"
+    "_id": "randchick-1-2",
+    "action": "randchick-1"
   },
   {
-    "_id": "see-base-a",
-    "location": "See the Future",
+    "_id": "randchick-1-3",
+    "action": "randchick-1"
+  },
+  {
+    "_id": "randchick-1-4",
+    "action": "randchick-1"
+  },
+  {
+    "_id": "randchick-2-1",
+    "action": "randchick-2"
+  },
+  {
+    "_id": "randchick-2-2",
+    "action": "randchick-2"
+  },
+  {
+    "_id": "randchick-2-3",
+    "action": "randchick-2"
+  },
+  {
+    "_id": "randchick-2-4",
+    "action": "randchick-2"
+  },
+  {
+    "_id": "randchick-3-1",
+    "action": "randchick-3"
+  },
+  {
+    "_id": "randchick-3-2",
+    "action": "randchick-3"
+  },
+  {
+    "_id": "randchick-3-3",
+    "action": "randchick-3"
+  },
+  {
+    "_id": "randchick-3-4",
+    "action": "randchick-3"
+  },
+  {
+    "_id": "randchick-4-1",
+    "action": "randchick-4"
+  },
+  {
+    "_id": "randchick-4-2",
+    "action": "randchick-4"
+  },
+  {
+    "_id": "randchick-4-3",
+    "action": "randchick-4"
+  },
+  {
+    "_id": "randchick-4-4",
+    "action": "randchick-4"
+  },
+  {
+    "_id": "reverse-1",
+    "action": "reverse"
+  },
+  {
+    "_id": "reverse-2",
+    "action": "reverse"
+  },
+  {
+    "_id": "reverse-3",
+    "action": "reverse"
+  },
+  {
+    "_id": "reverse-4",
+    "action": "reverse"
+  },
+  {
+    "_id": "seethefuture-1",
     "action": "seethefuture"
   },
   {
-    "_id": "drawbot-base-a",
-    "location": "Draw from the Bottom",
-    "action": "drawfromthebottom"
+    "_id": "seethefuture-2",
+    "action": "seethefuture"
   },
   {
-    "_id": "chicken-base-a",
-    "location": "Exploding Chicken",
-    "action": "chicken"
+    "_id": "seethefuture-3",
+    "action": "seethefuture"
+  },
+  {
+    "_id": "seethefuture-4",
+    "action": "seethefuture"
+  },
+  {
+    "_id": "seethefuture-5",
+    "action": "seethefuture"
+  },
+  {
+    "_id": "shuffle-1",
+    "action": "shuffle"
+  },
+  {
+    "_id": "shuffle-2",
+    "action": "shuffle"
+  },
+  {
+    "_id": "shuffle-3",
+    "action": "shuffle"
+  },
+  {
+    "_id": "shuffle-4",
+    "action": "shuffle"
+  },
+  {
+    "_id": "skip-1",
+    "action": "skip"
+  },
+  {
+    "_id": "skip-2",
+    "action": "skip"
+  },
+  {
+    "_id": "skip-3",
+    "action": "skip"
+  },
+  {
+    "_id": "skip-4",
+    "action": "skip"
   }
 ]
