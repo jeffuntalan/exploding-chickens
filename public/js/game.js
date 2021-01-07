@@ -341,7 +341,7 @@ function update_stats() {
     //Cards remaining
     document.getElementById("sidebar_cards_left").innerHTML = game_data.cards_remaining;
     //EC remaining
-    document.getElementById("sidebar_ec_remaining").innerHTML = game_data.ec_remaining + ", " +  Math.floor((game_data.ec_remaining/game_data.cards_remaining)*100) + "% chance";
+    document.getElementById("sidebar_ec_remaining").innerHTML = game_data.ec_remaining + "<a class=\"font-light\">, " +  Math.floor((game_data.ec_remaining/game_data.cards_remaining)*100) + "% chance</a>";
 }
 
 //HELPER FUNCTIONS
