@@ -52,7 +52,7 @@ let cardSchema = mongoose.Schema({
         type: String,
         required: true
     },
-    pack: {
+    image_loc: {
         type: String,
         required: true
     },

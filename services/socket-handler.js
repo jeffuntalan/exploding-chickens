@@ -99,7 +99,7 @@ module.exports = function (fastify) {
             if (raw_game_details["players"].length === 0) { //Add player as host
                 created_player = await player_actions.modify_player(data.slug, undefined, data.nickname, 0, data.avatar, "host", "idle", "connected");
             } else { //Add as player
-                created_player = await player_actions.modify_player(data.slug, undefined, data.nickname, raw_game_details["players"].length, data.avatar, "player", "idle", "offline");
+                created_player = await player_actions.modify_player(data.slug, undefined, data.nickname, raw_game_details["players"].length, data.avatar, "player", "idle", "connected");
             }
             //Return player_id to client
             fastify.io.to(socket.id).emit("player-created", created_player);

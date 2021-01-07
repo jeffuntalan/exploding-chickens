@@ -86,7 +86,7 @@ exports.create_hand = async function (game_slug) {
     for (let i = 0; i <= game_details.cards.length - 1; i++) {
         if (game_details.cards[i].action === "defuse") {
             defuseBucket.push(i);
-        } else if (game_details.cards[i].action !== "exploding") {
+        } else if (game_details.cards[i].action !== "chicken") {
             cardBucket.push(i);
         }
     }
