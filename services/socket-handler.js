@@ -56,6 +56,8 @@ module.exports = function (fastify) {
             //Make sure we have the correct number of seats
             let raw_game_details = await game_actions.game_details_slug(data.slug);
             if (raw_game_details.players.length > 1 && raw_game_details.players.length < 5) {
+                //Reset game
+                await game_actions.reset_game(data.slug);
                 //Create hand for each player
                 await player_actions.create_hand(data.slug);
                 //Randomize seat positions
