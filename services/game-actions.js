@@ -91,7 +91,7 @@ exports.import_cards = async function (game_slug, pack_loc) {
     let pack_array = require(pack_loc);
     //Loop through each json value and add card
     for (let i = 1; i <= pack_array.length - 1; i++) {
-        game_details.cards.push({ _id: pack_array[i]._id, name: pack_array[i].name, action: pack_array[i].action, position: i });
+        game_details.cards.push({ _id: pack_array[i]._id, location: pack_array[i].location, action: pack_array[i].action, position: i });
     }
     //Create new promise
     return await new Promise((resolve, reject) => {
