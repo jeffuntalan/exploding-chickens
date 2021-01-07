@@ -267,7 +267,7 @@ function update_players() {
             document.getElementById("sidebar_top_nickname").innerHTML = game_data.players[i].nickname + status_dot(game_data.players[i].status, game_data.players[i].connection, "mx-1.5");
             //Add cards to hand
             for (let j = 0; j < game_data.players[i].cards.length; j++) {
-                document.getElementById("player_cards").innerHTML += "<div class=\"rounded-xl shadow-lg h-64 w-52 mx-1 bg-center bg-contain\" style=\"background-image: url('/public/cards/base/card_back.png')\"></div>";
+                document.getElementById("player_cards").innerHTML += "<div class=\"rounded-xl shadow-lg h-64 w-52 mx-1 bg-center bg-contain\" style=\"background-image: url('/public/cards/card_back.png')\"></div>";
             }
             //Add reset game button to player actions
             if (current_player_host) {
