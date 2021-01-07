@@ -105,57 +105,61 @@ module.exports = function (fastify) {
     async function update_game_ui(slug, target, source) {
         //Get raw game details from mongodb
         let raw_game_details = await game_actions.game_details_slug(slug);
-        //Determine number of exploding chickens
-        let ec_count = 0;
-        for (let i = 0; i < raw_game_details["cards"].length; i++) {
-            //If the card is assigned to this player, add to hand
-            if (raw_game_details["cards"][i].action === "chicken") {
-                ec_count += 1;
+        if (raw_game_details !== null) {
+            //Determine number of exploding chickens
+            let ec_count = 0;
+            for (let i = 0; i < raw_game_details["cards"].length; i++) {
+                //If the card is assigned to this player, add to hand
+                if (raw_game_details["cards"][i].action === "chicken") {
+                    ec_count += 1;
+                }
             }
-        }
-        //console.log(ec_count);
-        //Prepare pretty game details
-        let pretty_game_details = {
-            players: [],
-            discard_deck: [],
-            slug: raw_game_details["slug"],
-            created: moment(raw_game_details["created"]).calendar(),
-            status: raw_game_details["status"],
-            seat_playing: raw_game_details["seat_playing"],
-            turn_direction: raw_game_details["turn_direction"],
-            turns_remaining: raw_game_details["turns_remaining"],
-            cards_remaining: filter_cards("draw_deck", raw_game_details["cards"]).length,
-            ec_remaining: ec_count
-        }
-        //Sort and add players to json array
-        raw_game_details["players"].sort(function(a, b) {
-            return a.seat > b.seat;
-        });
-        //Loop through each player
-        for (let i = 0; i < raw_game_details["players"].length; i++) {
-            let card_array = filter_cards(raw_game_details["players"][i]._id, raw_game_details["cards"]);
-            //Found current player, return extended details
-            pretty_game_details.players.push({
-                _id: raw_game_details["players"][i]._id,
-                cards: card_array,
-                card_num: card_array.length,
-                avatar: raw_game_details["players"][i].avatar,
-                type: raw_game_details["players"][i].type,
-                status: raw_game_details["players"][i].status,
-                connection: raw_game_details["players"][i].connection,
-                nickname: raw_game_details["players"][i].nickname,
-                seat: raw_game_details["players"][i].seat,
+            //console.log(ec_count);
+            //Prepare pretty game details
+            let pretty_game_details = {
+                players: [],
+                discard_deck: [],
+                slug: raw_game_details["slug"],
+                created: moment(raw_game_details["created"]).calendar(),
+                status: raw_game_details["status"],
+                seat_playing: raw_game_details["seat_playing"],
+                turn_direction: raw_game_details["turn_direction"],
+                turns_remaining: raw_game_details["turns_remaining"],
+                cards_remaining: filter_cards("draw_deck", raw_game_details["cards"]).length,
+                ec_remaining: ec_count
+            }
+            //Sort and add players to json array
+            raw_game_details["players"].sort(function(a, b) {
+                return a.seat > b.seat;
             });
-        }
-        //Get discard deck
-        pretty_game_details.discard_deck = filter_cards("discard_deck", raw_game_details["cards"]);
-        //Send game-data
-        if (target === "") {
-            fastify.io.emit(slug, pretty_game_details);
+            //Loop through each player
+            for (let i = 0; i < raw_game_details["players"].length; i++) {
+                let card_array = filter_cards(raw_game_details["players"][i]._id, raw_game_details["cards"]);
+                //Found current player, return extended details
+                pretty_game_details.players.push({
+                    _id: raw_game_details["players"][i]._id,
+                    cards: card_array,
+                    card_num: card_array.length,
+                    avatar: raw_game_details["players"][i].avatar,
+                    type: raw_game_details["players"][i].type,
+                    status: raw_game_details["players"][i].status,
+                    connection: raw_game_details["players"][i].connection,
+                    nickname: raw_game_details["players"][i].nickname,
+                    seat: raw_game_details["players"][i].seat,
+                });
+            }
+            //Get discard deck
+            pretty_game_details.discard_deck = filter_cards("discard_deck", raw_game_details["cards"]);
+            //Send game-data
+            if (target === "") {
+                fastify.io.emit(slug, pretty_game_details);
+            } else {
+                fastify.io.to(target).emit(slug, pretty_game_details);
+            }
+            spinner.succeed(`${chalk.bold.blue('Socket')}: ${chalk.dim.cyan(source)} ${chalk.dim.yellow(slug)} Sent game update event`);
         } else {
-            fastify.io.to(target).emit(slug, pretty_game_details);
+            spinner.fail(`${chalk.bold.blue('Socket')}: ${chalk.dim.cyan(source)} ${chalk.dim.yellow(slug)} Game does not exist`);
         }
-        spinner.succeed(`${chalk.bold.blue('Socket')}: ${chalk.dim.cyan(source)} ${chalk.dim.yellow(slug)} Sent game update event`);
     }
 
     // Name : filter_cards(assignment, card_array)
