@@ -307,25 +307,14 @@ exports.card_call = async function (game_slug, card_id, player_id) {
 exports.reset_game = async function (game_slug) {
     //Get game details
     let game_details = await game_actions.game_details_slug(game_slug);
+    for (let i = 0; i <= game_details.cards.length - 1; i++) {
+        game_details.cards[i].assignment = "draw_deck";
+    }
+    game_details.turn_direction = "forward";
+    game_details.seat_playing = 0;
+    game_details.turns_remaining = 1;
+    //Create new promise
     await new Promise((resolve, reject) => {
-        for (let i = 0; i <= game_details.cards.length - 1; i++) {
-            game.findOneAndUpdate({ slug: game_slug, "cards._id": game_details.cards[i]._id},
-                {"$set": { "cards.$.assignment": "draw_deck"}}, function (err) {
-                    if (err) {
-                        reject(err);
-                    } else {
-                        resolve();
-                    }
-                });
-        }
-        game.findOneAndUpdate({ slug: game_slug},
-            {"$set": { "seat.$.playing": 0, "turn.$.direction": "forward", "turns.$.remaining": 1, }}, function (err) {
-                if (err) {
-                    reject(err);
-                } else {
-                    resolve();
-                }
-            });
         //Save updated game
         game_details.save({}, function (err) {
             if (err) {
