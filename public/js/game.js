@@ -126,11 +126,7 @@ function setup_game() {
                 player_id: session_player_id
             })
             //Check to see if the player is the host
-            if (game_data.players[i].type === "host") {
-                current_player_host = true;
-            } else {
-                current_player_host = false;
-            }
+            current_player_host = game_data.players[i].type === "host";
             break;
         }
     }
@@ -265,11 +261,17 @@ function update_players() {
         //Append to sidebar, information
         let actions = "";
         if (game_data.players[i]._id === session_player_id) {
+            //Check to see if the player is the host
+            current_player_host = game_data.players[i].type === "host";
             //Add nickname to the top of sidebar
             document.getElementById("sidebar_top_nickname").innerHTML = game_data.players[i].nickname + status_dot(game_data.players[i].status, game_data.players[i].connection, "mx-1.5");
             //Add cards to hand
+            let call_card_action = "";
+            if (game_data.seat_playing === game_data.players[i].seat) {
+                call_card_action = "card_action('" + game_data.players[i].cards[j]._id + "')";
+            }
             for (let j = 0; j < game_data.players[i].cards.length; j++) {
-                current_player_cards += "<div class=\"rounded-xl shadow-sm bottom-card bg-center bg-contain\" style=\"background-image: url('/" + game_data.players[i].cards[j].image_loc + "')\"></div>";
+                current_player_cards += "<div class=\"rounded-xl shadow-sm bottom-card bg-center bg-contain\" onclick=\"" + call_card_action + "\" style=\"background-image: url('/" + game_data.players[i].cards[j].image_loc + "')\"></div>";
             }
             //Add reset game button to player actions
             if (current_player_host) {
@@ -328,12 +330,16 @@ function update_players() {
         //Append to topbar, players
         topbar_players_payload += "<img class=\"inline-block h-6 w-6 rounded-full ring-2 ring-white\" src=\"/public/avatars/" + game_data.players[i].avatar + "\" alt=\"\">";
         //Append to center
+        let playing_halo = "";
+        if (game_data.seat_playing === game_data.players[i].seat) {
+            playing_halo = " ring-2 ring-blue-500";
+        }
         center_players_payload += "<div class=\"block text-center\">\n" +
             "    <h1 class=\"text-gray-600 font-medium text-sm\">\n" +
             "        " + game_data.players[i].nickname + " " + status_dot(game_data.players[i].status, game_data.players[i].connection, "") + "\n" +
             "    </h1>\n" +
             "    <div class=\"flex flex-col items-center -space-y-3\">\n" +
-            "        <img class=\"h-12 w-12 rounded-full\" src=\"/public/avatars/" + game_data.players[i].avatar + "\" alt=\"\">\n" +
+            "        <img class=\"h-12 w-12 rounded-full" + playing_halo + "\" src=\"/public/avatars/" + game_data.players[i].avatar + "\" alt=\"\">\n" +
             "        <div class=\"-space-x-4 rotate-12\">\n" +
             cards_icon(game_data.players[i].card_num) +
             "        </div>\n" +
@@ -453,6 +459,13 @@ function start_game() {
     socket.emit('start-game', {
         slug: window.location.pathname.substr(6)
     })
+}
+
+//Card action
+function card_action() {
+    // socket.emit('start-game', {
+    //     slug: window.location.pathname.substr(6)
+    // })
 }
 
 /*\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\

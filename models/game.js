@@ -10,10 +10,6 @@ let mongoose = require('mongoose');
 const { v4: uuidv4 } = require('uuid');
 const { uniqueNamesGenerator, adjectives, colors, animals } = require('unique-names-generator');
 
-module.exports = {
-    v4: () => uuid.v4,
-};
-
 //Player schema
 let playerSchema = mongoose.Schema({
     _id: {

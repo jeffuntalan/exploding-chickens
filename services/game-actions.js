@@ -8,6 +8,7 @@ Author(s): RAk3rman
 //Packages
 let game = require('../models/game.js');
 const { v4: uuidv4 } = require('uuid');
+const { uniqueNamesGenerator, adjectives, colors, animals } = require('unique-names-generator');
 const dataStore = require('data-store');
 const config_storage = new dataStore({path: './config/config.json'});
 let verbose_debug_mode = config_storage.get('verbose_debug_mode');
@@ -23,7 +24,7 @@ let player_actions = require('./player-actions.js');
 exports.create_game = async function () {
     //Create new promise and return created_game after saved
     return await new Promise((resolve, reject) => {
-        game.create({ _id: uuidv4() }, function (err, created_game) {
+        game.create({ _id: uuidv4(), slug: uniqueNamesGenerator({dictionaries: [adjectives, animals, colors], separator: '-', length: 2}) }, function (err, created_game) {
             if (err) {
                 reject(err);
             } else {

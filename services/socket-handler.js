@@ -155,7 +155,7 @@ module.exports = function (fastify) {
             }
             //Sort and add players to json array
             raw_game_details["players"].sort(function(a, b) {
-                return a.seat > b.seat;
+                return a.seat - b.seat;
             });
             //Loop through each player
             for (let i = 0; i < raw_game_details["players"].length; i++) {
@@ -201,7 +201,7 @@ module.exports = function (fastify) {
         }
         //Sort card hand by position
         temp_deck.sort(function(a, b) {
-            return a.position > b.position;
+            return a.position - b.position;
         });
         return temp_deck;
     }

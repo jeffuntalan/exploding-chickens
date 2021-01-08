@@ -157,7 +157,7 @@ function game_purge() {
                 //Determine if the game is more than 4 hours old
                 if (!moment(found_games[i].created).add(4, "hours").isSameOrAfter(moment())) {
                     //Delete game
-                    game_actions.delete_game(found_games[i]._id).then(() => {
+                    game_actions.delete_game(found_games[i].slug).then(() => {
                         spinner.succeed(`${chalk.bold.red('Game Purge')}: Deleted game with id:` + found_games[i]._id);
                     });
                 }
