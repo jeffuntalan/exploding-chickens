@@ -266,11 +266,11 @@ function update_players() {
             //Add nickname to the top of sidebar
             document.getElementById("sidebar_top_nickname").innerHTML = game_data.players[i].nickname + status_dot(game_data.players[i].status, game_data.players[i].connection, "mx-1.5");
             //Add cards to hand
-            let call_card_action = "";
-            if (game_data.seat_playing === game_data.players[i].seat) {
-                call_card_action = "card_action('" + game_data.players[i].cards[j]._id + "')";
-            }
             for (let j = 0; j < game_data.players[i].cards.length; j++) {
+                let call_card_action = "";
+                if (game_data.seat_playing === game_data.players[i].seat) {
+                    call_card_action = "card_action('" + game_data.players[i].cards[j]._id + "')";
+                }
                 current_player_cards += "<div class=\"rounded-xl shadow-sm bottom-card bg-center bg-contain\" onclick=\"" + call_card_action + "\" style=\"background-image: url('/" + game_data.players[i].cards[j].image_loc + "')\"></div>";
             }
             //Add reset game button to player actions
