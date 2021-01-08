@@ -301,18 +301,26 @@ exports.card_call = async function (game_slug, card_id, player_id) {
     });
 
 }
-// Name : game_actions.reset_game(game_id)
+// Name : game_actions.reset_game(game_slug, player_status, game_status)
 // Desc : Calls the appropriate card function based on card id
 // Author(s) : Vincent Do
-exports.reset_game = async function (game_slug) {
+exports.reset_game = async function (game_slug, player_status, game_status) {
     //Get game details
     let game_details = await game_actions.game_details_slug(game_slug);
+    //Reset cards
     for (let i = 0; i <= game_details.cards.length - 1; i++) {
         game_details.cards[i].assignment = "draw_deck";
+        game_details.cards[i].position = i;
     }
+    //Reset players
+    for (let i = 0; i <= game_details.players.length - 1; i++) {
+        game_details.players[i].status = player_status;
+    }
+    //Reset game variables
     game_details.turn_direction = "forward";
     game_details.seat_playing = 0;
     game_details.turns_remaining = 1;
+    game_details.status = game_status;
     //Create new promise
     await new Promise((resolve, reject) => {
         //Save updated game
@@ -324,5 +332,4 @@ exports.reset_game = async function (game_slug) {
             }
         });
     });
-
 }

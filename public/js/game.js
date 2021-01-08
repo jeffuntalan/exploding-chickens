@@ -57,17 +57,25 @@ socket.on("player-created", function (data) {
 //Socket.io on game-start
 socket.on(window.location.pathname.substr(6) + "-start", function (data) {
     //Check to see if we got an error
-    if (current_player_host && data !== "") {
+    if (data !== "") {
         Toast.fire({
             icon: 'error',
             html: '<h1 class="text-lg font-bold pl-2 pr-1">' + data + '</h1>'
         });
     } else {
         Toast.fire({
-            icon: 'success',
+            icon: 'info',
             html: '<h1 class="text-lg font-bold pl-2 pr-1">Game has started</h1>'
         });
     }
+});
+
+//Socket.io on game-reset
+socket.on(window.location.pathname.substr(6) + "-reset", function (data) {
+    Toast.fire({
+        icon: 'info',
+        html: '<h1 class="text-lg font-bold pl-2 pr-1">Game has been reset</h1>'
+    });
 });
 
 //Socket.io on disconnect
@@ -393,7 +401,7 @@ function update_stats() {
                 "    </div>\n" +
                 "</div>";
         } else if (game_data.status === "in_game") {
-            document.getElementById("sidebar_status").innerHTML = "<div class=\"widget w-full p-2.5 rounded-lg bg-white border border-gray-100 dark:bg-gray-900 dark:border-gray-800 bg-yellow-500\"  onclick=\"start_game()\">\n" +
+            document.getElementById("sidebar_status").innerHTML = "<div class=\"widget w-full p-2.5 rounded-lg bg-white border border-gray-100 dark:bg-gray-900 dark:border-gray-800 bg-yellow-500\"  onclick=\"reset_game()\">\n" +
                 "    <div class=\"flex flex-row items-center justify-between\">\n" +
                 "        <div class=\"flex flex-col\">\n" +
                 "            <div class=\"text-xs uppercase text-white truncate\">\n" +
@@ -457,6 +465,13 @@ function update_stats() {
 //Start game
 function start_game() {
     socket.emit('start-game', {
+        slug: window.location.pathname.substr(6)
+    })
+}
+
+//Reset game
+function reset_game() {
+    socket.emit('reset-game', {
         slug: window.location.pathname.substr(6)
     })
 }

@@ -70,7 +70,7 @@ module.exports = function (fastify) {
         })
 
         // Name : socket.on.start-game
-        // Desc : runs when game data is requested from the client
+        // Desc : runs when the host requests the game to start
         // Author(s) : RAk3rman
         socket.on('start-game', async function (data) {
             spinner.start(`${chalk.bold.blue('Socket')}: ${chalk.dim.cyan('start-game      ')} ${chalk.dim.yellow(data.slug)} Starting game`);
@@ -78,20 +78,34 @@ module.exports = function (fastify) {
             let raw_game_details = await game_actions.game_details_slug(data.slug);
             if (raw_game_details.players.length > 1 && raw_game_details.players.length < 5) {
                 //Reset game
-                await game_actions.reset_game(data.slug);
+                await game_actions.reset_game(data.slug, "playing", "in_game");
                 //Create hand for each player
                 await player_actions.create_hand(data.slug);
                 //Randomize seat positions
                 await player_actions.randomize_seats(data.slug);
                 //Emit start game event
-                fastify.io.to(socket.id).emit(data.slug + "-start", "");
+                fastify.io.emit(data.slug + "-start", "");
                 spinner.succeed(`${chalk.bold.blue('Socket')}: ${chalk.dim.cyan('start-game      ')} ${chalk.dim.yellow(data.slug)} Game has started`);
                 //Update clients
                 await update_game_ui(data.slug, "", "start-game      ");
             } else {
                 //Emit start game event with error
-                fastify.io.to(socket.id).emit(data.slug + "-start", "Only 2-5 players are allowed");
+                fastify.io.to(socket.id).emit(data.slug + "-start", "You must have 2-5 players");
             }
+        })
+
+        // Name : socket.on.reset-game
+        // Desc : runs when the host requests the game to reset back to the lobby
+        // Author(s) : RAk3rman
+        socket.on('reset-game', async function (data) {
+            spinner.start(`${chalk.bold.blue('Socket')}: ${chalk.dim.cyan('reset-game      ')} ${chalk.dim.yellow(data.slug)} Resetting game`);
+            //Reset game
+            await game_actions.reset_game(data.slug, "idle", "in_lobby");
+            //Emit start game event
+            fastify.io.emit(data.slug + "-reset", "");
+            spinner.succeed(`${chalk.bold.blue('Socket')}: ${chalk.dim.cyan('reset-game      ')} ${chalk.dim.yellow(data.slug)} Game has been reset`);
+            //Update clients
+            await update_game_ui(data.slug, "", "reset-game      ");
         })
 
         // Name : socket.on.play-card
