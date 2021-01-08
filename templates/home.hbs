@@ -13,162 +13,193 @@
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css"
         integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
 </head>
+
 <body>
-<!-- Exploding Chickens, home landing page // SengdowJones -->
+    <!-- Exploding Chickens, home landing page // SengdowJones -->
 
-{{! Logo }}
-<div class="bg-white">
-    <div class="py-5 relative rounded-2xl bg-white">
-            <div class="mt-80 flex flex-col items-center -space-y-3">
-                <img class="h-36 w-auto" src="public\css\assets\ecv01.png" alt="">
+    {{! Logo }}
+    <div class="bg-white">
+        <div class="py-5 relative rounded-2xl bg-white">
+            <div class="mt-6 sm:mt-24 flex flex-col items-center -space-y-3">
+                <img class="p-4 h-auto w-screen lg:h-36 lg:w-auto" src="public\css\assets\ecv01.png" alt="">
             </div>
-        {{!-- Title --}}
-        <div class="mt-2 block text-center">
-            <div class="flex flex-col items-center">
-                {{!-- Buttons --}}
-                <div class="mt-4">
-                <form action="/game/create" method="POST" enctype="application/x-www-form-urlencoded">
-                    <button type="submit" class="rounded-full bg-gradient-to-r from-yellow-400 to-yellow-500 text-white font-bold py-2 px-6 border-b-1 border-yellow-400 hover:bg-yellow-300 hover:text-white hover:border-transparent transition ease-in duration-200 transform hover:-translate-y-1">New Game</button>
-                <button type="button" onclick=join_game_modal() class="rounded-full mx-1 bg-gradient-to-r from-yellow-400 to-yellow-500 text-white font-bold py-2 px-6 border-b-1 border-yellow-400 hover:bg-yellow-300 hover:text-white hover:border-transparent transition ease-in duration-200 transform hover:-translate-y-1">Join Game</button>
-                <button type="button" onclick=join_game_modal() class="rounded-full bg-gradient-to-r from-yellow-400 to-yellow-500 text-white font-bold py-2 px-6 border-b-1 border-yellow-400 hover:bg-yellow-300 hover:text-white hover:border-transparent transition ease-in duration-200 transform hover:-translate-y-1">Find Game</button>
-                </form>
+            {{!-- Title --}}
+            <div class="mt-4 block text-center">
+                <div class="flex flex-col items-center">
+                    <form class="-mt-5 mb-10 hidden sm:block" action="/game/create" method="POST"
+                        enctype="application/x-www-form-urlencoded">
+                        <button type="submit"
+                            class="rounded-full bg-gradient-to-r from-yellow-400 to-yellow-500 text-white font-bold py-2 px-3 sm:py-2 sm:px-6 border-b-1 border-yellow-400 hover:bg-yellow-300 hover:text-white hover:border-transparent transition ease-in duration-200 transform hover:-translate-y-1">New
+                            Game</button>
+                        <button type="button" onclick=join_game_modal()
+                            class="rounded-full mx-1 bg-gradient-to-r from-yellow-400 to-yellow-500 text-white font-bold py-2 px-3 sm:py-2 sm:px-6 border-b-1 border-yellow-400 hover:bg-yellow-300 hover:text-white hover:border-transparent transition ease-in duration-200 transform hover:-translate-y-1">Join
+                            Game</button>
+                        <button type="button" onclick=join_game_modal()
+                            class="rounded-full bg-gradient-to-r from-yellow-400 to-yellow-500 text-white font-bold py-2 px-3 sm:py-2 sm:px-6 border-b-1 border-yellow-400 hover:bg-yellow-300 hover:text-white hover:border-transparent transition ease-in duration-200 transform hover:-translate-y-1">Find
+                            Game</button>
+                    </form>
+                    {{!-- Cover Art w/Desc. --}}
+                    <div class="text-xs sm:text-xl text-gray-500 italic" style="font-family: Open Sans">
+                        <p>Don't know how to play?
+                        </p>
+                        <p>Check out the <a class="font-bold">"How to Play"</a> section below!</p>
+                    </div>
+                    {{!-- Buttons --}}
+                    <div class="text-xs">
+                        <img class="mb-2 h-auto w-screen" src="public\css\assets\cards.png" alt="">
+                        <form class="sm:hidden" action="/game/create" method="POST"
+                            enctype="application/x-www-form-urlencoded">
+                            <button type="submit"
+                                class="rounded-full bg-gradient-to-r from-yellow-400 to-yellow-500 text-white font-bold py-2 px-3 sm:py-2 sm:px-6 border-b-1 border-yellow-400 hover:bg-yellow-300 hover:text-white hover:border-transparent transition ease-in duration-200 transform hover:-translate-y-1">New
+                                Game</button>
+                            <button type="button" onclick=join_game_modal()
+                                class="rounded-full mx-1 bg-gradient-to-r from-yellow-400 to-yellow-500 text-white font-bold py-2 px-3 sm:py-2 sm:px-6 border-b-1 border-yellow-400 hover:bg-yellow-300 hover:text-white hover:border-transparent transition ease-in duration-200 transform hover:-translate-y-1">Join
+                                Game</button>
+                            <button type="button" onclick=join_game_modal()
+                                class="rounded-full bg-gradient-to-r from-yellow-400 to-yellow-500 text-white font-bold py-2 px-3 sm:py-2 sm:px-6 border-b-1 border-yellow-400 hover:bg-yellow-300 hover:text-white hover:border-transparent transition ease-in duration-200 transform hover:-translate-y-1">Find
+                                Game</button>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 
-{{!-- How to Play --}}
-<div class="px-10 py-12 bg-white">
-    <div class="mt-80 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="lg:text-center">
-            <h2 class="text-gray-600 font-semibold tracking-wide" style="font-family: Open Sans">Copyright © 2021  | exploding-chickens.com 
-            </h2>
-            <p class="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">
-                How to Play Exploding Chickens
-            </p>
-            <p class="mt-4 mb-16 max-w-2xl text-xl text-gray-500 lg:mx-auto">
-                In the deck of cards are some Exploding Chickens. You take turns drawing cards until someone
-                draws an Exploding Chicken. Without a defuse, that person explodes and is out of the game. This
-                process continues until there’s only 1 player left, who wins the game.
+    {{!-- How to Play --}}
+    <div class="px-10 py-12 bg-white">
+        <div class="mt-80 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="lg:text-center">
+                <h2 class="text-gray-600 font-semibold tracking-wide" style="font-family: Open Sans">Copyright © 2021 |
+                    exploding-chickens.com
+                </h2>
+                <p class="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">
+                    How to Play Exploding Chickens
+                </p>
+                <p class="mt-4 mb-16 max-w-2xl text-xl text-gray-500 lg:mx-auto">
+                    In the deck of cards are some Exploding Chickens. You take turns drawing cards until someone
+                    draws an Exploding Chicken. Without a defuse, that person explodes and is out of the game. This
+                    process continues until there’s only 1 player left, who wins the game.
 
-            </p>
-        </div>
-        <div class="mb-16">
-            <dl class="space-y-10 md:space-y-0 md:grid md:grid-cols-2 md:gap-x-8 md:gap-y-10">
-                <div class="flex">
-                    <div class="flex-shrink-0">
-                        <div class="flex items-center justify-center h-12 w-12 rounded-md bg-indigo-500 text-white">
-                            <!-- Heroicon name: dice one -->
-                            <i class="fas fa-dice-one fa-2x"> </i>
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
-                            </svg>
+                </p>
+            </div>
+            <div class="mb-16">
+                <dl class="space-y-10 md:space-y-0 md:grid md:grid-cols-2 md:gap-x-8 md:gap-y-10">
+                    <div class="flex">
+                        <div class="flex-shrink-0">
+                            <div class="flex items-center justify-center h-12 w-12 rounded-md bg-indigo-500 text-white">
+                                <!-- Heroicon name: dice one -->
+                                <i class="fas fa-dice-one fa-2x"> </i>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="ml-4">
+                            <dt class="text-lg leading-6 font-medium text-gray-900">
+                                Phase 1 of Turn
+                            </dt>
+                            <dd class="mt-2 text-base text-gray-500">
+                                Choose either to pass (play no cards) or play an action card. You may play as many
+                                action cards as you'd like in phase 1 of your turn.
+                            </dd>
                         </div>
                     </div>
-                    <div class="ml-4">
-                        <dt class="text-lg leading-6 font-medium text-gray-900">
-                            Phase 1 of Turn
-                        </dt>
-                        <dd class="mt-2 text-base text-gray-500">
-                            Choose either to pass (play no cards) or play an action card. You may play as many
-                            action cards as you'd like in phase 1 of your turn.
-                        </dd>
-                    </div>
-                </div>
 
-                <div class="flex">
-                    <div class="flex-shrink-0">
-                        <div class="flex items-center justify-center h-12 w-12 rounded-md bg-indigo-500 text-white">
-                            <!-- Heroicon name: scale -->
-                            <i class="fas fa-dice-two fa-2x"> </i>
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3" />
-                            </svg>
+                    <div class="flex">
+                        <div class="flex-shrink-0">
+                            <div class="flex items-center justify-center h-12 w-12 rounded-md bg-indigo-500 text-white">
+                                <!-- Heroicon name: scale -->
+                                <i class="fas fa-dice-two fa-2x"> </i>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3" />
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="ml-4">
+                            <dt class="text-lg leading-6 font-medium text-gray-900">
+                                Phase 2 of turn
+                            </dt>
+                            <dd class="mt-2 text-base text-gray-500">
+                                If you play a card that requires another player to perform an action (such as a favor),
+                                that player must perform the action. The turn either moves to the next player or stays
+                                on you
+                                depending on the card instructions.
+
+                            </dd>
                         </div>
                     </div>
-                    <div class="ml-4">
-                        <dt class="text-lg leading-6 font-medium text-gray-900">
-                            Phase 2 of turn
-                        </dt>
-                        <dd class="mt-2 text-base text-gray-500">
-                            If you play a card that requires another player to perform an action (such as a favor),
-                            that player must perform the action. The turn either moves to the next player or stays on you
-                            depending on the card instructions.
 
-                        </dd>
-                    </div>
-                </div>
-
-                <div class="flex">
-                    <div class="flex-shrink-0">
-                        <div class="flex items-center justify-center h-12 w-12 rounded-md bg-indigo-500 text-white">
-                            <!-- Heroicon name: lightning-bolt -->
-                            <i class="fas fa-dice-three fa-2x"> </i>
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M13 10V3L4 14h7v7l9-11h-7z" />
-                            </svg>
+                    <div class="flex">
+                        <div class="flex-shrink-0">
+                            <div class="flex items-center justify-center h-12 w-12 rounded-md bg-indigo-500 text-white">
+                                <!-- Heroicon name: lightning-bolt -->
+                                <i class="fas fa-dice-three fa-2x"> </i>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M13 10V3L4 14h7v7l9-11h-7z" />
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="ml-4">
+                            <dt class="text-lg leading-6 font-medium text-gray-900">
+                                Phase 3 of turn
+                            </dt>
+                            <dd class="mt-2 text-base text-gray-500">
+                                If an action card you played does not end your turn, end your turn by drawing a card
+                                from the Draw Pile into your hand. The next player then plays.
+                                If the card is an exploding chicken, you must play a defuse card to avoid getting
+                                exploded.
+                            </dd>
                         </div>
                     </div>
-                    <div class="ml-4">
-                        <dt class="text-lg leading-6 font-medium text-gray-900">
-                            Phase 3 of turn
-                        </dt>
-                        <dd class="mt-2 text-base text-gray-500">
-                            If an action card you played does not end your turn, end your turn by drawing a card from the Draw Pile into your hand. The next player then plays.
-                            If the card is an exploding chicken, you must play a defuse card to avoid getting exploded.
-                        </dd>
-                    </div>
-                </div>
 
-                <div class="flex">
-                    <div class="flex-shrink-0">
-                        <div class="flex items-center justify-center h-12 w-12 rounded-md bg-indigo-500 text-white">
-                            <!-- Heroicon name: annotation -->
-                            <i class="fas fa-dice-four fa-2x"> </i>
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
-                            </svg>
+                    <div class="flex">
+                        <div class="flex-shrink-0">
+                            <div class="flex items-center justify-center h-12 w-12 rounded-md bg-indigo-500 text-white">
+                                <!-- Heroicon name: annotation -->
+                                <i class="fas fa-dice-four fa-2x"> </i>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="ml-4">
+                            <dt class="text-lg leading-6 font-medium text-gray-900">
+                                Ending the Game
+                            </dt>
+                            <dd class="mt-2 text-base text-gray-500">
+                                The last player who hasn't exploded wins the game. You won't ever run out of cards
+                                in the Draw Pile because there are enough Exploding Chickens to kill all but 1
+                                player.
+                            </dd>
                         </div>
                     </div>
-                    <div class="ml-4">
-                        <dt class="text-lg leading-6 font-medium text-gray-900">
-                            Ending the Game
-                        </dt>
-                        <dd class="mt-2 text-base text-gray-500">
-                            The last player who hasn't exploded wins the game. You won't ever run out of cards
-                            in the Draw Pile because there are enough Exploding Chickens to kill all but 1
-                            player.
-                        </dd>
-                    </div>
-                </div>
-            </dl>
+                </dl>
+            </div>
         </div>
     </div>
-</div>
 
-<script src="/socket.io/socket.io.js"></script>
-<script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
-<script src="/public/js/home.js"></script>
-<script>
-    function openModal(key) {
-        document.getElementById(key).showModal();
-        document.body.setAttribute('style', 'overflow: hidden;');
-        document.getElementById(key).children[0].scrollTop = 0;
-        document.getElementById(key).children[0].classList.remove('opacity-15');
-        document.getElementById(key).children[0].classList.add('opacity-85')
-    }
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+    <script src="/public/js/home.js"></script>
+    <script>
+        function openModal(key) {
+            document.getElementById(key).showModal();
+            document.body.setAttribute('style', 'overflow: hidden;');
+            document.getElementById(key).children[0].scrollTop = 0;
+            document.getElementById(key).children[0].classList.remove('opacity-15');
+            document.getElementById(key).children[0].classList.add('opacity-85')
+        }
 
-    function modalClose(key) {
-        document.getElementById(key).children[0].classList.remove('opacity-85');
-        document.getElementById(key).children[0].classList.add('opacity-15');
-        setTimeout(function () {
-            document.getElementById(key).close();
-            document.body.removeAttribute('style');
-        }, 100);
-    }
-</script>
+        function modalClose(key) {
+            document.getElementById(key).children[0].classList.remove('opacity-85');
+            document.getElementById(key).children[0].classList.add('opacity-15');
+            setTimeout(function () {
+                document.getElementById(key).close();
+                document.body.removeAttribute('style');
+            }, 100);
+        }
+    </script>
 </body>
 
 </html>
