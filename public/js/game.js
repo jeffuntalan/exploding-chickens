@@ -275,11 +275,11 @@ function update_players() {
             document.getElementById("sidebar_top_nickname").innerHTML = game_data.players[i].nickname + status_dot(game_data.players[i].status, game_data.players[i].connection, "mx-1.5");
             //Add cards to hand
             for (let j = 0; j < game_data.players[i].cards.length; j++) {
-                let call_card_action = "";
+                let call_play_card = "";
                 if (game_data.seat_playing === game_data.players[i].seat) {
-                    call_card_action = "card_action('" + game_data.players[i].cards[j]._id + "')";
+                    call_play_card = "play_card('" + game_data.players[i].cards[j]._id + "')";
                 }
-                current_player_cards += "<div class=\"rounded-xl shadow-sm bottom-card bg-center bg-contain\" onclick=\"" + call_card_action + "\" style=\"background-image: url('/" + game_data.players[i].cards[j].image_loc + "')\"></div>";
+                current_player_cards += "<div class=\"rounded-xl shadow-sm bottom-card bg-center bg-contain\" onclick=\"" + call_play_card + "\" style=\"background-image: url('/" + game_data.players[i].cards[j].image_loc + "')\"></div>";
             }
             //Add reset game button to player actions
             if (current_player_host) {
@@ -338,19 +338,17 @@ function update_players() {
         //Append to topbar, players
         topbar_players_payload += "<img class=\"inline-block h-6 w-6 rounded-full ring-2 ring-white\" src=\"/public/avatars/" + game_data.players[i].avatar + "\" alt=\"\">";
         //Append to center
-        let playing_halo = "";
+        let turns_remaining_player = 0;
         if (game_data.seat_playing === game_data.players[i].seat) {
-            playing_halo = " ring-2 ring-blue-500";
+            turns_remaining_player = game_data.turns_remaining;
         }
         center_players_payload += "<div class=\"block text-center\">\n" +
             "    <h1 class=\"text-gray-600 font-medium text-sm\">\n" +
             "        " + game_data.players[i].nickname + " " + status_dot(game_data.players[i].status, game_data.players[i].connection, "") + "\n" +
             "    </h1>\n" +
             "    <div class=\"flex flex-col items-center -space-y-3\">\n" +
-            "        <img class=\"h-12 w-12 rounded-full" + playing_halo + "\" src=\"/public/avatars/" + game_data.players[i].avatar + "\" alt=\"\">\n" +
-            "        <div class=\"-space-x-4 rotate-12\">\n" +
-            cards_icon(game_data.players[i].card_num) +
-            "        </div>\n" +
+            "        <img class=\"h-12 w-12 rounded-full\" src=\"/public/avatars/" + game_data.players[i].avatar + "\" alt=\"\">\n" +
+            cards_icon(game_data.players[i].card_num, turns_remaining_player) +
             "    </div>\n" +
             "</div>";
         //If we are not at the end of the # of players, put an arrow
@@ -385,7 +383,7 @@ function update_stats() {
     //Game status
     if (current_player_host) {
         if (game_data.status === "in_lobby") {
-            document.getElementById("sidebar_status").innerHTML = "<div class=\"widget w-full p-2.5 rounded-lg bg-white border border-gray-100 dark:bg-gray-900 dark:border-gray-800 bg-green-500\" onclick=\"start_game()\">\n" +
+            document.getElementById("sidebar_status").innerHTML = "<div class=\"widget w-full p-2.5 rounded-lg bg-white border border-gray-100 bg-gradient-to-r from-green-500 to-green-400\" onclick=\"start_game()\">\n" +
                 "    <div class=\"flex flex-row items-center justify-between\">\n" +
                 "        <div class=\"flex flex-col\">\n" +
                 "            <div class=\"text-xs uppercase text-white truncate\">\n" +
@@ -401,7 +399,7 @@ function update_stats() {
                 "    </div>\n" +
                 "</div>";
         } else if (game_data.status === "in_game") {
-            document.getElementById("sidebar_status").innerHTML = "<div class=\"widget w-full p-2.5 rounded-lg bg-white border border-gray-100 dark:bg-gray-900 dark:border-gray-800 bg-yellow-500\"  onclick=\"reset_game()\">\n" +
+            document.getElementById("sidebar_status").innerHTML = "<div class=\"widget w-full p-2.5 rounded-lg bg-white border border-gray-100 bg-gradient-to-r from-yellow-500 to-yellow-400\"  onclick=\"reset_game()\">\n" +
                 "    <div class=\"flex flex-row items-center justify-between\">\n" +
                 "        <div class=\"flex flex-col\">\n" +
                 "            <div class=\"text-xs uppercase text-white truncate\">\n" +
@@ -462,59 +460,85 @@ function update_stats() {
  PLAYER ACTION FUNCTIONS
 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\*/
 
-//Start game
+// Name : frontend-game.start_game()
+// Desc : emits the start-game event when the host clicks the start game button
 function start_game() {
     socket.emit('start-game', {
-        slug: window.location.pathname.substr(6)
+        slug: window.location.pathname.substr(6),
+        player_id: session_player_id
     })
 }
 
-//Reset game
+// Name : frontend-game.reset_game()
+// Desc : emits the reset-game event when the host clicks the reset game button
 function reset_game() {
     socket.emit('reset-game', {
-        slug: window.location.pathname.substr(6)
+        slug: window.location.pathname.substr(6),
+        player_id: session_player_id
     })
 }
 
-//Card action
-function card_action() {
-    // socket.emit('start-game', {
-    //     slug: window.location.pathname.substr(6)
-    // })
+// Name : frontend-game.play_card(card_id)
+// Desc : emits the play-card event when a card in the players hand is clicked
+function play_card(card_id) {
+    socket.emit('play-card', {
+        slug: window.location.pathname.substr(6),
+        player_id: session_player_id,
+        card_id: card_id
+    })
+}
+
+// Name : frontend-game.draw_card()
+// Desc : emits the draw-card event when the draw deck is clicked
+function draw_card() {
+    socket.emit('draw-card', {
+        slug: window.location.pathname.substr(6),
+        player_id: session_player_id
+    })
 }
 
 /*\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
  GAME UI HELPER FUNCTIONS
 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\*/
 
-//Return avatar icon cards
-function cards_icon(card_num) {
+// Name : frontend-game.cards_icon(card_num, turns)
+// Desc : returns the html for cards in a players hand (as well as blue card for turns)
+function cards_icon(card_num, turns) {
+    //Check to see if target player has any turns remaining
+    let turns_payload = "";
+    if (turns !== 0) {
+        turns_payload = "<div class=\"transform inline-block rounded-md bg-blue-500 shadow-md h-5 w-4 ml-1\">\n" +
+            "    <h1 class=\"text-white text-sm\">" + turns + "</h1>\n" +
+            "</div>\n"
+    }
+    //Determine number of cards in hand
     if (card_num === 2) {
-        return "<div class=\"transform inline-block rounded-md bg-gray-600 shadow-md h-5 w-4 -rotate-6\"><h1 class=\"text-gray-600 text-sm\">1</h1></div>\n" +
+        return "<div class=\"inline-block\"><div class=\"-space-x-4 rotate-12 inline-block\"><div class=\"transform inline-block rounded-md bg-gray-600 shadow-md h-5 w-4 -rotate-6\"><h1 class=\"text-gray-600 text-sm\">1</h1></div>\n" +
             "<div class=\"transform inline-block rounded-md bg-gray-500 shadow-md h-5 w-4 rotate-6\">\n" +
             "    <h1 class=\"text-white text-sm\">" + card_num + "</h1>\n" +
-            "</div>\n";
+            "</div></div>" +  turns_payload + "</div>\n"
     } else if (card_num === 3) {
-        return "<div class=\"transform inline-block rounded-md bg-gray-700 shadow-md h-5 w-4 -rotate-12\"><h1 class=\"text-gray-700 text-sm\">1</h1></div>\n" +
+        return "<div class=\"inline-block\"><div class=\"-space-x-4 rotate-12 inline-block\"><div class=\"transform inline-block rounded-md bg-gray-700 shadow-md h-5 w-4 -rotate-12\"><h1 class=\"text-gray-700 text-sm\">1</h1></div>\n" +
             "<div class=\"transform inline-block rounded-md bg-gray-600 shadow-md h-5 w-4\"><h1 class=\"text-gray-600 text-sm\">1</h1></div>\n" +
             "<div class=\"transform inline-block rounded-md bg-gray-500 shadow-md h-5 w-4 rotate-12\">\n" +
             "    <h1 class=\"text-white text-sm\">" + card_num + "</h1>\n" +
-            "</div>\n";
+            "</div></div>" +  turns_payload + "</div>\n"
     } else if (card_num >= 4) {
-        return "<div class=\"transform inline-block rounded-md bg-gray-800 shadow-md h-5 w-4\" style=\"--tw-rotate: -18deg\"><h1 class=\"text-gray-700 text-sm\">1</h1></div>\n" +
+        return "<div class=\"inline-block\"><div class=\"-space-x-4 rotate-12 inline-block\"><div class=\"transform inline-block rounded-md bg-gray-800 shadow-md h-5 w-4\" style=\"--tw-rotate: -18deg\"><h1 class=\"text-gray-700 text-sm\">1</h1></div>\n" +
             "<div class=\"transform inline-block rounded-md bg-gray-700 shadow-md h-5 w-4 -rotate-6\"><h1 class=\"text-gray-700 text-sm\">1</h1></div>\n" +
             "<div class=\"transform inline-block rounded-md bg-gray-600 shadow-md h-5 w-4 rotate-6\"><h1 class=\"text-gray-600 text-sm\">1</h1></div>\n" +
             "<div class=\"transform inline-block rounded-md bg-gray-500 shadow-md h-5 w-4\" style=\"--tw-rotate: 18deg\">\n" +
             "    <h1 class=\"text-white text-sm\">" + card_num + "</h1>\n" +
-            "</div>\n";
+            "</div></div>" +  turns_payload + "</div>\n"
     } else {
-        return "<div class=\"transform inline-block rounded-md bg-gray-500 shadow-md h-5 w-4\">\n" +
+        return "<div class=\"inline-block\"><div class=\"-space-x-4 rotate-12 inline-block\"><div class=\"transform inline-block rounded-md bg-gray-500 shadow-md h-5 w-4\">\n" +
             "    <h1 class=\"text-white text-sm\">" + card_num + "</h1>\n" +
-            "</div>\n";
+            "</div></div>" +  turns_payload + "</div>\n"
     }
 }
 
-//Return status dot
+// Name : frontend-game.status_dot(status, connection, margin)
+// Desc : returns the html for a pulsating status dot
 function status_dot(status, connection, margin) {
     if (status === "exploded") {
         return "<span class=\"animate-pulse inline-flex rounded-full h-1.5 w-1.5 mb-0.5 " + margin + " align-middle bg-red-500\"></span>"
@@ -527,7 +551,8 @@ function status_dot(status, connection, margin) {
     }
 }
 
-//Copy game url to clipboard
+// Name : frontend-game.copy_game_url()
+// Desc : copies the game url to the clients clipboard
 function copy_game_url() {
     let tempInput = document.createElement("input");
     tempInput.value = window.location.href;

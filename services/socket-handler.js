@@ -112,7 +112,7 @@ module.exports = function (fastify) {
         // Desc : runs when a card is played on the client
         // Author(s) : RAk3rman
         socket.on('play-card', async function (data) {
-            spinner.start(`${chalk.bold.blue('Socket')}: ${chalk.dim.cyan('play-card       ')} ${chalk.dim.yellow(data.slug)} Starting game`);
+            spinner.start(`${chalk.bold.blue('Socket')}: ${chalk.dim.cyan('play-card       ')} ${chalk.dim.yellow(data.slug)} Playing card with card_id: ` + data.card_id);
             //A whole bunch of checks to play a card
 
         })
@@ -121,7 +121,7 @@ module.exports = function (fastify) {
         // Desc : runs when a card is played on the client
         // Author(s) : RAk3rman
         socket.on('draw-card', async function (data) {
-            spinner.start(`${chalk.bold.blue('Socket')}: ${chalk.dim.cyan('draw-card       ')} ${chalk.dim.yellow(data.slug)} Starting game`);
+            spinner.start(`${chalk.bold.blue('Socket')}: ${chalk.dim.cyan('draw-card       ')} ${chalk.dim.yellow(data.slug)} Drawing new card for player_id: ` + data.player_id);
             //Draw a card from the deck
 
         })
