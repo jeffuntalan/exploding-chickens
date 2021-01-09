@@ -8,11 +8,18 @@ Author(s): RAk3rman
 //Declare socket.io
 let socket = io();
 //Set SA Toast Settings
-const Toast = Swal.mixin({
+const toast_alert = Swal.mixin({
     toast: true,
     position: 'top-end',
     showConfirmButton: false,
-    timer: 5000
+    timer: 5000,
+    padding: '0.3rem'
+});
+const toast_turn = Swal.mixin({
+    toast: true,
+    position: 'top',
+    showConfirmButton: false,
+    padding: '0.3rem'
 });
 //JSON array of game data
 let game_data;
@@ -21,7 +28,10 @@ let in_setup = true;
 let current_player_host = false;
 let selected_avatar = "default.png";
 let prompt_open = false;
-let session_player_id = undefined;
+let session_player = {
+    _id: undefined,
+    is_host: false
+};
 
 /*\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
  SOCKET.IO EVENTS
@@ -47,7 +57,7 @@ socket.on(window.location.pathname.substr(6) + "-update", function (data) {
 
 //Socket.io on player-created
 socket.on("player-created", function (data) {
-    session_player_id = data;
+    session_player._id = data;
     localStorage.setItem('ec_session', JSON.stringify({
         slug: window.location.pathname.substr(6),
         player_id: data
@@ -58,12 +68,12 @@ socket.on("player-created", function (data) {
 socket.on(window.location.pathname.substr(6) + "-start", function (data) {
     //Check to see if we got an error
     if (data !== "") {
-        Toast.fire({
+        toast_alert.fire({
             icon: 'error',
             html: '<h1 class="text-lg font-bold pl-2 pr-1">' + data + '</h1>'
         });
     } else {
-        Toast.fire({
+        toast_alert.fire({
             icon: 'info',
             html: '<h1 class="text-lg font-bold pl-2 pr-1">Game has started</h1>'
         });
@@ -72,7 +82,7 @@ socket.on(window.location.pathname.substr(6) + "-start", function (data) {
 
 //Socket.io on game-reset
 socket.on(window.location.pathname.substr(6) + "-reset", function (data) {
-    Toast.fire({
+    toast_alert.fire({
         icon: 'info',
         html: '<h1 class="text-lg font-bold pl-2 pr-1">Game has been reset</h1>'
     });
@@ -126,20 +136,20 @@ function setup_game() {
     for (let i = 0; i < game_data.players.length; i++) {
         //Check if individual player exists
         if (game_data.players[i]._id === JSON.parse(localStorage.getItem('ec_session')).player_id) {
-            //Update session_player_id
-            session_player_id = game_data.players[i]._id;
+            //Update session_player._id
+            session_player._id = game_data.players[i]._id;
             //Tell server that a valid player connected
             socket.emit('player-connected', {
                 slug: window.location.pathname.substr(6),
-                player_id: session_player_id
+                player_id: session_player._id
             })
             //Check to see if the player is the host
             current_player_host = game_data.players[i].type === "host";
             break;
         }
     }
-    //If session_player_id is undefined, setup new player
-    if (session_player_id === undefined) {
+    //If session_player._id is undefined, setup new player
+    if (session_player._id === undefined) {
         setup_prompt();
     }
     //Update player interface
@@ -268,7 +278,7 @@ function update_players() {
     for (let i = 0; i < game_data.players.length; i++) {
         //Append to sidebar, information
         let actions = "";
-        if (game_data.players[i]._id === session_player_id) {
+        if (game_data.players[i]._id === session_player._id) {
             //Check to see if the player is the host
             current_player_host = game_data.players[i].type === "host";
             //Add nickname to the top of sidebar
@@ -317,9 +327,9 @@ function update_players() {
         }
         //Append to sidebar, players
         let player_nickname_msg = game_data.players[i].nickname;
-        if (current_player_host && game_data.players[i]._id === session_player_id) {
+        if (current_player_host && game_data.players[i]._id === session_player._id) {
             player_nickname_msg += ", Host"
-        } else if (game_data.players[i]._id === session_player_id) {
+        } else if (game_data.players[i]._id === session_player._id) {
             player_nickname_msg += ", You"
         }
         sidebar_players_payload += "<div class=\"flex items-center justify-between mb-2\">\n" +
@@ -465,7 +475,7 @@ function update_stats() {
 function start_game() {
     socket.emit('start-game', {
         slug: window.location.pathname.substr(6),
-        player_id: session_player_id
+        player_id: session_player._id
     })
 }
 
@@ -474,7 +484,7 @@ function start_game() {
 function reset_game() {
     socket.emit('reset-game', {
         slug: window.location.pathname.substr(6),
-        player_id: session_player_id
+        player_id: session_player._id
     })
 }
 
@@ -483,7 +493,7 @@ function reset_game() {
 function play_card(card_id) {
     socket.emit('play-card', {
         slug: window.location.pathname.substr(6),
-        player_id: session_player_id,
+        player_id: session_player._id,
         card_id: card_id
     })
 }
@@ -493,7 +503,7 @@ function play_card(card_id) {
 function draw_card() {
     socket.emit('draw-card', {
         slug: window.location.pathname.substr(6),
-        player_id: session_player_id
+        player_id: session_player._id
     })
 }
 
@@ -503,13 +513,17 @@ function draw_card() {
 
 // Name : frontend-game.cards_icon(card_num, turns)
 // Desc : returns the html for cards in a players hand (as well as blue card for turns)
-function cards_icon(card_num, turns) {
+function cards_icon(card_num, turns, player_id) {
     //Check to see if target player has any turns remaining
     let turns_payload = "";
-    if (turns !== 0) {
+    if (turns !== 0 && game_data.status === "in_game") {
         turns_payload = "<div class=\"transform inline-block rounded-md bg-blue-500 shadow-md h-5 w-4 ml-1\">\n" +
             "    <h1 class=\"text-white text-sm\">" + turns + "</h1>\n" +
             "</div>\n"
+        toast_turn.fire({
+            icon: 'info',
+            html: '<h1 class="text-lg font-bold pl-2 pr-1">Your turn</h1>'
+        });
     }
     //Determine number of cards in hand
     if (card_num === 2) {
@@ -560,7 +574,7 @@ function copy_game_url() {
     tempInput.select();
     document.execCommand("copy");
     document.body.removeChild(tempInput);
-    Toast.fire({
+    toast_alert.fire({
         icon: 'success',
         html: '<h1 class="text-lg font-bold pl-2 pr-1">Copied game link</h1>'
     });
