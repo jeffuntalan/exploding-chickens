@@ -19,9 +19,9 @@
 
     {{! Logo }}
     <div class="bg-white">
-        <div class="py-5 relative rounded-2xl bg-white">
-            <div class="mt-6 sm:mt-24 flex flex-col items-center -space-y-3">
-                <img class="p-4 h-auto w-screen lg:h-36 lg:w-auto" src="public\css\assets\ecv01.png" alt="">
+        <div class="py-3 relative rounded-2xl bg-white">
+            <div class="mt-6 sm:mt-24 lg:mt-80 flex flex-col items-center -space-y-3">
+                <img class="p-6 h-auto w-screen md:px-32 lg:h-48 lg:w-auto" src="public\css\assets\ecv01.png" alt="">
             </div>
             {{!-- Title --}}
             <div class="mt-4 block text-center">
@@ -39,14 +39,14 @@
                             Game</button>
                     </form>
                     {{!-- Cover Art w/Desc. --}}
-                    <div class="text-xs sm:text-xl text-gray-500 italic" style="font-family: Open Sans">
+                    <div class="mt-0 md:mt-6 mb-4 text-xs sm:text-xl text-gray-500 italic" style="font-family: Open Sans">
                         <p>Don't know how to play?
                         </p>
                         <p>Check out the <a class="font-bold">"How to Play"</a> section below!</p>
                     </div>
                     {{!-- Buttons --}}
                     <div class="text-xs">
-                        <img class="mb-2 h-auto w-screen" src="public\css\assets\cards.png" alt="">
+                        <img class="mb-3 sm:h-auto sm:w-screen" style="width: 58rem" src="public\css\assets\cards.png" alt="">
                         <form class="sm:hidden" action="/game/create" method="POST"
                             enctype="application/x-www-form-urlencoded">
                             <button type="submit"
@@ -67,7 +67,7 @@
 
     {{!-- How to Play --}}
     <div class="px-10 py-12 bg-white">
-        <div class="mt-80 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="mt-0 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="lg:text-center">
                 <h2 class="text-gray-600 font-semibold tracking-wide" style="font-family: Open Sans">Copyright © 2021 |
                     exploding-chickens.com
