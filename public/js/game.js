@@ -13,7 +13,7 @@ const toast_alert = Swal.mixin({
     position: 'top-end',
     showConfirmButton: false,
     timer: 5000,
-    padding: '0.3rem'
+    padding: '0.4rem'
 });
 const toast_turn = Swal.mixin({
     toast: true,
@@ -24,10 +24,10 @@ const toast_turn = Swal.mixin({
 //JSON array of game data
 let game_data;
 //Setup game variables
-let in_setup = true;
-let current_player_host = false;
-let selected_avatar = "default.png";
+let allow_prompt = true;
 let prompt_open = false;
+let allow_connect_msg = false;
+let selected_avatar = "default.png";
 let session_player = {
     _id: undefined,
     is_host: false
@@ -37,26 +37,26 @@ let session_player = {
  SOCKET.IO EVENTS
 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\*/
 
-//Socket.io on game-data
+// Name : frontend-game.socket.on.{slug}-update
+// Desc : whenever an event occurs containing a game update
 socket.on(window.location.pathname.substr(6) + "-update", function (data) {
     console.log(data);
+    //Update game data
     game_data = data;
-    //Check to see if we have to set up the game
-    if (in_setup === true) {
-        in_setup = false;
-        setup_game();
-    } else {
-        //Update game
-        update_interface();
-    }
+    //Check session data and player status
+    session_check();
+    //Update user interface
+    update_interface();
     //Check to see if prompt window is open to update avatars
     if (prompt_open) {
         update_avatar_options();
     }
 });
 
-//Socket.io on player-created
+// Name : frontend-game.socket.on.player-created
+// Desc : whenever an event occurs stating that a player was created
 socket.on("player-created", function (data) {
+    //Update player_id
     session_player._id = data;
     localStorage.setItem('ec_session', JSON.stringify({
         slug: window.location.pathname.substr(6),
@@ -64,7 +64,8 @@ socket.on("player-created", function (data) {
     }));
 });
 
-//Socket.io on game-start
+// Name : frontend-game.socket.on.{slug}-start
+// Desc : whenever an event occurs stating that the game started
 socket.on(window.location.pathname.substr(6) + "-start", function (data) {
     //Check to see if we got an error
     if (data !== "") {
@@ -80,7 +81,8 @@ socket.on(window.location.pathname.substr(6) + "-start", function (data) {
     }
 });
 
-//Socket.io on game-reset
+// Name : frontend-game.socket.on.{slug}-reset
+// Desc : whenever an event occurs stating that the game has been reset
 socket.on(window.location.pathname.substr(6) + "-reset", function (data) {
     toast_alert.fire({
         icon: 'info',
@@ -88,72 +90,93 @@ socket.on(window.location.pathname.substr(6) + "-reset", function (data) {
     });
 });
 
-//Socket.io on disconnect
+// Name : frontend-game.socket.on.connect
+// Desc : whenever we connect to the backend
 socket.on("connect", function (data) {
-    request_game_update();
+    //Request game update
+    socket.emit('retrieve-game', {
+        slug: window.location.pathname.substr(6)
+    })
+    //Update status dot
     document.getElementById("status_ping").innerHTML = "<span class=\"animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75\"></span>\n" +
         "<span class=\"relative inline-flex rounded-full h-2 w-2 bg-green-500\"></span>"
+    //Send alert
+    if (allow_connect_msg) {
+        toast_alert.fire({
+            icon: 'success',
+            html: '<h1 class="text-lg font-bold pl-2 pr-1">Connected</h1>'
+        });
+    } else {
+        allow_connect_msg = true;
+    }
 });
 
-//Socket.io on disconnect
+// Name : frontend-game.socket.on.connect
+// Desc : whenever we disconnect from the backend
 socket.on("disconnect", function (data) {
+    //Update status dot
     document.getElementById("status_ping").innerHTML = "<span class=\"animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75\"></span>\n" +
         "<span class=\"relative inline-flex rounded-full h-2 w-2 bg-red-500\"></span>"
+    //Send alert
+    toast_alert.fire({
+        icon: 'error',
+        html: '<h1 class="text-lg font-bold pl-2 pr-1">Disconnected</h1>'
+    });
 });
 
 /*\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
  GAME UI CONFIGURATION
 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\*/
 
-//Update game_data
-function request_game_update() {
-    socket.emit('retrieve-game', {
-        slug: window.location.pathname.substr(6)
-    })
-}
-
 //Local storage pre check
-function storage_check() {
+function session_check() {
     //Get browser session details
     if (!localStorage.getItem('ec_session')) {
-        //Reset local storage since game data doesn't exist
+        //Reset local storage and session player since game data doesn't exist
         localStorage.setItem('ec_session', JSON.stringify({
             slug: window.location.pathname.substr(6),
             player_id: undefined
         }));
+        session_player = {
+            _id: undefined,
+            is_host: false
+        };
     } else if (JSON.parse(localStorage.getItem('ec_session')).slug !== window.location.pathname.substr(6)) {
-        //Reset local storage since slugs don't match
+        //Reset local storage and session player since slugs don't match
         localStorage.setItem('ec_session', JSON.stringify({
             slug: window.location.pathname.substr(6),
             player_id: undefined
         }));
-    }
-}
-
-//Setup game
-function setup_game() {
-    //Make sure the player exists in the game
-    for (let i = 0; i < game_data.players.length; i++) {
-        //Check if individual player exists
-        if (game_data.players[i]._id === JSON.parse(localStorage.getItem('ec_session')).player_id) {
-            //Update session_player._id
-            session_player._id = game_data.players[i]._id;
-            //Tell server that a valid player connected
-            socket.emit('player-connected', {
-                slug: window.location.pathname.substr(6),
-                player_id: session_player._id
-            })
-            //Check to see if the player is the host
-            current_player_host = game_data.players[i].type === "host";
-            break;
+        session_player = {
+            _id: undefined,
+            is_host: false
+        };
+    } else {
+        //Check to make sure that the player is valid
+        for (let i = 0; i < game_data.players.length; i++) {
+            //Check if individual player exists
+            if (game_data.players[i]._id === JSON.parse(localStorage.getItem('ec_session')).player_id) {
+                if (session_player._id === undefined) {
+                    //Tell server that a valid player connected
+                    socket.emit('player-connected', {
+                        slug: window.location.pathname.substr(6),
+                        player_id: game_data.players[i]._id
+                    })
+                }
+                //Update session_player _id and is_host
+                session_player = {
+                    _id: game_data.players[i]._id,
+                    is_host: game_data.players[i].type === "host"
+                };
+                break;
+            }
         }
     }
-    //If session_player._id is undefined, setup new player
-    if (session_player._id === undefined) {
+    //Open setup prompt if needed
+    if (allow_prompt && session_player._id === undefined) {
         setup_prompt();
+        allow_prompt = false;
     }
-    //Update player interface
-    update_interface();
 }
 
 //Update player interface
@@ -162,6 +185,8 @@ function update_interface() {
     update_players();
     //Update sidebar stats
     update_stats();
+    //Update discard deck
+    update_discard();
 }
 
 //Prompt to set player settings
@@ -279,8 +304,6 @@ function update_players() {
         //Append to sidebar, information
         let actions = "";
         if (game_data.players[i]._id === session_player._id) {
-            //Check to see if the player is the host
-            current_player_host = game_data.players[i].type === "host";
             //Add nickname to the top of sidebar
             document.getElementById("sidebar_top_nickname").innerHTML = game_data.players[i].nickname + status_dot(game_data.players[i].status, game_data.players[i].connection, "mx-1.5");
             //Add cards to hand
@@ -292,7 +315,7 @@ function update_players() {
                 current_player_cards += "<div class=\"rounded-xl shadow-sm bottom-card bg-center bg-contain\" onclick=\"" + call_play_card + "\" style=\"background-image: url('/" + game_data.players[i].cards[j].image_loc + "')\"></div>";
             }
             //Add reset game button to player actions
-            if (current_player_host) {
+            if (session_player.is_host) {
                 // actions = "<div class=\"flex mt-0 ml-4\">\n" +
                 //     "    <span class=\"\">\n" +
                 //     "          <button type=\"button\" class=\"inline-flex items-center px-2 py-1 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-yellow-500 hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-400\">\n" +
@@ -304,7 +327,7 @@ function update_players() {
                 //     "    </span>\n" +
                 //     "</div>";
             }
-        } else if (current_player_host) {
+        } else if (session_player.is_host) {
             //Add make host and kick buttons to player actions
             actions = "<div class=\"flex mt-0 ml-4\">\n" +
                 "    <span class=\"\">\n" +
@@ -327,7 +350,7 @@ function update_players() {
         }
         //Append to sidebar, players
         let player_nickname_msg = game_data.players[i].nickname;
-        if (current_player_host && game_data.players[i]._id === session_player._id) {
+        if (session_player.is_host && game_data.players[i]._id === session_player._id) {
             player_nickname_msg += ", Host"
         } else if (game_data.players[i]._id === session_player._id) {
             player_nickname_msg += ", You"
@@ -391,7 +414,7 @@ function update_stats() {
     //Game code
     document.getElementById("sidebar_game_code").innerHTML = window.location.pathname.substr(6);
     //Game status
-    if (current_player_host) {
+    if (session_player.is_host) {
         if (game_data.status === "in_lobby") {
             document.getElementById("sidebar_status").innerHTML = "<div class=\"widget w-full p-2.5 rounded-lg bg-white border border-gray-100 bg-gradient-to-r from-green-500 to-green-400\" onclick=\"start_game()\">\n" +
                 "    <div class=\"flex flex-row items-center justify-between\">\n" +
@@ -464,6 +487,14 @@ function update_stats() {
     document.getElementById("sidebar_cards_left").innerHTML = game_data.cards_remaining;
     //EC remaining
     document.getElementById("sidebar_ec_remaining").innerHTML = game_data.ec_remaining + "<a class=\"font-light\"> / " +  Math.floor((game_data.ec_remaining/game_data.cards_remaining)*100) + "% chance</a>";
+}
+
+// Name : frontend-game.update_discard()
+// Desc : refreshes the data for the discard deck
+function update_discard() {
+    if (game_data.discard_deck.length !== 0) {
+        document.getElementById("discard_deck").innerHTML = "<div class=\"rounded-xl shadow-sm center-card bg-center bg-contain\" style=\"background-image: url('/" + game_data.discard_deck[game_data.discard_deck.length-1].image_loc + "')\"></div>";
+    }
 }
 
 /*\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
