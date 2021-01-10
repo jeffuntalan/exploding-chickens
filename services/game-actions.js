@@ -183,17 +183,20 @@ exports.discard_card = async function (game_slug, card_id) {
     });
 }
 
-// Name : game_actions.draw_card(game_slug, card_id, player_seat)
+// Name : game_actions.draw_card(game_slug, player_seat)
 // Desc : draw a card
 // Author(s) : Vincent Do, SengdowJones
-exports.draw_card = async function (game_slug, card_id, player_id) {
+exports.draw_card = async function (game_slug,player_id) {
     //Get game details
     let game_details = await game_actions.game_details_slug(game_slug);
     //Find current player hand
     let hand = -1;
-    //if the card drawn is a chicken, call defuse
-    if (game_details.cards.action === "exploding") {
-        await card_actions.defuse(game_slug, card_id, player_id);
+    let card_id = "";
+    //Obtaining card with draw_deck with lowest position
+    for (let i = 0; i <= game_details.cards.length - 1; i++) {
+        if (game_details.cards[i].assignment === "draw_deck" && game_details.cards[i].position < 100) {
+            card_id = game_details.cards[i]._id;
+        }
     }
     //Counts how many cards in player's hand
     for (let i = 0; i <= game_details.cards.length - 1; i++) {
@@ -201,7 +204,6 @@ exports.draw_card = async function (game_slug, card_id, player_id) {
             hand++;
         }
     }
-
     //Create new promise
     return await new Promise((resolve, reject) => {
         //Update card that was drawn
@@ -302,7 +304,7 @@ exports.card_call = async function (game_slug, card_id, player_id) {
 
 }
 // Name : game_actions.reset_game(game_slug, player_status, game_status)
-// Desc : Calls the appropriate card function based on card id
+// Desc : Resets the current game
 // Author(s) : Vincent Do
 exports.reset_game = async function (game_slug, player_status, game_status) {
     //Get game details
