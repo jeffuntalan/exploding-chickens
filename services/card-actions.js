@@ -245,6 +245,7 @@ exports.defuse = async function (game_slug, card_id, player_id) {
         resolve();
     });
 }
+
 // Name : card_actions.favor(game_slug)
 // Desc : Ask for a favor
 // Author(s) : Vincent Do
@@ -274,6 +275,7 @@ exports.favor = async function (game_slug, card_id, player_id) {
         resolve();
     });
 }
+
 // Name : card_actions.double(game_slug)
 // Desc : Ask for a favor with two cards
 // Author(s) : Vincent Do
@@ -304,9 +306,6 @@ exports.double = async function (game_slug, card_id, card_id1, player_id) {
         resolve();
     });
 }
-
-
-
 
 //PRIVATE FUNCTIONS
 

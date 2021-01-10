@@ -50,7 +50,7 @@
 <div class="flex flex-col items-center justify-center h-screen pb-10">
     <div class="flex align-top mb-10">
         <div class="inline-flex items-center p-2" id="center_players">
-            {{! Sample player }}
+            {{! Host player when no one has joined }}
             <div class="block text-center">
                 <h1 class="text-gray-600 font-medium text-sm">
                     Host <span class="animate-pulse inline-flex rounded-full h-1.5 w-1.5 mb-0.5 align-middle bg-gray-500"></span>
@@ -94,9 +94,11 @@
                 }
             }
         </style>
-        <div class="shadow-lg center-card mx-1 bg-center bg-cover bg-no-repeat" onclick="draw_card()" style="background-image: url('/public/cards/card_back.png');"></div>
-        <div class="rounded-xl border-dashed border-4 border-gray-400 shadow-lg center-card mx-1">
-            <h1 class="text-gray-400 font-bold flex items-center justify-center center-card-text">Discard Pile</h1>
+        <div class="rounded-xl shadow-lg center-card bg-center bg-contain mx-1" onclick="draw_card()" style="background-image: url('/public/cards/card_back.png');"></div>
+        <div id="discard_deck">
+            <div class="rounded-xl shadow-lg center-card bg-center bg-contain mx-1 border-dashed border-4 border-gray-400">
+                <h1 class="text-gray-400 font-bold flex items-center justify-center center-card-text">Discard Pile</h1>
+            </div>
         </div>
     </div>
 </div>
@@ -105,11 +107,7 @@
     <div class="-my-2 overflow-x-auto">
         <div class="align-middle inline-block min-w-full sm:px-0 lg:px-8">
             <div class="overflow-hidden">
-                <div class="flex items-center" id="player_cards">
-<!--                    <div class="rounded-xl border-dashed border-4 border-gray-400 shadow-lg h-64 w-52 mx-1">-->
-<!--                        <h1 class="text-gray-400 font-bold flex items-center justify-center h-64">Wow, such empty</h1>-->
-<!--                    </div>-->
-                </div>
+                <div class="flex items-center" id="player_cards"></div>
             </div>
         </div>
     </div>
@@ -321,8 +319,5 @@
 <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
 <script src="/public/js/game.js"></script>
-<script>
-    storage_check();
-</script>
 </body>
 </html>
