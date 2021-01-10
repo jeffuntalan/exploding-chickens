@@ -174,14 +174,19 @@ exports.discard_card = async function (game_slug, card_id) {
 // Name : game_actions.draw_card(game_slug, card_id, player_id)
 // Desc : draw a card from the draw deck
 // Author(s) : Vincent Do, SengdowJones
-exports.draw_card = async function (game_slug, card_id, player_id) {
+exports.draw_card = async function (game_slug, player_id) {
     //Get game details
     let game_details = await game_actions.game_details_slug(game_slug);
     //Find current player hand
     let hand = -1;
-    //if the card drawn is a chicken, call defuse
-    if (game_details.cards.action === "exploding") {
-        await card_actions.defuse(game_slug, card_id, player_id);
+    let min = 100;
+    let card_id = "";
+    //Find card in draw_deck with lowest position
+    for (let i = 0; i <= game_details.cards.length - 1; i++) {
+        if (game_details.cards[i].assignment === "draw_deck" && game_details.cards[i].position < min) {
+            min = game_details.cards[i].position;
+            card_id = game_details.cards[i]._id;
+        }
     }
     //Counts how many cards in player's hand
     for (let i = 0; i <= game_details.cards.length - 1; i++) {
