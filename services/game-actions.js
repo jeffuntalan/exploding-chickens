@@ -179,12 +179,12 @@ exports.draw_card = async function (game_slug, player_id) {
     let game_details = await game_actions.game_details_slug(game_slug);
     //Find current player hand
     let hand = -1;
-    let min = 100;
+    let max = -1;
     let card_id = "";
     //Find card in draw_deck with lowest position
     for (let i = 0; i <= game_details.cards.length - 1; i++) {
-        if (game_details.cards[i].assignment === "draw_deck" && game_details.cards[i].position < min) {
-            min = game_details.cards[i].position;
+        if (game_details.cards[i].assignment === "draw_deck" && game_details.cards[i].position > max) {
+            max = game_details.cards[i].position;
             card_id = game_details.cards[i]._id;
         }
     }
