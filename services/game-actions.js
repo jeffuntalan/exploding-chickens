@@ -7,6 +7,10 @@ Author(s): RAk3rman
 
 //Packages
 let game = require('../models/game.js');
+const ora = require('ora');
+const chalk = require('chalk');
+const moment = require('moment');
+const spinner = ora('');
 const { v4: uuidv4 } = require('uuid');
 const { uniqueNamesGenerator, adjectives, colors, animals } = require('unique-names-generator');
 const dataStore = require('data-store');
@@ -167,8 +171,8 @@ exports.discard_card = async function (game_slug, card_id) {
     });
 }
 
-// Name : game_actions.draw_card(game_slug, card_id, player_seat)
-// Desc : draw a card
+// Name : game_actions.draw_card(game_slug, card_id, player_id)
+// Desc : draw a card from the draw deck
 // Author(s) : Vincent Do, SengdowJones
 exports.draw_card = async function (game_slug, card_id, player_id) {
     //Get game details
@@ -185,7 +189,6 @@ exports.draw_card = async function (game_slug, card_id, player_id) {
             hand++;
         }
     }
-
     //Create new promise
     return await new Promise((resolve, reject) => {
         //Update card that was drawn
@@ -207,7 +210,7 @@ exports.draw_card = async function (game_slug, card_id, player_id) {
 }
 
 // Name : game_actions.chicken(game_slug, card_id, player_seat)
-// Desc : Put chicken back
+// Desc : put chicken back
 // Author(s) : Vincent Do & Richie
 exports.chicken = async function (game_slug, card_id, draw_deck) {
     //Get game details
@@ -246,8 +249,9 @@ exports.chicken = async function (game_slug, card_id, draw_deck) {
 
     });
 }
+
 // Name : game_actions.card_call(game_slug, card_id, player_seat)
-// Desc : Calls the appropriate card function based on card id
+// Desc : calls the appropriate card function based on card id
 // Author(s) : Vincent Do
 exports.card_call = async function (game_slug, card_id, player_id) {
     //Get game details
@@ -286,7 +290,7 @@ exports.card_call = async function (game_slug, card_id, player_id) {
 
 }
 // Name : game_actions.reset_game(game_slug, player_status, game_status)
-// Desc : Calls the appropriate card function based on card id
+// Desc : resets the game to defaults
 // Author(s) : Vincent Do
 exports.reset_game = async function (game_slug, player_status, game_status) {
     //Get game details
@@ -315,5 +319,28 @@ exports.reset_game = async function (game_slug, player_status, game_status) {
                 resolve();
             }
         });
+    });
+}
+
+// Name : game_actions.game_purge()
+// Desc : deletes all games that are over 4 hours old
+// Author(s) : RAk3rman
+exports.game_purge = async function () {
+    spinner.info(`${chalk.bold.red('Game Purge')}: Purging all games older than 4 hours`);
+    game.find({}, function (err, found_games) {
+        if (err) {
+            spinner.fail(`${chalk.bold.red('Game Purge')}: Could not retrieve games`);
+        } else {
+            //Loop through each game
+            for (let i = 0; i < found_games.length; i++) {
+                //Determine if the game is more than 4 hours old
+                if (!moment(found_games[i].created).add(4, "hours").isSameOrAfter(moment())) {
+                    //Delete game
+                    game_actions.delete_game(found_games[i].slug).then(() => {
+                        spinner.succeed(`${chalk.bold.red('Game Purge')}: Deleted game with id:` + found_games[i]._id);
+                    });
+                }
+            }
+        }
     });
 }

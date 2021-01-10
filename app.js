@@ -108,8 +108,8 @@ mongoose.set('useFindAndModify', false);
 function mongoose_connected() {
     spinner.succeed(`${chalk.bold.yellow('Mongoose')}: Connected successfully at ` + config_storage.get('mongodb_url'));
     //Start purge game cycle
-    game_purge();
-    setInterval(game_purge, 3600000);
+    game_actions.game_purge().then(r => {});
+    setInterval(game_actions.game_purge, 3600000);
     //Start webserver using config values
     spinner.info(`${chalk.bold.magenta('Fastify')}: Attempting to start http webserver on port ` + config_storage.get('webserver_port'));
     fastify.listen(config_storage.get('webserver_port'), function (err, address) {
@@ -142,29 +142,5 @@ function mongoose_disconnected() {
     spinner.succeed(`${chalk.bold.magenta('Fastify')}: Stopping http webserver on port ` + config_storage.get('webserver_port'));
     //server.close();
 }
-
-// Name : game_purge()
-// Desc : deletes all games that are over 4 hours old
-// Author(s) : RAk3rman, Vincent Do
-function game_purge() {
-    spinner.info(`${chalk.bold.red('Game Purge')}: Purging all games older than 4 hours`);
-    game.find({}, function (err, found_games) {
-        if (err) {
-            spinner.fail(`${chalk.bold.red('Game Purge')}: Could not retrieve games`);
-        } else {
-            //Loop through each game
-            for (let i = 0; i < found_games.length; i++) {
-                //Determine if the game is more than 4 hours old
-                if (!moment(found_games[i].created).add(4, "hours").isSameOrAfter(moment())) {
-                    //Delete game
-                    game_actions.delete_game(found_games[i].slug).then(() => {
-                        spinner.succeed(`${chalk.bold.red('Game Purge')}: Deleted game with id:` + found_games[i]._id);
-                    });
-                }
-            }
-        }
-    });
-}
-
 
 //End of Setup external connections - - - - - - - - - - - - - - - - - - - - - -

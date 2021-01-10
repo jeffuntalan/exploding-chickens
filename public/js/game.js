@@ -545,17 +545,17 @@ function draw_card() {
 
 // Name : frontend-game.cards_icon(card_num, turns)
 // Desc : returns the html for cards in a players hand (as well as blue card for turns)
-function cards_icon(card_num, turns, player_id) {
+function cards_icon(card_num, turns) {
     //Check to see if target player has any turns remaining
     let turns_payload = "";
     if (turns !== 0 && game_data.status === "in_game") {
         turns_payload = "<div class=\"transform inline-block rounded-md bg-blue-500 shadow-md h-5 w-4 ml-1\">\n" +
             "    <h1 class=\"text-white text-sm\">" + turns + "</h1>\n" +
             "</div>\n"
-        toast_turn.fire({
-            icon: 'info',
-            html: '<h1 class="text-lg font-bold pl-2 pr-1">Your turn</h1>'
-        });
+        // toast_turn.fire({
+        //     icon: 'info',
+        //     html: '<h1 class="text-lg font-bold pl-2 pr-1">Your turn</h1>'
+        // });
     }
     //Determine number of cards in hand
     if (card_num === 2) {

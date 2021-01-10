@@ -42,8 +42,8 @@ module.exports = function (fastify) {
                 //Update clients
                 await update_game_ui(data.slug, "", "player-connected");
             } else {
-                //Emit start game event with error
-                spinner.fail(`${chalk.bold.blue('Socket')}: ${chalk.dim.cyan('player-connected')} ${chalk.dim.yellow(data.slug)} Game does not exist`);
+                //Emit error event with error
+                spinner.warn(`${chalk.bold.blue('Socket')}: ${chalk.dim.cyan('player-connected')} ${chalk.dim.yellow(data.slug)} Game does not exist`);
                 fastify.io.to(socket.id).emit(data.slug + "-error", "Game does not exist");
             }
         })
@@ -58,8 +58,8 @@ module.exports = function (fastify) {
                 //Send updated game data
                 await update_game_ui(data.slug, socket.id, "retrieve-game   ");
             } else {
-                //Emit start game event with error
-                spinner.fail(`${chalk.bold.blue('Socket')}: ${chalk.dim.cyan('retrieve-game   ')} ${chalk.dim.yellow(data.slug)} Game does not exist`);
+                //Emit error event with error
+                spinner.warn(`${chalk.bold.blue('Socket')}: ${chalk.dim.cyan('retrieve-game   ')} ${chalk.dim.yellow(data.slug)} Game does not exist`);
                 fastify.io.to(socket.id).emit(data.slug + "-error", "Game does not exist");
             }
         })
@@ -86,8 +86,8 @@ module.exports = function (fastify) {
                 //Update clients
                 await update_game_ui(data.slug, "", "create-player   ");
             } else {
-                //Emit start game event with error
-                spinner.fail(`${chalk.bold.blue('Socket')}: ${chalk.dim.cyan('create-player   ')} ${chalk.dim.yellow(data.slug)} Game does not exist`);
+                //Emit error event with error
+                spinner.warn(`${chalk.bold.blue('Socket')}: ${chalk.dim.cyan('create-player   ')} ${chalk.dim.yellow(data.slug)} Game does not exist`);
                 fastify.io.to(socket.id).emit(data.slug + "-error", "Game does not exist");
             }
         })
@@ -100,7 +100,7 @@ module.exports = function (fastify) {
             //Get game details
             let raw_game_details = await game_actions.game_details_slug(data.slug);
             //Verify game exists
-            if (await game.exists({ slug: data.slug })) {
+            if (await game.exists({ slug: data.slug, "players._id": data.player_id })) {
                 //Verify host
                 if (validate_host(data.player_id, raw_game_details)) {
                     //Make sure we have the correct number of players
@@ -117,18 +117,18 @@ module.exports = function (fastify) {
                         //Update clients
                         await update_game_ui(data.slug, "", "start-game      ");
                     } else {
-                        //Emit start game event with error
-                        spinner.fail(`${chalk.bold.blue('Socket')}: ${chalk.dim.cyan('start-game      ')} ${chalk.dim.yellow(data.slug)} 2-5 players are required`);
+                        //Emit error event with error
+                        spinner.warn(`${chalk.bold.blue('Socket')}: ${chalk.dim.cyan('start-game      ')} ${chalk.dim.yellow(data.slug)} 2-5 players are required`);
                         fastify.io.to(socket.id).emit(data.slug + "-error", "You must have 2-5 players");
                     }
                 } else {
-                    //Emit start game event with error
-                    spinner.fail(`${chalk.bold.blue('Socket')}: ${chalk.dim.cyan('start-game      ')} ${chalk.dim.yellow(data.slug)} Tried to complete host action`);
+                    //Emit error event with error
+                    spinner.warn(`${chalk.bold.blue('Socket')}: ${chalk.dim.cyan('start-game      ')} ${chalk.dim.yellow(data.slug)} Tried to complete host action`);
                     fastify.io.to(socket.id).emit(data.slug + "-error", "You are not the host");
                 }
             } else {
-                //Emit start game event with error
-                spinner.fail(`${chalk.bold.blue('Socket')}: ${chalk.dim.cyan('start-game      ')} ${chalk.dim.yellow(data.slug)} Game does not exist`);
+                //Emit error event with error
+                spinner.warn(`${chalk.bold.blue('Socket')}: ${chalk.dim.cyan('start-game      ')} ${chalk.dim.yellow(data.slug)} Game does not exist`);
                 fastify.io.to(socket.id).emit(data.slug + "-error", "Game does not exist");
             }
         })
@@ -141,7 +141,7 @@ module.exports = function (fastify) {
             //Get game details
             let raw_game_details = await game_actions.game_details_slug(data.slug);
             //Verify game exists
-            if (await game.exists({ slug: data.slug })) {
+            if (await game.exists({ slug: data.slug, "players._id": data.player_id })) {
                 //Verify host
                 if (validate_host(data.player_id, raw_game_details)) {
                     //Reset game
@@ -152,13 +152,13 @@ module.exports = function (fastify) {
                     //Update clients
                     await update_game_ui(data.slug, "", "reset-game      ");
                 } else {
-                    //Emit start game event with error
-                    spinner.fail(`${chalk.bold.blue('Socket')}: ${chalk.dim.cyan('start-game      ')} ${chalk.dim.yellow(data.slug)} Tried to complete host action`);
+                    //Emit error event with error
+                    spinner.warn(`${chalk.bold.blue('Socket')}: ${chalk.dim.cyan('reset-game      ')} ${chalk.dim.yellow(data.slug)} Tried to complete host action`);
                     fastify.io.to(socket.id).emit(data.slug + "-error", "You are not the host");
                 }
             } else {
-                //Emit start game event with error
-                spinner.fail(`${chalk.bold.blue('Socket')}: ${chalk.dim.cyan('start-game      ')} ${chalk.dim.yellow(data.slug)} Game does not exist`);
+                //Emit error event with error
+                spinner.warn(`${chalk.bold.blue('Socket')}: ${chalk.dim.cyan('reset-game      ')} ${chalk.dim.yellow(data.slug)} Game does not exist`);
                 fastify.io.to(socket.id).emit(data.slug + "-error", "Game does not exist");
             }
         })
@@ -168,8 +168,23 @@ module.exports = function (fastify) {
         // Author(s) : RAk3rman
         socket.on('play-card', async function (data) {
             spinner.start(`${chalk.bold.blue('Socket')}: ${chalk.dim.cyan('play-card       ')} ${chalk.dim.yellow(data.slug)} Playing card with card_id: ` + data.card_id);
-            //A whole bunch of checks to play a card
+            //Get game details
+            let raw_game_details = await game_actions.game_details_slug(data.slug);
+            //Verify game exists
+            if (await game.exists({ slug: data.slug, "players._id": data.player_id })) {
+                //Verify turn
+                if (validate_turn(data.player_id, raw_game_details)) {
 
+                } else {
+                    //Emit error event with error
+                    spinner.warn(`${chalk.bold.blue('Socket')}: ${chalk.dim.cyan('play-card       ')} ${chalk.dim.yellow(data.slug)} It is not the current players turn`);
+                    fastify.io.to(socket.id).emit(data.slug + "-error", "It is not your turn");
+                }
+            } else {
+                //Emit error event with error
+                spinner.warn(`${chalk.bold.blue('Socket')}: ${chalk.dim.cyan('play-card       ')} ${chalk.dim.yellow(data.slug)} Game does not exist`);
+                fastify.io.to(socket.id).emit(data.slug + "-error", "Game does not exist");
+            }
         })
 
         // Name : socket.on.draw-card
@@ -177,8 +192,23 @@ module.exports = function (fastify) {
         // Author(s) : RAk3rman
         socket.on('draw-card', async function (data) {
             spinner.start(`${chalk.bold.blue('Socket')}: ${chalk.dim.cyan('draw-card       ')} ${chalk.dim.yellow(data.slug)} Drawing new card for player_id: ` + data.player_id);
-            //Draw a card from the deck
+            //Get game details
+            let raw_game_details = await game_actions.game_details_slug(data.slug);
+            //Verify game exists
+            if (await game.exists({ slug: data.slug, "players._id": data.player_id })) {
+                //Verify turn
+                if (validate_turn(data.player_id, raw_game_details)) {
 
+                } else {
+                    //Emit error event with error
+                    spinner.warn(`${chalk.bold.blue('Socket')}: ${chalk.dim.cyan('draw-card       ')} ${chalk.dim.yellow(data.slug)} It is not the current players turn`);
+                    fastify.io.to(socket.id).emit(data.slug + "-error", "It is not your turn");
+                }
+            } else {
+                //Emit error event with error
+                spinner.warn(`${chalk.bold.blue('Socket')}: ${chalk.dim.cyan('draw-card       ')} ${chalk.dim.yellow(data.slug)} Game does not exist`);
+                fastify.io.to(socket.id).emit(data.slug + "-error", "Game does not exist");
+            }
         })
 
         // Name : socket.on.retrieve-stats
@@ -228,6 +258,22 @@ module.exports = function (fastify) {
         for (let i = 0; i < game_details.players.length; i++) {
             if (game_details.players[i]._id === player_id) {
                 if (game_details.players[i].type === "host") {
+                    return true
+                } else {
+                    return false;
+                }
+            }
+        }
+    }
+
+    // Name : validate_turn(player_id, game_details)
+    // Desc : returns a bool stating if the player_id is on its turn
+    // Author(s) : RAk3rman
+    function validate_turn(player_id, game_details) {
+        //Find player
+        for (let i = 0; i < game_details.players.length; i++) {
+            if (game_details.players[i]._id === player_id) {
+                if (game_details.players[i].seat === game_details.seat_playing) {
                     return true
                 } else {
                     return false;
