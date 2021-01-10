@@ -198,7 +198,13 @@ module.exports = function (fastify) {
             if (await game.exists({ slug: data.slug, "players._id": data.player_id })) {
                 //Verify turn
                 if (validate_turn(data.player_id, raw_game_details)) {
-
+                    //Draw card from draw deck and place in hand
+                    await game_actions.draw_card(data.slug, data.player_id);
+                    //Advance turn by one
+                    await game_actions.advance_turn(data.slug);
+                    spinner.succeed(`${chalk.bold.blue('Socket')}: ${chalk.dim.cyan('draw-card       ')} ${chalk.dim.yellow(data.slug)} Drew new card and advanced turn for player_id:` + data.player_id);
+                    //Update clients
+                    await update_game_ui(data.slug, "", "draw-card       ");
                 } else {
                     //Emit error event with error
                     spinner.warn(`${chalk.bold.blue('Socket')}: ${chalk.dim.cyan('draw-card       ')} ${chalk.dim.yellow(data.slug)} It is not the current players turn`);

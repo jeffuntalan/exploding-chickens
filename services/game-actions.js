@@ -171,44 +171,25 @@ exports.discard_card = async function (game_slug, card_id) {
     });
 }
 
-// Name : game_actions.draw_card(game_slug, card_id, player_id)
-// Desc : draw a card from the draw deck
-// Author(s) : Vincent Do, SengdowJones
+// Name : game_actions.draw_card(game_slug, player_id)
+// Desc : draw a card from the draw deck and place at end of players hand
+// Author(s) : Vincent Do, RAk3rman
 exports.draw_card = async function (game_slug, player_id) {
     //Get game details
     let game_details = await game_actions.game_details_slug(game_slug);
-    //Find current player hand
-    let hand = -1;
-    let max = -1;
-    let card_id = "";
-    //Find card in draw_deck with lowest position
-    for (let i = 0; i <= game_details.cards.length - 1; i++) {
-        if (game_details.cards[i].assignment === "draw_deck" && game_details.cards[i].position > max) {
-            max = game_details.cards[i].position;
-            card_id = game_details.cards[i]._id;
-        }
-    }
-    //Counts how many cards in player's hand
-    for (let i = 0; i <= game_details.cards.length - 1; i++) {
-        if (game_details.cards[i]._id === player_id) {
-            hand++;
-        }
-    }
+    //Filter draw deck
+    let draw_deck = await filter_cards("draw_deck", game_details.cards);
+    //Filter player hand
+    let player_hand = await filter_cards(player_id, game_details.cards);
     //Create new promise
     return await new Promise((resolve, reject) => {
         //Update card that was drawn
-        game.findOneAndUpdate({ slug: game_slug, "cards._id": card_id},
-            {"$set": { "cards.$.assignment": player_id, "cards.$.position": hand + 1 }}, function (err) {
+        game.findOneAndUpdate({ slug: game_slug, "cards._id": draw_deck[draw_deck.length-1]._id },
+            {"$set": { "cards.$.assignment": player_id, "cards.$.position": player_hand.length }}, function (err) {
                 if (err) {
                     reject(err);
                 } else {
-                    for (let i = 0; i <= game_details.cards.length - 1; i++) {
-                        //Update card positions in draw deck
-                        if (game_details.cards[i].assignment === "draw_deck") {
-                            game_details.cards[i].position = game_details.cards[i].position - 1;
-                        }
-                    }
-                    resolve(hand + 1);
+                    resolve(player_hand.length);
                 }
             });
     });
@@ -348,4 +329,24 @@ exports.game_purge = async function () {
             }
         }
     });
+}
+
+// PRIVATE FUNCTIONS
+// Name : filter_cards(assignment, card_array)
+// Desc : filters and sorts cards based on assignment and position
+// Author(s) : RAk3rman
+function filter_cards(assignment, card_array) {
+    //Get cards in discard deck
+    let temp_deck = [];
+    for (let i = 0; i < card_array.length; i++) {
+        //If the card is assigned to this player, add to hand
+        if (card_array[i].assignment === assignment) {
+            temp_deck.push(card_array[i]);
+        }
+    }
+    //Sort card hand by position
+    temp_deck.sort(function(a, b) {
+        return a.position - b.position;
+    });
+    return temp_deck;
 }
