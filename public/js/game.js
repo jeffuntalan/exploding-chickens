@@ -67,18 +67,10 @@ socket.on("player-created", function (data) {
 // Name : frontend-game.socket.on.{slug}-start
 // Desc : whenever an event occurs stating that the game started
 socket.on(window.location.pathname.substr(6) + "-start", function (data) {
-    //Check to see if we got an error
-    if (data !== "") {
-        toast_alert.fire({
-            icon: 'error',
-            html: '<h1 class="text-lg font-bold pl-2 pr-1">' + data + '</h1>'
-        });
-    } else {
-        toast_alert.fire({
-            icon: 'info',
-            html: '<h1 class="text-lg font-bold pl-2 pr-1">Game has started</h1>'
-        });
-    }
+    toast_alert.fire({
+        icon: 'info',
+        html: '<h1 class="text-lg font-bold pl-2 pr-1">Game has started</h1>'
+    });
 });
 
 // Name : frontend-game.socket.on.{slug}-reset
@@ -87,6 +79,15 @@ socket.on(window.location.pathname.substr(6) + "-reset", function (data) {
     toast_alert.fire({
         icon: 'info',
         html: '<h1 class="text-lg font-bold pl-2 pr-1">Game has been reset</h1>'
+    });
+});
+
+// Name : frontend-game.socket.on.{slug}-error
+// Desc : whenever an event occurs related to an error
+socket.on(window.location.pathname.substr(6) + "-error", function (data) {
+    toast_alert.fire({
+        icon: 'error',
+        html: '<h1 class="text-lg font-bold pl-2 pr-1">' + data + '</h1>'
     });
 });
 

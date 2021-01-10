@@ -34,24 +34,8 @@ exports.create_game = async function () {
     });
 }
 
-// Name : game_actions.game_details_id(game_id)
-// Desc : returns the details for a game id
-// Author(s) : RAk3rman
-exports.game_details_id = async function (game_id) {
-    //Create new promise and return created_game after saved
-    return await new Promise((resolve, reject) => {
-        game.findById({ _id: game_id }, function (err, found_game) {
-            if (err) {
-                reject(err);
-            } else {
-                resolve(found_game);
-            }
-        });
-    });
-}
-
 // Name : game_actions.game_details_slug(slug)
-// Desc : returns the details for a game id
+// Desc : returns the details for a game slug
 // Author(s) : RAk3rman
 exports.game_details_slug = async function (slug) {
     //Create new promise and return created_game after saved
