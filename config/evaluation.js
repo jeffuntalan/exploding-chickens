@@ -123,14 +123,8 @@ exports.game_test = async function () {
     spinner.info(console_head + `${chalk.bold('Evaluating game actions')}`);
     //Advance forward 4 turns
     spinner.info(console_head + `Advancing forward 4 turns`);
-    let next_player_id = await game_actions.advance_turn(sample_game_slug).catch(e => {failed_test(e)});
-    spinner.succeed(console_head + `Advanced turn to player with id: ` + next_player_id);
-    next_player_id = await game_actions.advance_turn(sample_game_slug).catch(e => {failed_test(e)});
-    spinner.succeed(console_head + `Advanced turn to player with id: ` + next_player_id);
-    next_player_id = await game_actions.advance_turn(sample_game_slug).catch(e => {failed_test(e)});
-    spinner.succeed(console_head + `Advanced turn to player with id: ` + next_player_id);
-    next_player_id = await game_actions.advance_turn(sample_game_slug).catch(e => {failed_test(e)});
-    spinner.succeed(console_head + `Advanced turn to player with id: ` + next_player_id);
+    await game_actions.advance_turn(sample_game_slug).catch(e => {failed_test(e)});
+    spinner.succeed(console_head + `Advanced turn to next player`);
     //TODO tests game functions and interaction
     spinner.info(console_head + `Discarding card`);
     let discard = await game_actions.discard_card(sample_game_slug, "skip-base-a").catch(e => {failed_test(e)});
@@ -142,8 +136,8 @@ exports.game_test = async function () {
     let chicken = await game_actions.draw_card(sample_game_slug, "skip-base-a").catch(e => {failed_test(e)});
     spinner.succeed(console_head + `New chicken position is: ` + chicken);
     spinner.info(console_head + `Calling card function`);
-    await game_actions.card_call(sample_game_slug, "skip-base-a", "aea35f36-cf9c-44f1-b4a5-3718658d3964").catch(e => {failed_test(e)});
-    spinner.succeed(console_head + `Called successfully `);
+    await game_actions.base_router(sample_game_slug, "skip-1").catch(e => {failed_test(e)});
+    spinner.succeed(console_head + `Called successfully`);
     }
 
 // Name : evaluation.game_deletion()

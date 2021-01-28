@@ -174,11 +174,11 @@ module.exports = function (fastify) {
             if (await game.exists({ slug: data.slug, "players._id": data.player_id })) {
                 //Verify turn
                 if (validate_turn(data.player_id, raw_game_details)) {
-
+                    await game_actions.base_router(data.slug, data.card_id);
                 } else {
                     //Emit error event with error
                     spinner.warn(`${chalk.bold.blue('Socket')}: ${chalk.dim.cyan('play-card       ')} ${chalk.dim.yellow(data.slug)} It is not the current players turn`);
-                    fastify.io.to(socket.id).emit(data.slug + "-error", "It is not your turn");
+                    fastify.io.to(socket.id).emit(data.slug + "-error", "Please wait your turn");
                 }
             } else {
                 //Emit error event with error
@@ -188,30 +188,33 @@ module.exports = function (fastify) {
         })
 
         // Name : socket.on.draw-card
-        // Desc : runs when a card is played on the client
+        // Desc : runs when a card is drawn on the client
         // Author(s) : RAk3rman
         socket.on('draw-card', async function (data) {
             spinner.start(`${chalk.bold.blue('Socket')}: ${chalk.dim.cyan('draw-card       ')} ${chalk.dim.yellow(data.slug)} Drawing new card for player_id: ` + data.player_id);
-            //Get game details
+            // Get game details
             let raw_game_details = await game_actions.game_details_slug(data.slug);
-            //Verify game exists
+            // Verify game exists
             if (await game.exists({ slug: data.slug, "players._id": data.player_id })) {
-                //Verify turn
+                // Verify turn
                 if (validate_turn(data.player_id, raw_game_details)) {
-                    //Draw card from draw deck and place in hand
-                    await game_actions.draw_card(data.slug, data.player_id);
-                    //Advance turn by one
-                    await game_actions.advance_turn(data.slug);
+                    // Draw card from draw deck and place in hand
+                    let card_drawn = await game_actions.draw_card(data.slug, data.player_id);
+                    // Check if card drawn in an ec
+                    if (card_drawn["action"] !== "chicken") {
+                        // Advance turn by one
+                        await game_actions.advance_turn(data.slug);
+                    }
                     spinner.succeed(`${chalk.bold.blue('Socket')}: ${chalk.dim.cyan('draw-card       ')} ${chalk.dim.yellow(data.slug)} Drew new card and advanced turn for player_id:` + data.player_id);
-                    //Update clients
+                    // Update clients
                     await update_game_ui(data.slug, "", "draw-card       ");
                 } else {
-                    //Emit error event with error
+                    // Emit error event with error
                     spinner.warn(`${chalk.bold.blue('Socket')}: ${chalk.dim.cyan('draw-card       ')} ${chalk.dim.yellow(data.slug)} It is not the current players turn`);
-                    fastify.io.to(socket.id).emit(data.slug + "-error", "It is not your turn");
+                    fastify.io.to(socket.id).emit(data.slug + "-error", "Please wait your turn");
                 }
             } else {
-                //Emit error event with error
+                // Emit error event with error
                 spinner.warn(`${chalk.bold.blue('Socket')}: ${chalk.dim.cyan('draw-card       ')} ${chalk.dim.yellow(data.slug)} Game does not exist`);
                 fastify.io.to(socket.id).emit(data.slug + "-error", "Game does not exist");
             }
@@ -303,7 +306,6 @@ module.exports = function (fastify) {
                     ec_count += 1;
                 }
             }
-            //console.log(ec_count);
             //Prepare pretty game details
             let pretty_game_details = {
                 players: [],

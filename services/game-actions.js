@@ -54,22 +54,6 @@ exports.game_details_slug = async function (slug) {
     });
 }
 
-// Name : game_actions.delete_game()
-// Desc : deletes a existing game in mongodb, returns game_slug
-// Author(s) : RAk3rman
-exports.delete_game = async function (game_slug) {
-    //Create new promise and return delete_game _id after deleted
-    return await new Promise((resolve, reject) => {
-        game.deleteOne({ slug: game_slug }, function (err) {
-            if (err) {
-                reject(err);
-            } else {
-                resolve(game_slug);
-            }
-        });
-    });
-}
-
 // Name : game_actions.import_cards(game_slug)
 // Desc : bulk import cards via json file
 // Author(s) : RAk3rman
@@ -96,57 +80,72 @@ exports.import_cards = async function (game_slug, pack_loc) {
     });
 }
 
-// Name : game_actions.advance_turn(game_slug)
-// Desc : Advance to the next turn, returns player_id of next turn
-// Author(s) : RAk3rman, Vincent Do
-exports.advance_turn = async function (game_slug) {
-    //Get game details
+// Name : game_actions.draw_card(game_slug, player_id)
+// Desc : draw a card from the draw deck and place at the end of a players hand
+// Author(s) : Vincent Do, RAk3rman
+exports.draw_card = async function (game_slug, player_id) {
+    // Get game details
     let game_details = await game_actions.game_details_slug(game_slug);
-    //Check how many turns we have left
-    if (game_details.turns_remaining <= 1) { //Only one turn left, player seat advances
-        //Check if we are going forward or backward
-        if (game_details.turn_direction === "forward") {
-            if (!(game_details.players.length <= game_details.seat_playing + 1)) { //Player seat advances by one
-                game_details.seat_playing++;
-            } else {
-                game_details.seat_playing = 0;
-            }
-        } else if (game_details.turn_direction === "backward") {
-            if (!(game_details.seat_playing - 1 < 0)) { //Player seat decreases by one
-                game_details.seat_playing--;
-            } else {
-                game_details.seat_playing = game_details.players.length - 1;
-            }
-        }
-        //Make sure the number of turns remaining is not 0
-        game_details.turns_remaining = 1;
-    } else { //Multiple turns left, player seat remains the same and turns_remaining decreases by one
-        game_details.turns_remaining--;
-    }
-    //Find next player's id
-    let next_player_id = "";
-    for (let i = 0; i <= game_details.players.length - 1; i++) {
-        if (game_details.players[i].seat === game_details.seat_playing) {
-            next_player_id = game_details.players[i]._id;
-            break;
-        }
-    }
-    //Create new promise
+    // Filter draw deck
+    let draw_deck = await filter_cards("draw_deck", game_details.cards);
+    // Filter player hand
+    let player_hand = await filter_cards(player_id, game_details.cards);
+    // Create new promise
     return await new Promise((resolve, reject) => {
-        //Save updated game
-        game_details.save({}, function (err) {
-            if (err) {
-                reject(err);
-            } else {
-                resolve(next_player_id);
-            }
-        });
+        // Update player with card that was drawn
+        game.findOneAndUpdate({ slug: game_slug, "cards._id": draw_deck[draw_deck.length-1]._id },
+            {"$set": { "cards.$.assignment": player_id, "cards.$.position": player_hand.length }}, function (err) {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(draw_deck[draw_deck.length-1]);
+                }
+            });
     });
 }
 
+// Name : game_actions.base_router(game_slug, card_id)
+// Desc : base deck - calls the appropriate card function based on card action
+// Author(s) : RAk3rman
+exports.base_router = async function (game_slug, card_id) {
+    // Get game details
+    let game_details = await game_actions.game_details_slug(game_slug);
+    // Find card details from id
+    let card_details = await find_card(card_id, game_details.cards);
+    console.log(card_details);
+    // Determine which function to run
+    if (card_details.action === "attack") {
+
+    } else if (card_details.action === "chicken") {
+
+    } else if (card_details.action === "defuse") {
+
+    } else if (card_details.action === "favor") {
+
+    } else if (card_details.action === "randchick-1") {
+
+    } else if (card_details.action === "randchick-2") {
+
+    } else if (card_details.action === "randchick-3") {
+
+    } else if (card_details.action === "randchick-4") {
+
+    } else if (card_details.action === "reverse") {
+
+    } else if (card_details.action === "seethefuture") {
+
+    } else if (card_details.action === "shuffle") {
+
+    } else if (card_details.action === "skip") {
+
+    } else {
+
+    }
+}
+
 // Name : game_actions.discard_card(game_slug, card_id)
-// Desc : put card in discard deck
-// Author(s) : Vincent Do
+// Desc : put card in discard deck and handle chicken
+// Author(s) : RAk3rman, Vincent Do
 exports.discard_card = async function (game_slug, card_id) {
     //Get game details
     let game_details = await game_actions.game_details_slug(game_slug);
@@ -166,30 +165,6 @@ exports.discard_card = async function (game_slug, card_id) {
                     reject(err);
                 } else {
                     resolve(value + 1);
-                }
-            });
-    });
-}
-
-// Name : game_actions.draw_card(game_slug, player_id)
-// Desc : draw a card from the draw deck and place at end of players hand
-// Author(s) : Vincent Do, RAk3rman
-exports.draw_card = async function (game_slug, player_id) {
-    //Get game details
-    let game_details = await game_actions.game_details_slug(game_slug);
-    //Filter draw deck
-    let draw_deck = await filter_cards("draw_deck", game_details.cards);
-    //Filter player hand
-    let player_hand = await filter_cards(player_id, game_details.cards);
-    //Create new promise
-    return await new Promise((resolve, reject) => {
-        //Update card that was drawn
-        game.findOneAndUpdate({ slug: game_slug, "cards._id": draw_deck[draw_deck.length-1]._id },
-            {"$set": { "cards.$.assignment": player_id, "cards.$.position": player_hand.length }}, function (err) {
-                if (err) {
-                    reject(err);
-                } else {
-                    resolve(player_hand.length);
                 }
             });
     });
@@ -236,47 +211,48 @@ exports.chicken = async function (game_slug, card_id, draw_deck) {
     });
 }
 
-// Name : game_actions.card_call(game_slug, card_id, player_seat)
-// Desc : calls the appropriate card function based on card id
-// Author(s) : Vincent Do
-exports.card_call = async function (game_slug, card_id, player_id) {
-    //Get game details
+// Name : game_actions.advance_turn(game_slug)
+// Desc : Advance to the next turn, returns player_id of next turn
+// Author(s) : RAk3rman, Vincent Do
+exports.advance_turn = async function (game_slug) {
+    // Get game details
     let game_details = await game_actions.game_details_slug(game_slug);
-    //Create new promise
-    //Create new promise and return created_game after saved
-    return await new Promise((resolve, reject) => {
-        if (card_id.includes("shuffle")) {
-            card_actions.shuffle_draw_deck(game_slug, card_id);
-        }
-        if (card_id.includes("attack")) {
-            card_actions.attack(game_slug, card_id);
-        }
-        if (card_id.includes("skip")) {
-            card_actions.skip(game_slug, card_id);
-        }
-        if (card_id.includes("reverse")) {
-            card_actions.reverse(game_slug, card_id);
-        }
-        if (card_id.includes("favor")) {
-            card_actions.favor(game_slug, card_id, player_id);
-        }
-        let count = 0;
-        let bucket = []
-        for (let i = 0; i <= game_details.cards.length - 1; i++) {
-            if (game_details.cards[i].assignment === player_id && game_details.cards[i].action === "chicken") {
-                bucket.push(game_details.cards[i]._id);
-                count++;
+    // Check how many turns we have left
+    if (game_details.turns_remaining <= 1) { // Only one turn left, player seat advances
+        // Check if we are going forward or backward
+        if (game_details.turn_direction === "forward") {
+            if (!(game_details.players.length <= game_details.seat_playing + 1)) { // Player seat advances by one
+                game_details.seat_playing++;
+            } else {
+                game_details.seat_playing = 0;
+            }
+        } else if (game_details.turn_direction === "backward") {
+            if (!(game_details.seat_playing - 1 < 0)) { // Player seat decreases by one
+                game_details.seat_playing--;
+            } else {
+                game_details.seat_playing = game_details.players.length - 1;
             }
         }
-        if (count >= 2) {
-            card_actions.double(game_slug, bucket[0], bucket[1], player_id);
-        }
-        resolve();
+        // Make sure the number of turns remaining is not 0
+        game_details.turns_remaining = 1;
+    } else { // Multiple turns left, player seat remains the same and turns_remaining decreases by one
+        game_details.turns_remaining--;
+    }
+    // Create new promise
+    return await new Promise((resolve, reject) => {
+        // Save updated game
+        game_details.save({}, function (err) {
+            if (err) {
+                reject(err);
+            } else {
+                resolve();
+            }
+        });
     });
-
 }
+
 // Name : game_actions.reset_game(game_slug, player_status, game_status)
-// Desc : resets the game to defaults
+// Desc : resets the game to default
 // Author(s) : Vincent Do
 exports.reset_game = async function (game_slug, player_status, game_status) {
     //Get game details
@@ -331,7 +307,24 @@ exports.game_purge = async function () {
     });
 }
 
+// Name : game_actions.delete_game()
+// Desc : deletes a existing game in mongodb, returns game_slug
+// Author(s) : RAk3rman
+exports.delete_game = async function (game_slug) {
+    //Create new promise and return delete_game _id after deleted
+    return await new Promise((resolve, reject) => {
+        game.deleteOne({ slug: game_slug }, function (err) {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(game_slug);
+            }
+        });
+    });
+}
+
 // PRIVATE FUNCTIONS
+
 // Name : filter_cards(assignment, card_array)
 // Desc : filters and sorts cards based on assignment and position
 // Author(s) : RAk3rman
@@ -349,4 +342,20 @@ function filter_cards(assignment, card_array) {
         return a.position - b.position;
     });
     return temp_deck;
+}
+
+// Name : find_card(card_id, card_array)
+// Desc : filters and returns the data for a card id
+// Author(s) : RAk3rman
+function find_card(card_id, card_array) {
+    let temp_card = undefined;
+    // Loop through card array until we find the card
+    for (let i = 0; i < card_array.length; i++) {
+        //If the card is assigned to this player, add to hand
+        if (card_array[i]._id === card_id) {
+            temp_card = card_array[i];
+            i = card_array.length;
+        }
+    }
+    return temp_card;
 }
