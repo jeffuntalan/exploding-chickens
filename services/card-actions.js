@@ -20,21 +20,8 @@ let player_actions = require('./player-actions.js');
 // Desc : forces the next player in turn order to take 2 consecutive turns
 // Author(s) : RAk3rman
 exports.attack = async function (game_details) {
-    // Check if we are going forward or backward
-    // TODO Handle if players are dead
-    if (game_details.turn_direction === "forward") {
-        if (!(game_details.players.length <= game_details.seat_playing + 1)) { // Player seat advances by one
-            game_details.seat_playing++;
-        } else {
-            game_details.seat_playing = 0;
-        }
-    } else if (game_details.turn_direction === "backward") {
-        if (!(game_details.seat_playing - 1 < 0)) { // Player seat decreases by one
-            game_details.seat_playing--;
-        } else {
-            game_details.seat_playing = game_details.players.length - 1;
-        }
-    }
+    // Advance to the next seat
+    game_details.seat_playing = await player_actions.next_seat(game_details)
     // Check how many turns we have left
     if (game_details.turns_remaining <= 1) { // Only one turn left, equal to two turns
         // Make sure the number of turns remaining is not 0
@@ -70,6 +57,34 @@ exports.kill_player = async function (game_details, player_id) {
     for (let i = 0; i <= game_details.cards.length - 1; i++) {
         if (game_details.cards[i].assignment === player_id) {
             game_details.cards[i].assignment = "out_of_play";
+        }
+    }
+}
+
+// Name : card_actions.defuse(game_details, player_id)
+// Desc : removes exploding chicken from hand and inserts randomly in deck
+// Author(s) : RAk3rman
+exports.defuse = async function (game_details, player_id) {
+    // TEMP: Loop through each card to create array
+    let ctn = 0;
+    for (let i = 0; i <= game_details.cards.length - 1; i++) {
+        // Increment draw deck count
+        if (game_details.cards[i].assignment === "draw_deck") {
+            ctn++;
+        }
+    }
+    // Determine random position
+    let rand_pos = Math.floor(Math.random() * ctn);
+    // Loop through each card to create array
+    for (let i = 0; i <= game_details.cards.length - 1; i++) {
+        // Find chicken that is assigned to target player
+        if (game_details.cards[i].assignment === player_id && game_details.cards[i].action === "chicken") {
+            game_details.cards[i].assignment = "draw_deck";
+            game_details.cards[i].position = rand_pos;
+        }
+        // Add to new array
+        if (game_details.cards[i].assignment === "draw_deck" && game_details.cards[i].position >= rand_pos) {
+            game_details.cards[i].position++;
         }
     }
 }
@@ -128,85 +143,6 @@ exports.reverse = async function (game_details) {
                 resolve();
             }
         });
-    });
-}
-
-// Name : card_actions.see_the_future(game_slug)
-// Desc : allows active player to view the top three cards of the draw deck
-// Author(s) : SengdowJones
-exports.see_the_future = async function (game_slug) {
-    //Get game details
-    let game_details = await game_actions.game_details_slug(game_slug);
-    //Loop through each card to create array
-    let bucket = [];
-    let bucket_length = 0;
-    while (bucket_length < 3) {
-        for (let i=0;i<=game_details.cards.length-1;i++) {
-            //Check to see if card in draw deck
-            if (game_details.cards[i].assignment === "draw_deck") {
-                bucket.push(game_details.cards[i]);
-                bucket_length++;
-            } else {
-
-            }
-        }
-    }
-    //Create new promise
-    return await new Promise((resolve, reject) => {
-        game.findOne({ slug: game_slug }, function (err, found_game) {
-                if (err) {
-                    reject(err);
-                } else {
-                    //Resolve bucket of top 3 cards
-                    resolve(bucket);
-                }
-            }
-        )
-    })
-}
-
-// Name : card_actions.defuse(game_slug)
-// Desc : allows active player to play a defuse card in the event of drawing an Exploding Chicken
-// Author(s) : Vincent Do
-exports.defuse = async function (game_slug, card_id, player_id) {
-    //Get game details
-    let game_details = await game_actions.game_details_slug(game_slug);
-    //Create new promise and return created_game after saved
-    return await new Promise((resolve, reject) => {
-        //Loop through each card
-        for (let i = 0; i <= game_details.cards.length - 1; i++) {
-            if (game_details.cards[i].action === "defuse" && game_details.cards[i].assignment === player_id) {
-                game_actions.discard_card(game_slug, game_details.cards[i]._id);
-                game_actions.chicken(game_slug, game_details.cards[i]._id);
-            } else {
-                //Removes the player's hand to the draw_deck
-                for (let i = 0; i <= game_details.cards.length - 1; i++) {
-                    if (game_details.cards[i]._id === player_id) {
-                        game_actions.discard_card(game_slug, game_details.cards[i]._id);
-                    }
-                }
-                //Changes player status of "dead"
-                game_actions.discard_card(game_slug, card_id);
-                game.findOneAndUpdate({ slug: game_slug, "player._id": player_id},
-                    {"$set": { "player.$.status": "dead"}}, function (err) {
-                        if (err) {
-                            reject(err);
-                        } else {
-                            resolve(game_details.players.status);
-                        }
-                    });
-                let count = 1;
-                for (let i = 0; i <= game_details.players.length - 1; i++) {
-                    if (game_details.players[i].status === "dead") {
-                        count++;
-                        if (count === game_details.players.length) {
-                            //Announce winner
-                        }
-                    }
-                }
-            }
-        }
-        resolve();
     });
 }
 

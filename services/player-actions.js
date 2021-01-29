@@ -75,41 +75,51 @@ exports.update_connection = async function (game_slug, player_id, p_connection) 
 };
 
 // Name : player_actions.create_hand(game_slug)
-// Desc : given a game_slug, gives each player a defuse card and 4 random cards from the draw_deck
+// Desc : gives each player a defuse card and 4 random cards from the draw_deck, rations ec
 // Author(s) : RAk3rman
 exports.create_hand = async function (game_slug) {
-    //Get game details
+    // Get game details
     let game_details = await game_actions.game_details_slug(game_slug);
-    //Create array containing the position of each defuse card and regular card
-    let defuseBucket = [];
-    let cardBucket = [];
+    // Create array containing the position of each defuse card and regular card
+    let defuse_bucket = [];
+    let exploding_bucket = [];
+    let card_bucket = [];
     for (let i = 0; i <= game_details.cards.length - 1; i++) {
         if (game_details.cards[i].action === "defuse") {
-            defuseBucket.push(i);
-        } else if (game_details.cards[i].action !== "chicken") {
-            cardBucket.push(i);
+            defuse_bucket.push(i);
+        } else if (game_details.cards[i].action === "chicken") {
+            exploding_bucket.push(i);
+            game_details.cards[i].assignment = "out_of_play";
+        } else {
+            card_bucket.push(i);
         }
     }
-    //Assign defuse card to player id in first position
+    // Assign defuse card to player id in first position
     for (let i = 0; i <= game_details.players.length - 1; i++) {
-        let rand_defuse_pos = rand_bucket(defuseBucket);
+        let rand_defuse_pos = rand_bucket(defuse_bucket);
         game_details.cards[rand_defuse_pos].assignment = game_details.players[i]._id;
         game_details.cards[rand_defuse_pos].position = 0;
     }
-    //Add remaining defuse cards to card bucket
-    for (let i = 0; i <= defuseBucket.length - 1; i++) {
-        cardBucket.push(defuseBucket[i]);
+    // Add remaining defuse cards to card bucket
+    for (let i = 0; i <= defuse_bucket.length - 1; i++) {
+        card_bucket.push(defuse_bucket[i]);
     }
-    //Assign remaining 4 cards to each player
+    // Assign remaining 4 cards to each player
     for (let i = 0; i <= game_details.players.length - 1; i++) {
         //Over 4 cards on the same player
         for (let j = 1; j <= 4; j++) {
-            let rand_card_pos = rand_bucket(cardBucket);
+            let rand_card_pos = rand_bucket(card_bucket);
             game_details.cards[rand_card_pos].assignment = game_details.players[i]._id;
             game_details.cards[rand_card_pos].position = j;
         }
     }
-    //Create new promise
+    // Assign exploding chickens to deck
+    for (let i = 0; i < game_details.players.length - 1; i++) {
+        // Randomly pick ec
+        let rand_card_pos = rand_bucket(exploding_bucket);
+        game_details.cards[rand_card_pos].assignment = "draw_deck";
+    }
+    // Create new promise
     await new Promise((resolve, reject) => {
         //Save updated game
         game_details.save({}, function (err) {
@@ -120,7 +130,7 @@ exports.create_hand = async function (game_slug) {
             }
         });
     });
-    //Shuffle draw deck once we are done
+    // Shuffle draw deck once we are done
     await card_actions.shuffle_draw_deck(game_details);
 }
 
@@ -151,6 +161,34 @@ exports.randomize_seats = async function (game_slug) {
             }
         });
     });
+}
+
+// Name : player_actions.next_seat(game_details)
+// Desc : determine next seat position
+// Author(s) : RAk3rman
+exports.next_seat = async function (game_details) {
+    // Traverse until we find next open seat
+    let found_seat = false;
+    let pos = game_details.seat_playing;
+    while (!found_seat) {
+        // Increment or decrement pos based on direction
+        if (game_details.turn_direction === "forward") {
+            pos++
+            if (pos > game_details.players.length - 1) {
+                pos = 0;
+            }
+        } else if (game_details.turn_direction === "backward") {
+            pos--;
+            if (pos < 0) {
+                pos = game_details.players.length - 1;
+            }
+        }
+        // Check to see if current seat is playing
+        if (game_details.players[pos].status === "playing") {
+            found_seat = true;
+            return pos;
+        }
+    }
 }
 
 //PRIVATE FUNCTIONS

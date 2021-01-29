@@ -97,37 +97,37 @@ module.exports = function (fastify) {
         // Author(s) : RAk3rman
         socket.on('start-game', async function (data) {
             spinner.start(`${chalk.bold.blue('Socket')}: ${chalk.dim.cyan('start-game      ')} ${chalk.dim.yellow(data.slug)} Starting game`);
-            //Get game details
-            let raw_game_details = await game_actions.game_details_slug(data.slug);
-            //Verify game exists
+            // Verify game exists
             if (await game.exists({ slug: data.slug, "players._id": data.player_id })) {
-                //Verify host
-                if (validate_host(data.player_id, raw_game_details)) {
+                // Get game details
+                let game_details = await game_actions.game_details_slug(data.slug);
+                // Verify host
+                if (validate_host(data.player_id, game_details)) {
                     //Make sure we have the correct number of players
-                    if (raw_game_details.players.length > 1 && raw_game_details.players.length < 5) {
-                        //Reset game
-                        await game_actions.reset_game(data.slug, "playing", "in_game");
-                        //Create hand for each player
+                    if (game_details.players.length > 1 && game_details.players.length < 5) {
+                        // Reset game
+                        await game_actions.reset_game(game_details, "playing", "in_game");
+                        // Create hand for each player
                         await player_actions.create_hand(data.slug);
-                        //Randomize seat positions
+                        // Randomize seat positions
                         await player_actions.randomize_seats(data.slug);
-                        //Emit start game event
+                        // Emit start game event
                         fastify.io.emit(data.slug + "-start", "");
                         spinner.succeed(`${chalk.bold.blue('Socket')}: ${chalk.dim.cyan('start-game      ')} ${chalk.dim.yellow(data.slug)} Game has started`);
-                        //Update clients
+                        // Update clients
                         await update_game_ui(data.slug, "", "start-game      ");
                     } else {
-                        //Emit error event with error
+                        // Emit error event with error
                         spinner.warn(`${chalk.bold.blue('Socket')}: ${chalk.dim.cyan('start-game      ')} ${chalk.dim.yellow(data.slug)} 2-5 players are required`);
                         fastify.io.to(socket.id).emit(data.slug + "-error", "You must have 2-5 players");
                     }
                 } else {
-                    //Emit error event with error
+                    // Emit error event with error
                     spinner.warn(`${chalk.bold.blue('Socket')}: ${chalk.dim.cyan('start-game      ')} ${chalk.dim.yellow(data.slug)} Tried to complete host action`);
                     fastify.io.to(socket.id).emit(data.slug + "-error", "You are not the host");
                 }
             } else {
-                //Emit error event with error
+                // Emit error event with error
                 spinner.warn(`${chalk.bold.blue('Socket')}: ${chalk.dim.cyan('start-game      ')} ${chalk.dim.yellow(data.slug)} Game does not exist`);
                 fastify.io.to(socket.id).emit(data.slug + "-error", "Game does not exist");
             }
@@ -138,26 +138,26 @@ module.exports = function (fastify) {
         // Author(s) : RAk3rman
         socket.on('reset-game', async function (data) {
             spinner.start(`${chalk.bold.blue('Socket')}: ${chalk.dim.cyan('reset-game      ')} ${chalk.dim.yellow(data.slug)} Resetting game`);
-            //Get game details
-            let raw_game_details = await game_actions.game_details_slug(data.slug);
-            //Verify game exists
+            // Verify game exists
             if (await game.exists({ slug: data.slug, "players._id": data.player_id })) {
-                //Verify host
-                if (validate_host(data.player_id, raw_game_details)) {
-                    //Reset game
-                    await game_actions.reset_game(data.slug, "idle", "in_lobby");
-                    //Emit start game event
+                // Get game details
+                let game_details = await game_actions.game_details_slug(data.slug);
+                // Verify host
+                if (validate_host(data.player_id, game_details)) {
+                    // Reset game
+                    await game_actions.reset_game(game_details, "idle", "in_lobby");
+                    // Emit start game event
                     fastify.io.emit(data.slug + "-reset", "");
                     spinner.succeed(`${chalk.bold.blue('Socket')}: ${chalk.dim.cyan('reset-game      ')} ${chalk.dim.yellow(data.slug)} Game has been reset`);
-                    //Update clients
+                    // Update clients
                     await update_game_ui(data.slug, "", "reset-game      ");
                 } else {
-                    //Emit error event with error
+                    // Emit error event with error
                     spinner.warn(`${chalk.bold.blue('Socket')}: ${chalk.dim.cyan('reset-game      ')} ${chalk.dim.yellow(data.slug)} Tried to complete host action`);
                     fastify.io.to(socket.id).emit(data.slug + "-error", "You are not the host");
                 }
             } else {
-                //Emit error event with error
+                // Emit error event with error
                 spinner.warn(`${chalk.bold.blue('Socket')}: ${chalk.dim.cyan('reset-game      ')} ${chalk.dim.yellow(data.slug)} Game does not exist`);
                 fastify.io.to(socket.id).emit(data.slug + "-error", "Game does not exist");
             }
@@ -311,7 +311,7 @@ module.exports = function (fastify) {
             let ec_count = 0;
             for (let i = 0; i < raw_game_details["cards"].length; i++) {
                 //If the card is assigned to this player, add to hand
-                if (raw_game_details["cards"][i].action === "chicken") {
+                if (raw_game_details["cards"][i].action === "chicken" && raw_game_details["cards"][i].assignment === "draw_deck") {
                     ec_count += 1;
                 }
             }

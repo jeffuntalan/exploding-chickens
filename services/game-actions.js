@@ -98,12 +98,10 @@ exports.draw_card = async function (game_details, player_id) {
     // Create new promise for game save
     return await new Promise((resolve, reject) => {
         // Update player with card that was drawn
-        game.findOneAndUpdate({
-            slug: game_details.slug,
-            "cards._id": draw_deck[draw_deck.length-1]._id
-        }, {
-            "$set": { "cards.$.assignment": player_id, "cards.$.position": player_hand.length }
-        }, function (err) {
+        game.findOneAndUpdate(
+            { slug: game_details.slug, "cards._id": draw_deck[draw_deck.length-1]._id},
+            { "$set": { "cards.$.assignment": player_id, "cards.$.position": player_hand.length }},
+            function (err) {
             if (err) {
                 reject(err);
             } else {
@@ -119,7 +117,6 @@ exports.draw_card = async function (game_details, player_id) {
 exports.base_router = async function (game_details, game_slug, player_id, card_id) {
     // Find card details from id
     let card_details = await find_card(card_id, game_details.cards);
-    console.log(card_details);
     // Determine which function to run
     if (card_details.action === "attack") {
         await card_actions.attack(game_details);
@@ -130,9 +127,13 @@ exports.base_router = async function (game_details, game_slug, player_id, card_i
         await game_actions.discard_card(game_details, card_id);
         game_details.turns_remaining = 0;
         await game_actions.advance_turn(game_details);
+        await game_actions.check_winner(game_details);
         return true;
     } else if (card_details.action === "defuse") {
-        // TODO Implement defuse
+        await card_actions.defuse(game_details, player_id);
+        await game_actions.discard_card(game_details, card_id);
+        await game_actions.advance_turn(game_details);
+        return true;
     } else if (card_details.action === "favor") {
         // TODO Implement favor
     } else if (card_details.action === "randchick-1") {
@@ -146,9 +147,11 @@ exports.base_router = async function (game_details, game_slug, player_id, card_i
     } else if (card_details.action === "reverse") {
         await card_actions.reverse(game_details);
         await game_actions.discard_card(game_details, card_id);
+        await game_actions.advance_turn(game_details);
         return true;
     } else if (card_details.action === "seethefuture") {
-        // TODO Implement see the future
+        await game_actions.discard_card(game_details, card_id);
+        return true;
     } else if (card_details.action === "shuffle") {
         await card_actions.shuffle_draw_deck(game_details);
         await game_actions.discard_card(game_details, card_id);
@@ -158,11 +161,11 @@ exports.base_router = async function (game_details, game_slug, player_id, card_i
         await game_actions.advance_turn(game_details);
         return true;
     } else {
-
+        // Houston, we have a problem
     }
 }
 
-// Name : game_actions.discard_card(game_details, game_slug, card_id)
+// Name : game_actions.discard_card(game_details, card_id)
 // Desc : put a card in discard deck
 // Author(s) : RAk3rman
 exports.discard_card = async function (game_details, card_id) {
@@ -171,7 +174,8 @@ exports.discard_card = async function (game_details, card_id) {
     // Create new promise to save game
     return await new Promise((resolve, reject) => {
         // Update card that was discarded
-        game.findOneAndUpdate({ slug: game_details.slug, "cards._id": card_id},
+        game.findOneAndUpdate(
+            { slug: game_details.slug, "cards._id": card_id},
             {"$set": { "cards.$.assignment": "discard_deck", "cards.$.position": discard_deck.length }},
             function (err) {
                 if (err) {
@@ -184,32 +188,19 @@ exports.discard_card = async function (game_details, card_id) {
 }
 
 // Name : game_actions.advance_turn(game_details)
-// Desc : Advance to the next turn
-// Author(s) : RAk3rman, Vincent Do
+// Desc : advance to the next turn
+// Author(s) : RAk3rman
 exports.advance_turn = async function (game_details) {
     // Check how many turns we have left
-    // TODO Handle if players are dead
     if (game_details.turns_remaining <= 1) { // Only one turn left, player seat advances
-        // Check if we are going forward or backward
-        if (game_details.turn_direction === "forward") {
-            if (!(game_details.players.length <= game_details.seat_playing + 1)) { // Player seat advances by one
-                game_details.seat_playing++;
-            } else {
-                game_details.seat_playing = 0;
-            }
-        } else if (game_details.turn_direction === "backward") {
-            if (!(game_details.seat_playing - 1 < 0)) { // Player seat decreases by one
-                game_details.seat_playing--;
-            } else {
-                game_details.seat_playing = game_details.players.length - 1;
-            }
-        }
+        // Advance to the next seat
+        game_details.seat_playing = await player_actions.next_seat(game_details);
         // Make sure the number of turns remaining is not 0
         game_details.turns_remaining = 1;
     } else { // Multiple turns left, player seat remains the same and turns_remaining decreases by one
         game_details.turns_remaining--;
     }
-    // Create new promise
+    // Create new promise to save game
     return await new Promise((resolve, reject) => {
         // Save updated game
         game_details.save({}, function (err) {
@@ -222,27 +213,57 @@ exports.advance_turn = async function (game_details) {
     });
 }
 
-// Name : game_actions.reset_game(game_slug, player_status, game_status)
+// Name : game_actions.check_winner(game_details)
+// Desc : check to see if there is a winner
+// Author(s) : RAk3rman
+exports.check_winner = async function (game_details) {
+    // Count the number of active players
+    let ctn = 0;
+    let player_id = undefined;
+    for (let i = 0; i <= game_details.players.length - 1; i++) {
+        if (game_details.players[i].status === "playing") {
+            ctn++;
+            player_id = game_details.players[i]._id;
+        }
+    }
+    // Determine if there is a winner, end game if so
+    if (ctn === 1) {
+        await game_actions.reset_game(game_details, "idle", "in_lobby");
+        // Create new promise to save game
+        return await new Promise((resolve, reject) => {
+            game.findOneAndUpdate(
+                { slug: game_details.slug, "players._id": player_id },
+                {"$set": { "players.$.status": "winner" }},
+                function (err) {
+                    if (err) {
+                        reject(err);
+                    } else {
+                        resolve();
+                    }
+                });
+        })
+    }
+}
+
+// Name : game_actions.reset_game(game_details, player_status, game_status)
 // Desc : resets the game to default
-// Author(s) : Vincent Do
-exports.reset_game = async function (game_slug, player_status, game_status) {
-    //Get game details
-    let game_details = await game_actions.game_details_slug(game_slug);
-    //Reset cards
+// Author(s) : Vincent Do, RAk3rman
+exports.reset_game = async function (game_details, player_status, game_status) {
+    // Reset cards
     for (let i = 0; i <= game_details.cards.length - 1; i++) {
         game_details.cards[i].assignment = "draw_deck";
         game_details.cards[i].position = i;
     }
-    //Reset players
+    // Reset players
     for (let i = 0; i <= game_details.players.length - 1; i++) {
         game_details.players[i].status = player_status;
     }
-    //Reset game variables
+    // Reset game variables
     game_details.turn_direction = "forward";
     game_details.seat_playing = 0;
     game_details.turns_remaining = 1;
     game_details.status = game_status;
-    //Create new promise
+    // Create new promise for game save
     await new Promise((resolve, reject) => {
         //Save updated game
         game_details.save({}, function (err) {
@@ -264,11 +285,11 @@ exports.game_purge = async function () {
         if (err) {
             spinner.fail(`${chalk.bold.red('Game Purge')}: Could not retrieve games`);
         } else {
-            //Loop through each game
+            // Loop through each game
             for (let i = 0; i < found_games.length; i++) {
-                //Determine if the game is more than 4 hours old
+                // Determine if the game is more than 4 hours old
                 if (!moment(found_games[i].created).add(4, "hours").isSameOrAfter(moment())) {
-                    //Delete game
+                    // Delete game
                     game_actions.delete_game(found_games[i].slug).then(() => {
                         spinner.succeed(`${chalk.bold.red('Game Purge')}: Deleted game with id:` + found_games[i]._id);
                     });
