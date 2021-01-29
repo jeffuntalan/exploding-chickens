@@ -168,20 +168,29 @@ module.exports = function (fastify) {
         // Author(s) : RAk3rman
         socket.on('play-card', async function (data) {
             spinner.start(`${chalk.bold.blue('Socket')}: ${chalk.dim.cyan('play-card       ')} ${chalk.dim.yellow(data.slug)} Playing card with card_id: ` + data.card_id);
-            //Get game details
-            let raw_game_details = await game_actions.game_details_slug(data.slug);
-            //Verify game exists
+            // Verify game exists
             if (await game.exists({ slug: data.slug, "players._id": data.player_id })) {
-                //Verify turn
-                if (validate_turn(data.player_id, raw_game_details)) {
-                    await game_actions.base_router(data.slug, data.card_id);
+                // Get game details
+                let game_details = await game_actions.game_details_slug(data.slug);
+                // Verify turn
+                if (validate_turn(data.player_id, game_details)) {
+                    // Send card id to router
+                    let action_err = await game_actions.base_router(game_details, data.slug, data.player_id, data.card_id);
+                    if (action_err === true) {
+                        spinner.succeed(`${chalk.bold.blue('Socket')}: ${chalk.dim.cyan('play-card       ')} ${chalk.dim.yellow(data.slug)} Card successfully played and discarded`);
+                        // Update clients
+                        await update_game_ui(data.slug, "", "play-card       ");
+                    } else {
+                        spinner.warn(`${chalk.bold.blue('Socket')}: ${chalk.dim.cyan('play-card       ')} ${chalk.dim.yellow(data.slug)} Error while playing card: ` + action_err);
+                        fastify.io.to(socket.id).emit(data.slug + "-error", action_err);
+                    }
                 } else {
-                    //Emit error event with error
+                    // Emit error event
                     spinner.warn(`${chalk.bold.blue('Socket')}: ${chalk.dim.cyan('play-card       ')} ${chalk.dim.yellow(data.slug)} It is not the current players turn`);
                     fastify.io.to(socket.id).emit(data.slug + "-error", "Please wait your turn");
                 }
             } else {
-                //Emit error event with error
+                // Emit error event
                 spinner.warn(`${chalk.bold.blue('Socket')}: ${chalk.dim.cyan('play-card       ')} ${chalk.dim.yellow(data.slug)} Game does not exist`);
                 fastify.io.to(socket.id).emit(data.slug + "-error", "Game does not exist");
             }
@@ -192,18 +201,18 @@ module.exports = function (fastify) {
         // Author(s) : RAk3rman
         socket.on('draw-card', async function (data) {
             spinner.start(`${chalk.bold.blue('Socket')}: ${chalk.dim.cyan('draw-card       ')} ${chalk.dim.yellow(data.slug)} Drawing new card for player_id: ` + data.player_id);
-            // Get game details
-            let raw_game_details = await game_actions.game_details_slug(data.slug);
             // Verify game exists
             if (await game.exists({ slug: data.slug, "players._id": data.player_id })) {
+                // Get game details
+                let game_details = await game_actions.game_details_slug(data.slug);
                 // Verify turn
-                if (validate_turn(data.player_id, raw_game_details)) {
+                if (validate_turn(data.player_id, game_details)) {
                     // Draw card from draw deck and place in hand
-                    let card_drawn = await game_actions.draw_card(data.slug, data.player_id);
+                    let card_drawn = await game_actions.draw_card(game_details, data.player_id);
                     // Check if card drawn in an ec
                     if (card_drawn["action"] !== "chicken") {
-                        // Advance turn by one
-                        await game_actions.advance_turn(data.slug);
+                        game_details = await game_actions.game_details_slug(data.slug);
+                        await game_actions.advance_turn(game_details);
                     }
                     spinner.succeed(`${chalk.bold.blue('Socket')}: ${chalk.dim.cyan('draw-card       ')} ${chalk.dim.yellow(data.slug)} Drew new card and advanced turn for player_id:` + data.player_id);
                     // Update clients

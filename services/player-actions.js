@@ -121,7 +121,7 @@ exports.create_hand = async function (game_slug) {
         });
     });
     //Shuffle draw deck once we are done
-    await card_actions.shuffle_draw_deck(game_slug);
+    await card_actions.shuffle_draw_deck(game_details);
 }
 
 

@@ -125,8 +125,8 @@ function mongoose_connected() {
             const run_eval = async () => {
                 await evaluation.game_creation();
                 await evaluation.player_test();
-                await evaluation.card_test();
-                await evaluation.game_test();
+                //await evaluation.card_test();
+                //await evaluation.game_test();
                 await evaluation.game_deletion();
             }
             run_eval().then(() => {

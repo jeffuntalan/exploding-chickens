@@ -28,7 +28,10 @@ let player_actions = require('./player-actions.js');
 exports.create_game = async function () {
     //Create new promise and return created_game after saved
     return await new Promise((resolve, reject) => {
-        game.create({ _id: uuidv4(), slug: uniqueNamesGenerator({dictionaries: [adjectives, animals, colors], separator: '-', length: 2}) }, function (err, created_game) {
+        game.create({
+            _id: uuidv4(),
+            slug: uniqueNamesGenerator({dictionaries: [adjectives, animals, colors], separator: '-', length: 2})
+        }, function (err, created_game) {
             if (err) {
                 reject(err);
             } else {
@@ -64,7 +67,11 @@ exports.import_cards = async function (game_slug, pack_loc) {
     let pack_array = require(pack_loc);
     //Loop through each json value and add card
     for (let i = 1; i <= pack_array.length - 1; i++) {
-        game_details.cards.push({ _id: pack_array[i]._id, image_loc: "public/cards/" + pack_array[0].pack_name + "/" + pack_array[i].file_name, action: pack_array[i].action, position: i });
+        game_details.cards.push({
+            _id: pack_array[i]._id,
+            image_loc: "public/cards/" + pack_array[0].pack_name + "/" + pack_array[i].file_name,
+            action: pack_array[i].action, position: i
+        });
     }
     //Create new promise
     return await new Promise((resolve, reject) => {
@@ -80,144 +87,108 @@ exports.import_cards = async function (game_slug, pack_loc) {
     });
 }
 
-// Name : game_actions.draw_card(game_slug, player_id)
+// Name : game_actions.draw_card(game_details, player_id)
 // Desc : draw a card from the draw deck and place at the end of a players hand
 // Author(s) : Vincent Do, RAk3rman
-exports.draw_card = async function (game_slug, player_id) {
-    // Get game details
-    let game_details = await game_actions.game_details_slug(game_slug);
+exports.draw_card = async function (game_details, player_id) {
     // Filter draw deck
     let draw_deck = await filter_cards("draw_deck", game_details.cards);
     // Filter player hand
     let player_hand = await filter_cards(player_id, game_details.cards);
-    // Create new promise
+    // Create new promise for game save
     return await new Promise((resolve, reject) => {
         // Update player with card that was drawn
-        game.findOneAndUpdate({ slug: game_slug, "cards._id": draw_deck[draw_deck.length-1]._id },
-            {"$set": { "cards.$.assignment": player_id, "cards.$.position": player_hand.length }}, function (err) {
-                if (err) {
-                    reject(err);
-                } else {
-                    resolve(draw_deck[draw_deck.length-1]);
-                }
-            });
+        game.findOneAndUpdate({
+            slug: game_details.slug,
+            "cards._id": draw_deck[draw_deck.length-1]._id
+        }, {
+            "$set": { "cards.$.assignment": player_id, "cards.$.position": player_hand.length }
+        }, function (err) {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(draw_deck[draw_deck.length-1]);
+            }
+        });
     });
 }
 
-// Name : game_actions.base_router(game_slug, card_id)
+// Name : game_actions.base_router(game_details, game_slug, player_id, card_id)
 // Desc : base deck - calls the appropriate card function based on card action
 // Author(s) : RAk3rman
-exports.base_router = async function (game_slug, card_id) {
-    // Get game details
-    let game_details = await game_actions.game_details_slug(game_slug);
+exports.base_router = async function (game_details, game_slug, player_id, card_id) {
     // Find card details from id
     let card_details = await find_card(card_id, game_details.cards);
     console.log(card_details);
     // Determine which function to run
     if (card_details.action === "attack") {
-
-    } else if (card_details.action === "chicken") {
-
+        await card_actions.attack(game_details);
+        await game_actions.discard_card(game_details, card_id);
+        return true;
+    } else if (card_details.action === "chicken") { // Signals that the player is dead
+        await card_actions.kill_player(game_details, player_id);
+        await game_actions.discard_card(game_details, card_id);
+        game_details.turns_remaining = 0;
+        await game_actions.advance_turn(game_details);
+        return true;
     } else if (card_details.action === "defuse") {
-
+        // TODO Implement defuse
     } else if (card_details.action === "favor") {
-
+        // TODO Implement favor
     } else if (card_details.action === "randchick-1") {
-
+        // TODO Implement randchick
     } else if (card_details.action === "randchick-2") {
-
+        // TODO Implement randchick
     } else if (card_details.action === "randchick-3") {
-
+        // TODO Implement randchick
     } else if (card_details.action === "randchick-4") {
-
+        // TODO Implement randchick
     } else if (card_details.action === "reverse") {
-
+        await card_actions.reverse(game_details);
+        await game_actions.discard_card(game_details, card_id);
+        return true;
     } else if (card_details.action === "seethefuture") {
-
+        // TODO Implement see the future
     } else if (card_details.action === "shuffle") {
-
+        await card_actions.shuffle_draw_deck(game_details);
+        await game_actions.discard_card(game_details, card_id);
+        return true;
     } else if (card_details.action === "skip") {
-
+        await game_actions.discard_card(game_details, card_id);
+        await game_actions.advance_turn(game_details);
+        return true;
     } else {
 
     }
 }
 
-// Name : game_actions.discard_card(game_slug, card_id)
-// Desc : put card in discard deck and handle chicken
-// Author(s) : RAk3rman, Vincent Do
-exports.discard_card = async function (game_slug, card_id) {
-    //Get game details
-    let game_details = await game_actions.game_details_slug(game_slug);
-    //Find greatest position in discard deck
-    let value = -1;
-    for (let i = 0; i <= game_details.cards.length - 1; i++) {
-        if (game_details.cards[i].position > value && game_details.cards[i].assignment === "discard_deck") {
-            value = game_details.cards[i].position;
-        }
-    }
-    //Create new promise
+// Name : game_actions.discard_card(game_details, game_slug, card_id)
+// Desc : put a card in discard deck
+// Author(s) : RAk3rman
+exports.discard_card = async function (game_details, card_id) {
+    // Find greatest position in discard deck
+    let discard_deck = await filter_cards("discard_deck", game_details.cards);
+    // Create new promise to save game
     return await new Promise((resolve, reject) => {
-        //Update card that was discarded
-        game.findOneAndUpdate({ slug: game_slug, "cards._id": card_id},
-            {"$set": { "cards.$.assignment": "discard_deck", "cards.$.position": value + 1 }}, function (err) {
+        // Update card that was discarded
+        game.findOneAndUpdate({ slug: game_details.slug, "cards._id": card_id},
+            {"$set": { "cards.$.assignment": "discard_deck", "cards.$.position": discard_deck.length }},
+            function (err) {
                 if (err) {
                     reject(err);
                 } else {
-                    resolve(value + 1);
+                    resolve();
                 }
             });
     });
 }
 
-// Name : game_actions.chicken(game_slug, card_id, player_seat)
-// Desc : put chicken back
-// Author(s) : Vincent Do & Richie
-exports.chicken = async function (game_slug, card_id, draw_deck) {
-    //Get game details
-    let game_details = await game_actions.game_details_slug(game_slug);
-    let new_position = prompt("Where would you like to place the card?", "1");
-    if (new_position === null || new_position < 0) {
-        console.log("invalid position");
-    }
-    //Create new promise
-    return await new Promise((resolve, reject) => {
-        //Update card positions in the draw_deck
-        for (let i = 0; i <= game_details.cards.length - 1; i++) {
-            if (game_details.cards[i].assignment === "draw_deck") {
-                //Putting chicken back into deck
-                if (game_details.cards[i].position >= new_position) {
-                    game.findOneAndUpdate({ slug: game_slug, "cards._id": game_details.cards[i]._id},
-                        {"$set": { "cards.$.assignment": "draw_deck", "cards.$.position": game_details.cards[i].position + 1 }}, function (err) {
-                            if (err) {
-                                reject(err);
-                            } else {
-                                resolve(new_position + 1);
-                            }
-                        });
-                }
-
-            }
-        }
-        game.findOneAndUpdate({ slug: game_slug, "cards._id": card_id},
-            {"$set": { "cards.$.assignment": "draw_deck", "cards.$.position": new_position }}, function (err) {
-                if (err) {
-                    reject(err);
-                } else {
-                    resolve(new_position);
-                }
-            });
-
-    });
-}
-
-// Name : game_actions.advance_turn(game_slug)
-// Desc : Advance to the next turn, returns player_id of next turn
+// Name : game_actions.advance_turn(game_details)
+// Desc : Advance to the next turn
 // Author(s) : RAk3rman, Vincent Do
-exports.advance_turn = async function (game_slug) {
-    // Get game details
-    let game_details = await game_actions.game_details_slug(game_slug);
+exports.advance_turn = async function (game_details) {
     // Check how many turns we have left
+    // TODO Handle if players are dead
     if (game_details.turns_remaining <= 1) { // Only one turn left, player seat advances
         // Check if we are going forward or backward
         if (game_details.turn_direction === "forward") {

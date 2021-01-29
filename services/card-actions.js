@@ -16,52 +16,69 @@ let card_actions = require('../services/card-actions.js');
 let game_actions = require('../services/game-actions.js');
 let player_actions = require('./player-actions.js');
 
-// Name : card_actions.skip(game_slug, card_id)
-// Desc : skips the current turn, returns next player_id
+// Name : card_actions.attack(game_details)
+// Desc : forces the next player in turn order to take 2 consecutive turns
 // Author(s) : RAk3rman
-exports.skip = async function (game_slug, card_id) {
-    //Move card to discard pile
-    await game_actions.discard_card(game_slug, card_id);
-    //Advance turn to next_player, return next player_id
-    return await game_actions.advance_turn(game_slug);
-}
-
-// Name : card_actions.reverse(game_slug, card_id)
-// Desc : reverse the current player order, returns next player_id
-// Author(s) : RAk3rman
-exports.reverse = async function (game_slug, card_id) {
-    //Get game details
-    let game_details = await game_actions.game_details_slug(game_slug);
-    //Switch to forwards or backwards
+exports.attack = async function (game_details) {
+    // Check if we are going forward or backward
+    // TODO Handle if players are dead
     if (game_details.turn_direction === "forward") {
-        game_details.turn_direction = "backward";
+        if (!(game_details.players.length <= game_details.seat_playing + 1)) { // Player seat advances by one
+            game_details.seat_playing++;
+        } else {
+            game_details.seat_playing = 0;
+        }
     } else if (game_details.turn_direction === "backward") {
-        game_details.turn_direction = "forward";
+        if (!(game_details.seat_playing - 1 < 0)) { // Player seat decreases by one
+            game_details.seat_playing--;
+        } else {
+            game_details.seat_playing = game_details.players.length - 1;
+        }
     }
-    //Create new promise and wait for game_details to save
-    await new Promise((resolve, reject) => {
-        //Move card to discard pile
-        game_actions.discard_card(game_slug, card_id);
-        //Save updated game
+    // Check how many turns we have left
+    if (game_details.turns_remaining <= 1) { // Only one turn left, equal to two turns
+        // Make sure the number of turns remaining is not 0
+        game_details.turns_remaining = 2;
+    } else { // Multiple turns left, turns_remaining
+        game_details.turns_remaining += 2;
+    }
+    // Create new promise for game save
+    return await new Promise((resolve, reject) => {
+        // Save updated game
         game_details.save({}, function (err) {
             if (err) {
                 reject(err);
+            } else {
+                resolve();
             }
         });
     });
-    //await game_actions.discard_card(game_slug, card_id);
-    //Advance turn to next_player, return next player_id
-    return await game_actions.advance_turn(game_slug);
-
 }
 
-// Name : card_actions.shuffle_draw_deck(game_slug, card_id)
-// Desc : shuffles the positions of all cards in the draw deck, returns number of cards in draw deck
+// Name : card_actions.kill_player(game_details)
+// Desc : player exploded, removes player from game and frees cards
 // Author(s) : RAk3rman
-exports.shuffle_draw_deck = async function (game_slug, card_id) {
-    //Get game details
-    let game_details = await game_actions.game_details_slug(game_slug);
-    //Loop through each card to create array
+exports.kill_player = async function (game_details, player_id) {
+    // Find player and update status
+    for (let i = 0; i <= game_details.players.length - 1; i++) {
+        if (game_details.players[i]._id === player_id) {
+            game_details.players[i].status = "exploded";
+            i = game_details.players.length;
+        }
+    }
+    // Update all cards in player's hand to be "out of play"
+    for (let i = 0; i <= game_details.cards.length - 1; i++) {
+        if (game_details.cards[i].assignment === player_id) {
+            game_details.cards[i].assignment = "out_of_play";
+        }
+    }
+}
+
+// Name : card_actions.shuffle_draw_deck(game_details)
+// Desc : shuffles the positions of all cards in the draw deck
+// Author(s) : RAk3rman
+exports.shuffle_draw_deck = async function (game_details) {
+    // Loop through each card to create array
     let bucket = [];
     let cards_in_deck = 0;
     for (let i = 0; i <= game_details.cards.length - 1; i++) {
@@ -71,99 +88,46 @@ exports.shuffle_draw_deck = async function (game_slug, card_id) {
             cards_in_deck++;
         }
     }
-    //Loop though each card and reassign position
+    // Loop though each card and reassign position
     for (let i = 0; i <= game_details.cards.length - 1; i++) {
         //Check to see if card in draw deck and not chicken
         if (game_details.cards[i].assignment === "draw_deck") {
             game_details.cards[i].position = rand_bucket(bucket);
         }
     }
-    if (card_id === null) {
-        //Move card to discard pile
-        await game_actions.discard_card(game_slug, card_id);
-    }
-    //Create new promise
+    // Create new promise for game save
     return await new Promise((resolve, reject) => {
         //Save updated game
         game_details.save({}, function (err) {
             if (err) {
                 reject(err);
             } else {
-                //Check if we have to discard card
-                if (card_id) {
-                    //TODO call discard card function
-                    resolve(cards_in_deck + 1);
-                } else {
-                    resolve(cards_in_deck + 1);
-                }
+                resolve();
             }
         });
     });
 }
 
-// Name : card_actions.attack(game_slug, card_id)
-// Desc : forces the next player in turn order to take 2 consecutive turns
+// Name : card_actions.reverse(game_details)
+// Desc : reverse the current player order
 // Author(s) : RAk3rman
-exports.attack = async function (game_slug, card_id) {
-    //Get game details
-    let game_details = await game_actions.game_details_slug(game_slug);
-    //Check if we are going forward or backward
+exports.reverse = async function (game_details) {
+    // Switch to forwards or backwards
     if (game_details.turn_direction === "forward") {
-        if (!(game_details.players.length <= game_details.seat_playing + 1)) { //Player seat advances by one
-            game_details.seat_playing++;
-        } else {
-            game_details.seat_playing = 0;
-        }
+        game_details.turn_direction = "backward";
     } else if (game_details.turn_direction === "backward") {
-        if (!(game_details.seat_playing - 1 < 0)) { //Player seat decreases by one
-            game_details.seat_playing--;
-        } else {
-            game_details.seat_playing = game_details.players.length - 1;
-        }
+        game_details.turn_direction = "forward";
     }
-    //Check how many turns we have left
-    if (game_details.turns_remaining <= 1) { //Only one turn left, equal to two turns
-        //Make sure the number of turns remaining is not 0
-        game_details.turns_remaining = 2;
-    } else { //Multiple turns left, turns_remaining
-        game_details.turns_remaining += 2;
-    }
-    //Find next player's id
-    let next_player_id = "";
-    for (let i = 0; i <= game_details.players.length - 1; i++) {
-        if (game_details.players[i].seat === game_details.seat_playing) {
-            next_player_id = game_details.players[i]._id;
-            break;
-        }
-    }
-    //Create new promise
-    return await new Promise((resolve, reject) => {
+    // Create new promise for game save
+    await new Promise((resolve, reject) => {
         //Save updated game
         game_details.save({}, function (err) {
             if (err) {
                 reject(err);
             } else {
-                resolve(next_player_id);
+                resolve();
             }
         });
-    });
-}
-
-// Name : card_actions.drawfromthebottom(game_slug,card_id)
-// Desc : allows active player to draw one card from the bottom of the draw deck
-// Author(s) : SengdowJones
-exports.drawfromthebottom = async function (game_slug, card_id) {
-    //Get game details
-    let game_details = await game_actions.game_details_slug(game_slug);
-    //Create new promise and return created_game after saved
-    return await new Promise((resolve, reject) => {
-        //Change bottom card of draw deck's position to player's hand
-        draw_card(game_slug, card_id)
-        //Update draw deck
-        //No need to reassign position since drawing from bottom remains 0
-        //Move card to discard pile
-        game_actions.discard_card(game_slug, card_id);
-        resolve();
     });
 }
 

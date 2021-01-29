@@ -88,8 +88,9 @@ exports.player_test = async function () {
 
 // Name : evaluation.card_test()
 // Desc : adds cards to a sample game and tests interaction
-// Author(s) : RAk3rman,Vincent Do
+// Author(s) : RAk3rman, Vincent Do
 exports.card_test = async function () {
+    //TODO Needs to be reworked with new functions
     //Console header
     let console_head = `${chalk.bold.red('Evaluation')}: ${chalk.dim.cyan('C-ACT')} `;
     spinner.info(console_head + `${chalk.bold('Evaluating card actions')}`);
@@ -116,8 +117,9 @@ exports.card_test = async function () {
 
 // Name : evaluation.game_test()
 // Desc : tests game functions and interaction
-// Author(s) :Vincent Do
+// Author(s) : Vincent Do
 exports.game_test = async function () {
+    //TODO Needs to be reworked with new functions
     //Console header
     let console_head = `${chalk.bold.red('Evaluation')}: ${chalk.dim.magenta('G-ACT')} `;
     spinner.info(console_head + `${chalk.bold('Evaluating game actions')}`);
@@ -125,7 +127,6 @@ exports.game_test = async function () {
     spinner.info(console_head + `Advancing forward 4 turns`);
     await game_actions.advance_turn(sample_game_slug).catch(e => {failed_test(e)});
     spinner.succeed(console_head + `Advanced turn to next player`);
-    //TODO tests game functions and interaction
     spinner.info(console_head + `Discarding card`);
     let discard = await game_actions.discard_card(sample_game_slug, "skip-base-a").catch(e => {failed_test(e)});
     spinner.succeed(console_head + `New card position is: ` + discard);
@@ -138,7 +139,7 @@ exports.game_test = async function () {
     spinner.info(console_head + `Calling card function`);
     await game_actions.base_router(sample_game_slug, "skip-1").catch(e => {failed_test(e)});
     spinner.succeed(console_head + `Called successfully`);
-    }
+}
 
 // Name : evaluation.game_deletion()
 // Desc : deletes a test game and cleans up
@@ -147,12 +148,6 @@ exports.game_deletion = async function () {
     //Console header
     let console_head = `${chalk.bold.red('Evaluation')}: ${chalk.dim.redBright('G-DEL')} `;
     spinner.info(console_head + `${chalk.bold('Evaluating game deletion')}`);
-    //Calling delete_game
-    /**
-    spinner.info(console_head + `Checking if game is 4 hours old`);
-    let sample_game1 = await mongoose_deletes().catch(e => {failed_test(e)});
-    spinner.succeed(console_head + `Deleted game with id: ` + sample_game1);
-     **/
     //Delete sample game
     spinner.info(console_head + `Deleting sample game (1 of 1)`);
     let sample_game = await game_actions.delete_game(sample_game_slug).catch(e => {failed_test(e)});
