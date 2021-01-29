@@ -175,7 +175,7 @@ module.exports = function (fastify) {
                 // Verify turn
                 if (validate_turn(data.player_id, game_details)) {
                     // Send card id to router
-                    let action_err = await game_actions.base_router(game_details, data.slug, data.player_id, data.card_id);
+                    let action_err = await game_actions.base_router(game_details, data.player_id, data.card_id, data.position);
                     if (action_err === true) {
                         spinner.succeed(`${chalk.bold.blue('Socket')}: ${chalk.dim.cyan('play-card       ')} ${chalk.dim.yellow(data.slug)} Card successfully played and discarded`);
                         // Update clients
@@ -325,7 +325,7 @@ module.exports = function (fastify) {
                 seat_playing: raw_game_details["seat_playing"],
                 turn_direction: raw_game_details["turn_direction"],
                 turns_remaining: raw_game_details["turns_remaining"],
-                cards_remaining: filter_cards("draw_deck", raw_game_details["cards"]).length,
+                cards_remaining: await card_actions.filter_cards("draw_deck", raw_game_details["cards"]).length,
                 ec_remaining: ec_count
             }
             //Sort and add players to json array
@@ -334,7 +334,7 @@ module.exports = function (fastify) {
             });
             //Loop through each player
             for (let i = 0; i < raw_game_details["players"].length; i++) {
-                let card_array = filter_cards(raw_game_details["players"][i]._id, raw_game_details["cards"]);
+                let card_array = await card_actions.filter_cards(raw_game_details["players"][i]._id, raw_game_details["cards"]);
                 //Found current player, return extended details
                 pretty_game_details.players.push({
                     _id: raw_game_details["players"][i]._id,
@@ -349,7 +349,7 @@ module.exports = function (fastify) {
                 });
             }
             //Get discard deck
-            pretty_game_details.discard_deck = filter_cards("discard_deck", raw_game_details["cards"]);
+            pretty_game_details.discard_deck = await card_actions.filter_cards("discard_deck", raw_game_details["cards"]);
             //Send game-data
             if (target === "") {
                 fastify.io.emit(slug + "-update", pretty_game_details);
@@ -360,25 +360,6 @@ module.exports = function (fastify) {
         } else {
             spinner.fail(`${chalk.bold.blue('Socket')}: ${chalk.dim.cyan(source)} ${chalk.dim.yellow(slug)} Game does not exist`);
         }
-    }
-
-    // Name : filter_cards(assignment, card_array)
-    // Desc : filters and sorts cards based on assignment and position
-    // Author(s) : RAk3rman
-    function filter_cards(assignment, card_array) {
-        //Get cards in discard deck
-        let temp_deck = [];
-        for (let i = 0; i < card_array.length; i++) {
-            //If the card is assigned to this player, add to hand
-            if (card_array[i].assignment === assignment) {
-                temp_deck.push(card_array[i]);
-            }
-        }
-        //Sort card hand by position
-        temp_deck.sort(function(a, b) {
-            return a.position - b.position;
-        });
-        return temp_deck;
     }
 
     // Name : emit_statistics(target)

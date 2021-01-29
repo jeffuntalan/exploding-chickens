@@ -92,9 +92,9 @@ exports.import_cards = async function (game_slug, pack_loc) {
 // Author(s) : Vincent Do, RAk3rman
 exports.draw_card = async function (game_details, player_id) {
     // Filter draw deck
-    let draw_deck = await filter_cards("draw_deck", game_details.cards);
+    let draw_deck = await card_actions.filter_cards("draw_deck", game_details.cards);
     // Filter player hand
-    let player_hand = await filter_cards(player_id, game_details.cards);
+    let player_hand = await card_actions.filter_cards(player_id, game_details.cards);
     // Create new promise for game save
     return await new Promise((resolve, reject) => {
         // Update player with card that was drawn
@@ -111,12 +111,12 @@ exports.draw_card = async function (game_details, player_id) {
     });
 }
 
-// Name : game_actions.base_router(game_details, game_slug, player_id, card_id)
+// Name : game_actions.base_router(game_details, player_id, card_id, target)
 // Desc : base deck - calls the appropriate card function based on card action
 // Author(s) : RAk3rman
-exports.base_router = async function (game_details, game_slug, player_id, card_id) {
+exports.base_router = async function (game_details, player_id, card_id, target) {
     // Find card details from id
-    let card_details = await find_card(card_id, game_details.cards);
+    let card_details = await card_actions.find_card(card_id, game_details.cards);
     // Determine which function to run
     if (card_details.action === "attack") {
         await card_actions.attack(game_details);
@@ -130,20 +130,34 @@ exports.base_router = async function (game_details, game_slug, player_id, card_i
         await game_actions.check_winner(game_details);
         return true;
     } else if (card_details.action === "defuse") {
-        await card_actions.defuse(game_details, player_id);
+        await card_actions.defuse(game_details, player_id, target);
         await game_actions.discard_card(game_details, card_id);
         await game_actions.advance_turn(game_details);
         return true;
-    } else if (card_details.action === "favor") {
-        // TODO Implement favor
-    } else if (card_details.action === "randchick-1") {
-        // TODO Implement randchick
-    } else if (card_details.action === "randchick-2") {
-        // TODO Implement randchick
-    } else if (card_details.action === "randchick-3") {
-        // TODO Implement randchick
-    } else if (card_details.action === "randchick-4") {
-        // TODO Implement randchick
+    } else if (card_details.action === "favor") { // Favor, expecting target player_id
+        let v_favor = await card_actions.verify_favor(game_details, player_id, target);
+        if (v_favor === true) {
+            await card_actions.ask_favor(game_details, player_id, target);
+            await game_actions.discard_card(game_details, card_id);
+            return true;
+        } else {
+            return v_favor;
+        }
+    } else if (card_details.action === "randchick-1" || card_details.action === "randchick-2" ||
+        card_details.action === "randchick-3" || card_details.action === "randchick-4") { // Favor, expecting target player_id
+        let v_favor = await card_actions.verify_favor(game_details, player_id, target);
+        if (v_favor === true) {
+            let v_double = await card_actions.verify_double(game_details, card_details, player_id);
+            if (v_double === true) {
+                await card_actions.ask_favor(game_details, player_id, target);
+                await game_actions.discard_card(game_details, card_id);
+                return true;
+            } else {
+                return v_double;
+            }
+        } else {
+            return v_favor;
+        }
     } else if (card_details.action === "reverse") {
         await card_actions.reverse(game_details);
         await game_actions.discard_card(game_details, card_id);
@@ -162,6 +176,7 @@ exports.base_router = async function (game_details, game_slug, player_id, card_i
         return true;
     } else {
         // Houston, we have a problem
+        return "Invalid card";
     }
 }
 
@@ -170,7 +185,7 @@ exports.base_router = async function (game_details, game_slug, player_id, card_i
 // Author(s) : RAk3rman
 exports.discard_card = async function (game_details, card_id) {
     // Find greatest position in discard deck
-    let discard_deck = await filter_cards("discard_deck", game_details.cards);
+    let discard_deck = await card_actions.filter_cards("discard_deck", game_details.cards);
     // Create new promise to save game
     return await new Promise((resolve, reject) => {
         // Update card that was discarded
@@ -181,6 +196,7 @@ exports.discard_card = async function (game_details, card_id) {
                 if (err) {
                     reject(err);
                 } else {
+                    player_actions.sort_hand(game_details, card_id.assignment);
                     resolve();
                 }
             });
@@ -313,41 +329,4 @@ exports.delete_game = async function (game_slug) {
             }
         });
     });
-}
-
-// PRIVATE FUNCTIONS
-
-// Name : filter_cards(assignment, card_array)
-// Desc : filters and sorts cards based on assignment and position
-// Author(s) : RAk3rman
-function filter_cards(assignment, card_array) {
-    //Get cards in discard deck
-    let temp_deck = [];
-    for (let i = 0; i < card_array.length; i++) {
-        //If the card is assigned to this player, add to hand
-        if (card_array[i].assignment === assignment) {
-            temp_deck.push(card_array[i]);
-        }
-    }
-    //Sort card hand by position
-    temp_deck.sort(function(a, b) {
-        return a.position - b.position;
-    });
-    return temp_deck;
-}
-
-// Name : find_card(card_id, card_array)
-// Desc : filters and returns the data for a card id
-// Author(s) : RAk3rman
-function find_card(card_id, card_array) {
-    let temp_card = undefined;
-    // Loop through card array until we find the card
-    for (let i = 0; i < card_array.length; i++) {
-        //If the card is assigned to this player, add to hand
-        if (card_array[i]._id === card_id) {
-            temp_card = card_array[i];
-            i = card_array.length;
-        }
-    }
-    return temp_card;
 }

@@ -61,10 +61,10 @@ exports.kill_player = async function (game_details, player_id) {
     }
 }
 
-// Name : card_actions.defuse(game_details, player_id)
+// Name : card_actions.defuse(game_details, player_id, target)
 // Desc : removes exploding chicken from hand and inserts randomly in deck
 // Author(s) : RAk3rman
-exports.defuse = async function (game_details, player_id) {
+exports.defuse = async function (game_details, player_id, target) {
     // TEMP: Loop through each card to create array
     let ctn = 0;
     for (let i = 0; i <= game_details.cards.length - 1; i++) {
@@ -87,6 +87,64 @@ exports.defuse = async function (game_details, player_id) {
             game_details.cards[i].position++;
         }
     }
+}
+
+// Name : card_actions.verify_favor(game_details, player_id, target)
+// Desc : verifies that the target player is able to give up a card
+// Author(s) : RAk3rman
+exports.verify_favor = async function (game_details, player_id, target) {
+    // Make sure the player isn't asking itself
+    if (player_id !== target) {
+        // See if one card is assigned to target player
+        for (let i = 0; i <= game_details.cards.length - 1; i++) {
+            if (game_details.cards[i].assignment === target) {
+                return true;
+            }
+        }
+        return "Player cannot give up a card";
+    } else {
+        return "You cannot ask yourself";
+    }
+}
+
+// Name : card_actions.verify_double(game_details, card_details, player_id)
+// Desc : verifies that the current player has two of a kind, discards second card
+// Author(s) : RAk3rman
+exports.verify_double = async function (game_details, card_details, player_id) {
+    // See if we have another card of the same action
+    for (let i = 0; i <= game_details.cards.length - 1; i++) {
+        if (game_details.cards[i].assignment === player_id && game_details.cards[i].action === card_details.action) {
+            await game_actions.discard_card(game_details, game_details.cards[i]._id);
+            return true;
+        }
+    }
+    return "You must have a card of the same type";
+}
+
+// Name : card_actions.ask_favor(game_details, player_id, target)
+// Desc : takes a random card from target player's hand and places in current player's hand
+// Author(s) : RAk3rman
+exports.ask_favor = async function (game_details, player_id, target) {
+    // Get cards in target and current player's hand
+    let target_hand = await card_actions.filter_cards(target, game_details.cards);
+    let current_hand = await card_actions.filter_cards(player_id, game_details.cards);
+    // Determine random card
+    let rand_pos = Math.floor(Math.random() * (target_hand.length - 1));
+    // Create new promise for game save
+    return await new Promise((resolve, reject) => {
+        // Update player with card that was chosen
+        game.findOneAndUpdate(
+            { slug: game_details.slug, "cards._id": target_hand[rand_pos]._id},
+            { "$set": { "cards.$.assignment": player_id, "cards.$.position": current_hand.length }},
+            function (err) {
+                if (err) {
+                    reject(err);
+                } else {
+                    player_actions.sort_hand(game_details, target);
+                    resolve();
+                }
+            });
+    });
 }
 
 // Name : card_actions.shuffle_draw_deck(game_details)
@@ -146,65 +204,39 @@ exports.reverse = async function (game_details) {
     });
 }
 
-// Name : card_actions.favor(game_slug)
-// Desc : Ask for a favor
-// Author(s) : Vincent Do
-exports.favor = async function (game_slug, card_id, player_id) {
-    //Get game details
-    let game_details = await game_actions.game_details_slug(game_slug);
-    let bucket = [];
-    //To be inputted by UI
-    let target_id = "";
-    for (let i = 0; i <= game_details.cards.length - 1; i++) {
-        if (game_details.cards[i].assignment === target_id) {
-            bucket.push(game_details.cards[i])
+// Name : card_actions.filter_cards(assignment, card_array)
+// Desc : filters and sorts cards based on assignment and position
+// Author(s) : RAk3rman
+exports.filter_cards = async function (assignment, card_array) {
+    // Get cards based on assignment
+    let temp_deck = [];
+    for (let i = 0; i < card_array.length; i++) {
+        //If the card is assigned to this player, add to hand
+        if (card_array[i].assignment === assignment) {
+            temp_deck.push(card_array[i]);
         }
     }
-    //Create new promise and return created_game after saved
-    return await new Promise((resolve, reject) => {
-        game_actions.discard_card(game_slug, card_id);
-        //take rand card from target hand
-        game.findOneAndUpdate({slug: game_slug, "card": rand_bucket(bucket)},
-            {"$set": {"card.$.assignment": player_id}}, function (err) {
-                if (err) {
-                    reject(err);
-                } else {
-                    resolve(game_details.cards.assignment);
-                }
-            });
-        resolve();
+    // Sort card hand by position
+    temp_deck.sort(function(a, b) {
+        return a.position - b.position;
     });
+    return temp_deck;
 }
 
-// Name : card_actions.double(game_slug)
-// Desc : Ask for a favor with two cards
-// Author(s) : Vincent Do
-exports.double = async function (game_slug, card_id, card_id1, player_id) {
-    //Get game details
-    let game_details = await game_actions.game_details_slug(game_slug);
-    let bucket = [];
-    //To be inputted by UI
-    let target_id = "";
-    for (let i = 0; i <= game_details.cards.length - 1; i++) {
-        if (game_details.cards[i].assignment === target_id) {
-            bucket.push(game_details.cards[i])
+// Name : card_actions.find_card(card_id, card_array)
+// Desc : filters and returns the data for a card id
+// Author(s) : RAk3rman
+exports.find_card = async function (card_id, card_array) {
+    let temp_card = undefined;
+    // Loop through card array until we find the card
+    for (let i = 0; i < card_array.length; i++) {
+        //If the card is assigned to this player, add to hand
+        if (card_array[i]._id === card_id) {
+            temp_card = card_array[i];
+            i = card_array.length;
         }
     }
-    //Create new promise and return created_game after saved
-    return await new Promise((resolve, reject) => {
-        game_actions.discard_card(game_slug, card_id);
-        game_actions.discard_card(game_slug, card_id1);
-        //take rand card from target hand
-        game.findOneAndUpdate({slug: game_slug, "card": rand_bucket(bucket)},
-            {"$set": {"card.$.assignment": player_id}}, function (err) {
-                if (err) {
-                    reject(err);
-                } else {
-                    resolve(game_details.cards.assignment);
-                }
-            });
-        resolve();
-    });
+    return temp_card;
 }
 
 //PRIVATE FUNCTIONS

@@ -191,6 +191,31 @@ exports.next_seat = async function (game_details) {
     }
 }
 
+// Name : player_actions.sort_hand(game_details, player_id)
+// Desc : sort players hand, typically after a card is removed
+// Author(s) : RAk3rman
+exports.sort_hand = async function (game_details, player_id) {
+    // Get cards in player's hand
+    let player_hand = [];
+    for (let i = 0; i < game_details.cards.length; i++) {
+        //If the card is assigned to this player, add to hand
+        if (game_details.cards[i].assignment === player_id) {
+            player_hand.push({
+                loc_pos: game_details.cards[i].position,
+                gbl_pos: i
+            });
+        }
+    }
+    // Sort card hand by local position
+    player_hand.sort(function(a, b) {
+        return a.loc_pos - b.loc_pos;
+    });
+    // Overlay positions properly
+    for (let i = 0; i <= player_hand.length - 1; i++) {
+        game_details.cards[player_hand[i].gbl_pos].position = i;
+    }
+}
+
 //PRIVATE FUNCTIONS
 
 // Name : rand_bucket(bucket)
