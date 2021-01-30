@@ -315,19 +315,6 @@ function update_players() {
                 }
                 current_player_cards += "<div class=\"rounded-xl shadow-sm bottom-card bg-center bg-contain\" onclick=\"" + call_play_card + "\" style=\"background-image: url('/" + game_data.players[i].cards[j].image_loc + "')\"></div>";
             }
-            //Add reset game button to player actions
-            if (session_player.is_host) {
-                // actions = "<div class=\"flex mt-0 ml-4\">\n" +
-                //     "    <span class=\"\">\n" +
-                //     "          <button type=\"button\" class=\"inline-flex items-center px-2 py-1 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-yellow-500 hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-400\">\n" +
-                //     "                <svg class=\"-ml-1 mr-1 h-5 w-5\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\">\n" +
-                //     "                    <path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15\" />\n" +
-                //     "                </svg>\n" +
-                //     "                Reset Game\n" +
-                //     "          </button>\n" +
-                //     "    </span>\n" +
-                //     "</div>";
-            }
         } else if (session_player.is_host) {
             //Add make host and kick buttons to player actions
             actions = "<div class=\"flex mt-0 ml-4\">\n" +
@@ -381,7 +368,7 @@ function update_players() {
             "        " + game_data.players[i].nickname + " " + status_dot(game_data.players[i].status, game_data.players[i].connection, "") + "\n" +
             "    </h1>\n" +
             "    <div class=\"flex flex-col items-center -space-y-3\">\n" +
-            "        <img class=\"h-12 w-12 rounded-full\" src=\"/public/avatars/" + game_data.players[i].avatar + "\" alt=\"\">\n" +
+            "        <img class=\"h-12 w-12 rounded-full\" src=\"/public/avatars/" + game_data.players[i].avatar + "\" id=\"halo_" + game_data.players[i]._id + "\" alt=\"\">\n" +
             cards_icon(game_data.players[i].card_num, turns_remaining_player) +
             "    </div>\n" +
             "</div>";
@@ -407,6 +394,16 @@ function update_players() {
         document.getElementById("topbar_players").innerHTML = topbar_players_payload;
         document.getElementById("center_players").innerHTML = center_players_payload;
         document.getElementById("player_cards").innerHTML = current_player_cards;
+        // Check if an exploding chicken is in play
+        for (let j = 0; j < game_data.players[i].cards.length; j++) {
+            if (game_data.players[i].cards[j].action === "chicken") {
+                if (game_data.players[i]._id === session_player._id) {
+                    fire_exp_chicken(15, true, game_data.players[i]._id);
+                } else {
+                    fire_exp_chicken(15, true, false);
+                }
+            }
+        }
     }
 }
 
@@ -417,9 +414,9 @@ function update_stats() {
     //Game status
     if (session_player.is_host) {
         if (game_data.status === "in_lobby") {
-            document.getElementById("sidebar_status").innerHTML = "<div class=\"widget w-full p-2.5 rounded-lg bg-white border border-gray-100 bg-gradient-to-r from-green-500 to-green-400\" onclick=\"start_game()\">\n" +
+            document.getElementById("sidebar_status").innerHTML = "<button type=\"button\" class=\"widget w-full p-2.5 rounded-lg bg-white border border-gray-100 bg-gradient-to-r from-green-500 to-green-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500\" onclick=\"start_game()\">\n" +
                 "    <div class=\"flex flex-row items-center justify-between\">\n" +
-                "        <div class=\"flex flex-col\">\n" +
+                "        <div class=\"flex flex-col text-left\">\n" +
                 "            <div class=\"text-xs uppercase text-white truncate\">\n" +
                 "                Status\n" +
                 "            </div>\n" +
@@ -431,11 +428,11 @@ function update_stats() {
                 "           <path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M3 21v-4m0 0V5a2 2 0 012-2h6.5l1 1H21l-3 6 3 6h-8.5l-1-1H5a2 2 0 00-2 2zm9-13.5V9\" />\n" +
                 "        </svg>" +
                 "    </div>\n" +
-                "</div>";
+                "</button>";
         } else if (game_data.status === "in_game") {
-            document.getElementById("sidebar_status").innerHTML = "<div class=\"widget w-full p-2.5 rounded-lg bg-white border border-gray-100 bg-gradient-to-r from-yellow-500 to-yellow-400\"  onclick=\"reset_game()\">\n" +
+            document.getElementById("sidebar_status").innerHTML = "<button type=\"button\" class=\"widget w-full p-2.5 rounded-lg bg-white border border-gray-100 bg-gradient-to-r from-yellow-500 to-yellow-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500\"  onclick=\"reset_game()\">\n" +
                 "    <div class=\"flex flex-row items-center justify-between\">\n" +
-                "        <div class=\"flex flex-col\">\n" +
+                "        <div class=\"flex flex-col text-left\">\n" +
                 "            <div class=\"text-xs uppercase text-white truncate\">\n" +
                 "                Status\n" +
                 "            </div>\n" +
@@ -447,7 +444,7 @@ function update_stats() {
                 "           <path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15\" />\n" +
                 "        </svg>" +
                 "    </div>\n" +
-                "</div>";
+                "</button>";
         }
     } else {
         if (game_data.status === "in_lobby") {
@@ -530,7 +527,7 @@ function fire_stf() {
 
 // Name : frontend-game.fire_exp_chicken()
 // Desc : shows the UI when an exploding chicken is drawn
-function fire_exp_chicken(count, first_call) {
+function fire_exp_chicken(count, first_call, player_id) {
     // Append html overlay if on first function call
     if (first_call) {
         document.getElementById("discard_deck").innerHTML = "<div class=\"rounded-xl shadow-lg center-card bg-center bg-contain mx-1\" style=\"background-image: linear-gradient(rgba(0, 0, 0, .6), rgba(0, 0, 0, .6)), url('/public/cards/base/chicken-1.png');\">\n" +
@@ -538,18 +535,19 @@ function fire_exp_chicken(count, first_call) {
             "        <div class=\"flex flex-wrap content-center justify-center h-full w-full\">\n" +
             "            <div class=\"block text-center space-y-2\">\n" +
             "                <h1 class=\"font-extrabold text-xl m-0\">DEFUSE</h1>\n" +
-            "                <h1 class=\"font-bold text-8xl m-0\"> id=\"defuse_counter\"" + count + "</h1>\n" +
+            "                <h1 class=\"font-bold text-8xl m-0\" id=\"defuse_counter\">" + count + "</h1>\n" +
             "                <h1 class=\"font-extrabold text-xl m-0\">CHICKEN</h1>\n" +
             "            </div>\n" +
             "        </div>\n" +
             "    </div>\n" +
-            "</div>"
+            "</div>";
+        toggle_halo(player_id, "ring-2 ring-red-500 animate-pulse");
     }
     document.getElementById("defuse_counter").innerHTML = count;
     count--;
     // Call program again if not placed
     if (count > 0) {
-        setTimeout(fire_exp_chicken(count, false), 1000);
+        setTimeout(function(){ fire_exp_chicken(count, false) }, 1000);
     } else {
         // Automatically play chicken since time expired
     }
@@ -647,6 +645,12 @@ function cards_icon(card_num, turns) {
             "    <h1 class=\"text-white text-sm\">" + card_num + "</h1>\n" +
             "</div></div>" +  turns_payload + "</div>\n"
     }
+}
+
+// Name : frontend-game.toggle_halo(player_id, color)
+// Desc : toggles the halo for a target player
+function toggle_halo(player_id, style) {
+    document.getElementById("halo_" + player_id).className = "h-12 w-12 rounded-full " + style;
 }
 
 // Name : frontend-game.status_dot(status, connection, margin)
