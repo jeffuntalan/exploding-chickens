@@ -490,6 +490,72 @@ function update_stats() {
     document.getElementById("sidebar_ec_remaining").innerHTML = game_data.ec_remaining + "<a class=\"font-light\"> / " +  Math.floor((game_data.ec_remaining/game_data.cards_remaining)*100) + "% chance</a>";
 }
 
+// Name : frontend-game.fire_player_select()
+// Desc : shows the UI for a player to select another player to target
+function fire_player_select() {
+
+}
+
+// Name : frontend-game.fire_stf()
+// Desc : shows the UI for see the future
+function fire_stf() {
+    if (game_data.draw_deck !== undefined || game_data.draw_deck !== []) {
+        let card_payload;
+        // Check number of cards left in deck, prepare payload
+        if (game_data.draw_deck.length > 2) {
+            card_payload = "<div class=\"transform inline-block rounded-xl shadow-sm center-card bg-center bg-contain -rotate-12\" style=\"background-image: url('/" + game_data.draw_deck[game_data.draw_deck.length - 1].image_loc + "');width: 10.2rem;height: 14.4rem;border-radius: 1.6rem\"></div>\n" +
+                "<div class=\"transform inline-block rounded-xl shadow-sm center-card bg-center bg-contain mb-2\" style=\"background-image: url('/" + game_data.draw_deck[game_data.draw_deck.length - 2].image_loc + "');width: 10.2rem;height: 14.4rem;border-radius: 1.6rem\"></div>\n" +
+                "<div class=\"transform inline-block rounded-xl shadow-sm bottom-card bg-center bg-contain rotate-12\" style=\"background-image: url('/" + game_data.draw_deck[game_data.draw_deck.length - 3].image_loc + "');width: 10.2rem;height: 14.4rem;border-radius: 1.6rem\"></div>\n";
+        } else if (game_data.draw_deck.length > 1) {
+            card_payload = "<div class=\"transform inline-block rounded-xl shadow-sm center-card bg-center bg-contain -rotate-6\" style=\"background-image: url('/" + game_data.draw_deck[game_data.draw_deck.length - 1].image_loc + "');width: 10.2rem;height: 14.4rem;border-radius: 1.6rem\"></div>\n" +
+                "<div class=\"transform inline-block rounded-xl shadow-sm center-card bg-center bg-contain rotate-6\" style=\"background-image: url('/" + game_data.draw_deck[game_data.draw_deck.length - 2].image_loc + "');width: 10.2rem;height: 14.4rem;border-radius: 1.6rem\"></div>\n";
+        } else if (game_data.draw_deck.length > 0) {
+            card_payload = "<div class=\"transform inline-block rounded-xl shadow-sm center-card bg-center bg-contain\" style=\"background-image: url('/" + game_data.draw_deck[game_data.draw_deck.length - 1].image_loc + "');width: 10.2rem;height: 14.4rem;border-radius: 1.6rem\"></div>\n";
+        }
+        // Fire swal
+        Swal.fire({
+            html:
+                "<div class=\"inline-block\">" +
+                "    <h1 class=\"text-3xl font-semibold pb-1 text-white\"><i class=\"fas fa-eye\"></i> See the Future <i class=\"fas fa-eye\"></i></h1>" +
+                "    <h1 class=\"text-xl font-semibold pb-5 text-white\">Top <i class=\"fas fa-long-arrow-alt-right\"></i> Bottom</h1>" +
+                "    <div class=\"-space-x-24 rotate-12 inline-block\">" +
+                card_payload +
+                "    </div>" +
+                "</div>\n",
+            timer: 5000,
+            background: "transparent"
+        })
+    }
+}
+
+// Name : frontend-game.fire_exp_chicken()
+// Desc : shows the UI when an exploding chicken is drawn
+function fire_exp_chicken(count, first_call) {
+    // Append html overlay if on first function call
+    if (first_call) {
+        document.getElementById("discard_deck").innerHTML = "<div class=\"rounded-xl shadow-lg center-card bg-center bg-contain mx-1\" style=\"background-image: linear-gradient(rgba(0, 0, 0, .6), rgba(0, 0, 0, .6)), url('/public/cards/base/chicken-1.png');\">\n" +
+            "    <div class=\"rounded-xl shadow-lg center-card bg-center bg-contain border-dashed border-4 border-green-500 h-full\" style=\"border-color: rgb(178, 234, 55); color: rgb(178, 234, 55);\">\n" +
+            "        <div class=\"flex flex-wrap content-center justify-center h-full w-full\">\n" +
+            "            <div class=\"block text-center space-y-2\">\n" +
+            "                <h1 class=\"font-extrabold text-xl m-0\">DEFUSE</h1>\n" +
+            "                <h1 class=\"font-bold text-8xl m-0\"> id=\"defuse_counter\"" + count + "</h1>\n" +
+            "                <h1 class=\"font-extrabold text-xl m-0\">CHICKEN</h1>\n" +
+            "            </div>\n" +
+            "        </div>\n" +
+            "    </div>\n" +
+            "</div>"
+    }
+    document.getElementById("defuse_counter").innerHTML = count;
+    count--;
+    // Call program again if not placed
+    if (count > 0) {
+        setTimeout(fire_exp_chicken(count, false), 1000);
+    } else {
+        // Automatically play chicken since time expired
+    }
+}
+
+
 // Name : frontend-game.update_discard()
 // Desc : refreshes the data for the discard deck
 function update_discard() {

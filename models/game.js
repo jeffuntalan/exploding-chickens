@@ -5,68 +5,16 @@ Desc     : mongoose model for each game,
 Author(s): RAk3rman
 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\*/
 
-//Packages
+// Packages
 let mongoose = require('mongoose');
 const { v4: uuidv4 } = require('uuid');
 const { uniqueNamesGenerator, adjectives, colors, animals } = require('unique-names-generator');
 
-//Player schema
-let playerSchema = mongoose.Schema({
-    _id: {
-        type: String,
-        default: uuidv4()
-    },
-    nickname: {
-        type: String,
-        required: true
-    },
-    seat: {
-        type: Number,
-        required: true
-    },
-    avatar: {
-        type: String,
-        default: "/public/avatars/default.png"
-    },
-    type: {
-        type: String,
-        default: "player"
-    },
-    status: {
-        type: String,
-        default: "idle"
-    },
-    connection: {
-        type: String,
-        default: "online"
-    }
-});
+// Imported schemas
+let player = require('../models/player.js');
+let card = require('../models/card.js');
 
-//Card schema
-let cardSchema = mongoose.Schema({
-    _id: {
-        type: String,
-        required: true
-    },
-    image_loc: {
-        type: String,
-        required: true
-    },
-    action: {
-        type: String,
-        required: true
-    },
-    assignment: {
-        type: String,
-        default: "draw_deck"
-    },
-    position: {
-        type: Number,
-        required: true
-    }
-});
-
-//Game schema
+// Game schema
 let gameSchema = mongoose.Schema({
     _id: {
         type: String,
@@ -100,8 +48,8 @@ let gameSchema = mongoose.Schema({
         type: Date,
         default: Date.now
     },
-    players: [playerSchema],
-    cards: [cardSchema]
+    players: [player],
+    cards: [card]
 });
 
 //Export game model

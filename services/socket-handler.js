@@ -316,16 +316,18 @@ module.exports = function (fastify) {
                 }
             }
             //Prepare pretty game details
+            let draw_deck = await card_actions.filter_cards("draw_deck", raw_game_details["cards"]);
             let pretty_game_details = {
                 players: [],
                 discard_deck: [],
+                draw_deck: draw_deck,
                 slug: raw_game_details["slug"],
                 created: moment(raw_game_details["created"]).calendar(),
                 status: raw_game_details["status"],
                 seat_playing: raw_game_details["seat_playing"],
                 turn_direction: raw_game_details["turn_direction"],
                 turns_remaining: raw_game_details["turns_remaining"],
-                cards_remaining: await card_actions.filter_cards("draw_deck", raw_game_details["cards"]).length,
+                cards_remaining: draw_deck.length,
                 ec_remaining: ec_count
             }
             //Sort and add players to json array
