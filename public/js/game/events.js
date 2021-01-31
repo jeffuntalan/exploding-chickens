@@ -15,7 +15,7 @@ const toast_alert = Swal.mixin({
 });
 // Global variables
 let allow_connect_msg = false;
-let session_player = {
+let session_user = {
     _id: undefined,
     is_host: false
 };
@@ -24,19 +24,27 @@ let session_player = {
 // Desc : whenever an event occurs containing a game update
 socket.on(window.location.pathname.substr(6) + "-update", function (data) {
     console.log(data);
+    console.log(data.trigger);
+    // Check browser session
+    setup_session_check(data);
     // Update elements based on update trigger
     if (data.trigger === "player-connected") { // Existing player connected
-
-    } else if (data.trigger === "retrieve-game") { // Game data was requested by a client
-
+        sbr_update_pstatus(data);
     } else if (data.trigger === "create-player") { // New player was created
-
+        sbr_update_players(data);
+        if (user_prompt_open) {
+            setup_update_options(data);
+        }
     } else if (data.trigger === "start-game") { // Game started
+        sbr_update_widgets(data);
+        sbr_update_pstatus(data);
         toast_alert.fire({
             icon: 'info',
             html: '<h1 class="text-lg font-bold pl-2 pr-1">Game has started</h1>'
         });
     } else if (data.trigger === "reset-game") { // Game was reset
+        sbr_update_widgets(data);
+        sbr_update_pstatus(data);
         toast_alert.fire({
             icon: 'info',
             html: '<h1 class="text-lg font-bold pl-2 pr-1">Game has been reset</h1>'
@@ -46,9 +54,10 @@ socket.on(window.location.pathname.substr(6) + "-update", function (data) {
     } else if (data.trigger === "draw-card") { // A card was drawn by a player
 
     } else if (data.trigger === "disconnect") { // Existing player disconnected
-
-    } else { // Unknown event, update entire ui
-
+        sbr_update_pstatus(data);
+    } else { // Update entire ui
+        sbr_update_widgets(data);
+        sbr_update_players(data);
     }
 });
 
@@ -56,7 +65,7 @@ socket.on(window.location.pathname.substr(6) + "-update", function (data) {
 // Desc : whenever an event occurs stating that a player was created
 socket.on("player-created", function (data) {
     // Update player_id
-    session_player._id = data;
+    session_user._id = data;
     localStorage.setItem('ec_session', JSON.stringify({
         slug: window.location.pathname.substr(6),
         player_id: data

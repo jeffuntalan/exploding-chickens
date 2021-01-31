@@ -132,7 +132,7 @@
                     <div class="relative flex flex-col px-5">
                         <div class="flex items-center justify-between mb-2">
                             <div class="flex-1 min-w-0">
-                                <h2 class="text-xl font-medium text-gray-700" id="sidebar_top_nickname">
+                                <h2 class="text-xl font-medium text-gray-700" id="sbr_ele_usertop">
                                     Spectator <span class="animate-pulse inline-flex rounded-full h-1.5 w-1.5 mb-0.5 ml-0.5 align-middle bg-gray-500"></span>
                                 </h2>
                             </div>
@@ -148,7 +148,7 @@
                     </div>
                     <div class="mt-4 relative flex flex-col mx-5">
                         <div class="flex flex-row w-full space-x-2 space-y-0 mb-2">
-                            <div style="width: 40%" id="sidebar_status">
+                            <div style="width: 40%" id="sbr_ele_status">
                                 <div class="widget w-full p-2.5 rounded-lg bg-white border border-gray-100">
                                     <div class="flex flex-row items-center justify-between">
                                         <div class="flex flex-col">
@@ -166,7 +166,7 @@
                                 </div>
                             </div>
                             <div style="width: 60%">
-                                <button type="button" class="widget w-full p-2.5 rounded-lg border border-gray-100 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500" onclick="copy_game_url()">
+                                <button type="button" class="widget w-full p-2.5 rounded-lg border border-gray-100 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500" onclick="sbr_copy_url()">
                                     <div class="flex flex-row items-center justify-between">
                                         <div class="flex flex-col text-left">
                                             <div class="text-xs uppercase text-gray-500 truncate">
@@ -191,7 +191,7 @@
                                             <div class="text-xs uppercase text-gray-500 truncate">
                                                 Exploding Chickens
                                             </div>
-                                            <div class="text-lg font-bold truncate" id="sidebar_ec_remaining">
+                                            <div class="text-lg font-bold truncate" id="sbr_ele_ec_count">
                                                 ...
                                             </div>
                                         </div>
@@ -209,7 +209,7 @@
                                             <div class="text-xs uppercase text-gray-500 truncate">
                                                 Cards Left
                                             </div>
-                                            <div class="text-lg font-bold truncate" id="sidebar_cards_left">
+                                            <div class="text-lg font-bold truncate" id="sbr_ele_cards_remain">
                                                 ...
                                             </div>
                                         </div>
@@ -227,7 +227,7 @@
                             Players
                         </h2>
                     </div>
-                    <div class="mt-4 relative flex flex-col px-5" id="sidebar_players">
+                    <div class="mt-4 relative flex flex-col px-5" id="sbr_ele_players">
                         <div class="flex items-center justify-between mb-2">
                             <div class="flex-1 min-w-0">
                                 <h3 class="inline-flex text-md font-bold text-gray-900 truncate">
@@ -263,7 +263,7 @@
                             </div>
                             <div class="flex mt-0 ml-4">
                                 <span class="">
-                                      <button type="button" class="inline-flex items-center px-2 py-1 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-500 hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-400">
+                                      <button type="button" class="inline-flex items-center px-2 py-1 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-500 hover:bg-green-600 focus:outline-none">
                                             <svg class="-ml-1 mr-1 h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
                                             </svg>
@@ -289,7 +289,7 @@
                             </div>
                             <div class="flex mt-0 ml-4">
                                 <span class="">
-                                      <button type="button" class="inline-flex items-center px-2 py-1 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+                                      <button type="button" class="inline-flex items-center px-2 py-1 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none">
                                             <svg class="-ml-1 mr-1 h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                                             </svg>
@@ -338,6 +338,9 @@
 <script src="/socket.io/socket.io.js"></script>
 <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
-<script src="/public/js/game.js"></script>
+<script src="/public/js/game/events.js"></script>
+<script src="/public/js/game/interface.js"></script>
+<script src="/public/js/game/setup.js"></script>
+<script src="/public/js/game/sidebar.js"></script>
 </body>
 </html>

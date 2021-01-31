@@ -653,20 +653,6 @@ function toggle_halo(player_id, style) {
     document.getElementById("halo_" + player_id).className = "h-12 w-12 rounded-full " + style;
 }
 
-// Name : frontend-game.status_dot(status, connection, margin)
-// Desc : returns the html for a pulsating status dot
-function status_dot(status, connection, margin) {
-    if (status === "exploded") {
-        return "<span class=\"animate-pulse inline-flex rounded-full h-1.5 w-1.5 mb-0.5 " + margin + " align-middle bg-red-500\"></span>"
-    } else if (connection === "connected") {
-        return "<span class=\"animate-pulse inline-flex rounded-full h-1.5 w-1.5 mb-0.5 " + margin + " align-middle bg-green-500\"></span>"
-    } else if (connection === "offline") {
-        return "<span class=\"animate-pulse inline-flex rounded-full h-1.5 w-1.5 mb-0.5 " + margin + " align-middle bg-yellow-400\"></span>"
-    } else {
-        return "<span class=\"animate-pulse inline-flex rounded-full h-1.5 w-1.5 mb-0.5 " + margin + " align-middle bg-gray-500\"></span>"
-    }
-}
-
 // Name : frontend-game.copy_game_url()
 // Desc : copies the game url to the clients clipboard
 function copy_game_url() {
