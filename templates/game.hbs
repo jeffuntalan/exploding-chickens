@@ -173,7 +173,7 @@
                                                 Game Code
                                             </div>
                                             <div class="text-lg font-bold" id="sidebar_game_code">
-                                                ...
+                                                {{ slug }}
                                             </div>
                                         </div>
                                         <svg class="stroke-current text-purple-500" height="24" width="24" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -245,7 +245,7 @@
                             Card Packs
                         </h2>
                     </div>
-                    <div class="mt-4 relative flex flex-col px-5">
+                    <div class="mt-4 mb-7 relative flex flex-col px-5">
                         {{! Base deck }}
                         <div class="flex items-center justify-between mb-2">
                             <div class="flex-1 min-w-0">
@@ -303,11 +303,31 @@
                             <div class="flex-1 min-w-0">
                                 <div class="mt-1 flex flex-col sm:flex-row sm:flex-wrap sm:mt-0 sm:space-x-6">
                                     <div class="flex items-center text-xs text-gray-400">
-                                        Want to add an explosive card pack? Submit a pull request <span class="text-blue-600 pl-1" target="_blank" href="https://github.com/rak3rman/exploding-chickens/pulls">here!</span>
+                                        Want to add an explosive card pack? Submit a pull request <a class="text-blue-600 pl-1" target="_blank" href="https://github.com/rak3rman/exploding-chickens/pulls">here!</a>
                                     </div>
                                 </div>
                             </div>
                         </div>
+                    </div>
+                    <div class="mb-4 px-5 absolute bottom-0 left-0">
+                        <h2 class="text-xl font-medium text-gray-700">
+                            <button type="button" onclick="window.open('https://github.com/rak3rman/exploding-chickens', '_blank')" class="inline-flex items-center px-2 py-1 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+                                <svg class="-ml-1 mr-1 h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+                                </svg>
+                                Release {{ version }}
+                            </button>
+                        </h2>
+                    </div>
+                    <div class="mb-4 px-5 absolute bottom-0 right-0">
+                        <h2 class="text-xl font-medium text-gray-700">
+                            <button type="button" onclick="window.open('https://github.com/rak3rman/exploding-chickens/issues', '_blank')" class="inline-flex items-center px-2 py-1 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500">
+                                <svg class="-ml-1 mr-1 h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                                Issues
+                            </button>
+                        </h2>
                     </div>
                 </div>
             </div>

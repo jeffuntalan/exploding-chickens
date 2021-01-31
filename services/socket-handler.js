@@ -112,9 +112,7 @@ module.exports = function (fastify) {
                         // Randomize seat positions
                         await player_actions.randomize_seats(data.slug);
                         // Emit start game event
-                        fastify.io.emit(data.slug + "-start", "");
                         spinner.succeed(`${chalk.bold.blue('Socket')}: ${chalk.dim.cyan('start-game      ')} ${chalk.dim.yellow(data.slug)} Game has started`);
-                        // Update clients
                         await update_game_ui(data.slug, "", "start-game      ");
                     } else {
                         // Emit error event with error
@@ -146,10 +144,8 @@ module.exports = function (fastify) {
                 if (validate_host(data.player_id, game_details)) {
                     // Reset game
                     await game_actions.reset_game(game_details, "idle", "in_lobby");
-                    // Emit start game event
-                    fastify.io.emit(data.slug + "-reset", "");
+                    // Emit reset game event
                     spinner.succeed(`${chalk.bold.blue('Socket')}: ${chalk.dim.cyan('reset-game      ')} ${chalk.dim.yellow(data.slug)} Game has been reset`);
-                    // Update clients
                     await update_game_ui(data.slug, "", "reset-game      ");
                 } else {
                     // Emit error event with error
@@ -328,7 +324,8 @@ module.exports = function (fastify) {
                 turn_direction: raw_game_details["turn_direction"],
                 turns_remaining: raw_game_details["turns_remaining"],
                 cards_remaining: draw_deck.length,
-                ec_remaining: ec_count
+                ec_remaining: ec_count,
+                trigger: source.trim()
             }
             //Sort and add players to json array
             raw_game_details["players"].sort(function(a, b) {
