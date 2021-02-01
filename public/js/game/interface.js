@@ -31,8 +31,8 @@ function itr_update_players(game_details) {
             "    <h1 class=\"text-gray-600 font-medium text-sm\">\n" +
             "        " + game_details.players[i].nickname + " " + create_stat_dot(game_details.players[i].status, game_details.players[i].connection, "", "itr_stat_player_dot_" + game_details.players[i]._id) + "\n" +
             "    </h1>\n" +
-            "    <div class=\"flex flex-col items-center -space-y-3\">\n" +
-            "        <img class=\"h-12 w-12 rounded-full\" src=\"/public/avatars/" + game_details.players[i].avatar + "\" id=\"itr_stat_player_halo_" + game_details.players[i]._id + "\" alt=\"\">\n" +
+            "    <div class=\"flex flex-col items-center -space-y-3\" id=\"itr_stat_player_halo_" + game_details.players[i]._id + "\">\n" +
+            "        <img class=\"h-12 w-12 rounded-full\" src=\"/public/avatars/" + game_details.players[i].avatar + "\" alt=\"\">\n" +
             card_icon(game_details.players[i].card_num, turns, game_details) +
             "    </div>\n" +
             "</div>";
@@ -78,7 +78,7 @@ function itr_update_pcards(game_details) {
         if (game_details.seat_playing === game_details.players[i].seat) {
             turns = game_details.turns_remaining;
         }
-        document.getElementById("itr_stat_player_halo_" + game_details.players[i]._id).innerHTML = card_icon(game_details.players[i].card_num, turns, game_details);
+        document.getElementById("itr_stat_player_halo_" + game_details.players[i]._id).innerHTML = "<img class=\"h-12 w-12 rounded-full\" src=\"/public/avatars/" + game_details.players[i].avatar + "\" alt=\"\">\n" + card_icon(game_details.players[i].card_num, turns, game_details);
     }
 }
 
@@ -104,8 +104,10 @@ function itr_update_hand(game_details) {
             // Add cards to hand
             for (let j = 0; j < game_details.players[i].cards.length; j++) {
                 let play_card_funct = "";
-                if (game_details.seat_playing === game_details.players[i].seat) {
+                if (game_details.seat_playing === game_details.players[i].seat && game_details.players[i].cards[j].action !== "chicken") {
                     play_card_funct = "play_card('" + game_details.players[i].cards[j]._id + "')";
+                } else if (game_details.players[i].cards[j].action === "chicken") {
+                    itr_trigger_exp(10, game_details.players[i].cards[j]._id, true, true);
                 }
                 payload += "<div class=\"rounded-xl shadow-sm bottom-card bg-center bg-contain\" onclick=\"" + play_card_funct + "\" style=\"background-image: url('/" + game_details.players[i].cards[j].image_loc + "')\"></div>";
             }
@@ -120,10 +122,86 @@ function itr_update_hand(game_details) {
                 toast_turn.close();
                 is_turn = false;
             }
-            i = game_details.players.length;
+        } else {
+            // Check if chicken is in play
+            for (let j = 0; j < game_details.players[i].cards.length; j++) {
+                if (game_details.players[i].cards[j].action === "chicken") {
+                    itr_trigger_exp(10, game_details.players[i].cards[j]._id, true, false);
+                }
+            }
         }
     }
     document.getElementById("itr_ele_player_hand").innerHTML = payload;
+}
+
+// Name : frontend-game.itr_trigger_exp(count, card_id, setup)
+// Desc : triggers the exploding chicken ui to appear
+function itr_trigger_exp(count, card_id, setup, target) {
+    // Append html overlay if on first function call
+    if (setup) {
+        document.getElementById("itr_ele_discard_deck").innerHTML = "<div class=\"rounded-xl shadow-lg center-card bg-center bg-contain mx-1\" style=\"background-image: linear-gradient(rgba(0, 0, 0, .6), rgba(0, 0, 0, .6)), url('/public/cards/base/chicken-1.png');\">\n" +
+            "    <div class=\"rounded-xl shadow-lg center-card bg-center bg-contain border-dashed border-4 border-green-500 h-full\" style=\"border-color: rgb(178, 234, 55); color: rgb(178, 234, 55);\">\n" +
+            "        <div class=\"flex flex-wrap content-center justify-center h-full w-full\">\n" +
+            "            <div class=\"block text-center space-y-2\">\n" +
+            "                <h1 class=\"font-extrabold text-xl m-0\">DEFUSE</h1>\n" +
+            "                <h1 class=\"font-bold text-8xl m-0\" id=\"itr_val_defuse_counter\">" + count + "</h1>\n" +
+            "                <h1 class=\"font-extrabold text-xl m-0\">CHICKEN</h1>\n" +
+            "            </div>\n" +
+            "        </div>\n" +
+            "    </div>\n" +
+            "</div>";
+        //toggle_halo(player_id, "ring-2 ring-red-500 animate-pulse");
+    }
+    // Call program again if not placed
+    if (count > 0) {
+        document.getElementById("itr_val_defuse_counter").innerHTML = count;
+        setTimeout(function(){ itr_trigger_exp(count, card_id, false) }, 1000);
+    } else if (count > -1) {
+        document.getElementById("itr_val_defuse_counter").innerHTML = "<i class=\"fas fa-skull-crossbones\"></i>"
+        setTimeout(function(){ itr_trigger_exp(count, card_id, false) }, 1000);
+    } else if (target) {
+        // Force play chicken since time expired
+        play_card(card_id);
+    }
+    count--;
+}
+
+// Name : frontend-game.itr_trigger_exp(game_details)
+// Desc : triggers the exploding chicken ui to appear
+function itr_trigger_stf(game_details) {
+    if (game_data.draw_deck !== undefined || game_data.draw_deck !== []) {
+        let card_payload;
+        // Check number of cards left in deck, prepare payload
+        if (game_data.draw_deck.length > 2) {
+            card_payload = "<div class=\"transform inline-block rounded-xl shadow-sm center-card bg-center bg-contain -rotate-12\" style=\"background-image: url('/" + game_data.draw_deck[game_data.draw_deck.length - 1].image_loc + "');width: 10.2rem;height: 14.4rem;border-radius: 1.6rem\"></div>\n" +
+                "<div class=\"transform inline-block rounded-xl shadow-sm center-card bg-center bg-contain mb-2\" style=\"background-image: url('/" + game_data.draw_deck[game_data.draw_deck.length - 2].image_loc + "');width: 10.2rem;height: 14.4rem;border-radius: 1.6rem\"></div>\n" +
+                "<div class=\"transform inline-block rounded-xl shadow-sm bottom-card bg-center bg-contain rotate-12\" style=\"background-image: url('/" + game_data.draw_deck[game_data.draw_deck.length - 3].image_loc + "');width: 10.2rem;height: 14.4rem;border-radius: 1.6rem\"></div>\n";
+        } else if (game_data.draw_deck.length > 1) {
+            card_payload = "<div class=\"transform inline-block rounded-xl shadow-sm center-card bg-center bg-contain -rotate-6\" style=\"background-image: url('/" + game_data.draw_deck[game_data.draw_deck.length - 1].image_loc + "');width: 10.2rem;height: 14.4rem;border-radius: 1.6rem\"></div>\n" +
+                "<div class=\"transform inline-block rounded-xl shadow-sm center-card bg-center bg-contain rotate-6\" style=\"background-image: url('/" + game_data.draw_deck[game_data.draw_deck.length - 2].image_loc + "');width: 10.2rem;height: 14.4rem;border-radius: 1.6rem\"></div>\n";
+        } else if (game_data.draw_deck.length > 0) {
+            card_payload = "<div class=\"transform inline-block rounded-xl shadow-sm center-card bg-center bg-contain\" style=\"background-image: url('/" + game_data.draw_deck[game_data.draw_deck.length - 1].image_loc + "');width: 10.2rem;height: 14.4rem;border-radius: 1.6rem\"></div>\n";
+        }
+        // Fire swal
+        Swal.fire({
+            html:
+                "<div class=\"inline-block\">" +
+                "    <h1 class=\"text-3xl font-semibold pb-1 text-white\"><i class=\"fas fa-eye\"></i> See the Future <i class=\"fas fa-eye\"></i></h1>" +
+                "    <h1 class=\"text-xl font-semibold pb-5 text-white\">Top <i class=\"fas fa-long-arrow-alt-right\"></i> Bottom</h1>" +
+                "    <div class=\"-space-x-24 rotate-12 inline-block\">" +
+                card_payload +
+                "    </div>" +
+                "</div>\n",
+            timer: 5000,
+            background: "transparent"
+        })
+    }
+}
+
+// Name : frontend-game.itr_trigger_exp(game_details)
+// Desc : triggers the exploding chicken ui to appear
+function itr_trigger_pselect(game_details) {
+
 }
 
 /*\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\

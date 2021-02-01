@@ -211,10 +211,10 @@ module.exports = function (fastify) {
                             await game_actions.advance_turn(game_details);
                             spinner.succeed(`${chalk.bold.blue('Socket')}: ${chalk.dim.cyan('draw-card       ')} ${chalk.dim.yellow(data.slug)} Drew new card and advanced turn for player_id:` + data.player_id);
                         } else {
-                            fastify.io.emit(data.slug + "-callback", {
-                                player_id: data.player_id,
-                                action: "chicken"
-                            });
+                            // fastify.io.emit(data.slug + "-callback", {
+                            //     player_id: data.player_id,
+                            //     action: "chicken"
+                            // });
                             spinner.succeed(`${chalk.bold.blue('Socket')}: ${chalk.dim.cyan('draw-card       ')} ${chalk.dim.yellow(data.slug)} Drew chicken for player_id:` + data.player_id);
                         }
                         // Update clients
