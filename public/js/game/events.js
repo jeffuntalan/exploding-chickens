@@ -82,6 +82,12 @@ socket.on(window.location.pathname.substr(6) + "-update", function (data) {
     }
 });
 
+// Name : frontend-game.socket.on.{slug}-callback
+// Desc : whenever an event occurs related to an error
+socket.on(window.location.pathname.substr(6) + "-callback", function (data) {
+    console.log(data);
+});
+
 // Name : frontend-game.socket.on.player-created
 // Desc : whenever an event occurs stating that a player was created
 socket.on("player-created", function (data) {
@@ -96,10 +102,14 @@ socket.on("player-created", function (data) {
 // Name : frontend-game.socket.on.{slug}-error
 // Desc : whenever an event occurs related to an error
 socket.on(window.location.pathname.substr(6) + "-error", function (data) {
-    toast_alert.fire({
-        icon: 'error',
-        html: '<h1 class="text-lg font-bold pl-2 pr-1">' + data + '</h1>'
-    });
+    if (data === "Game does not exist") {
+        window.location.href = "/";
+    } else {
+        toast_alert.fire({
+            icon: 'error',
+            html: '<h1 class="text-lg font-bold pl-2 pr-1">' + data + '</h1>'
+        });
+    }
 });
 
 // Name : frontend-game.socket.on.connect
