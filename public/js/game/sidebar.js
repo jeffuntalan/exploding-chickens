@@ -10,7 +10,8 @@ function sbr_update_widgets(game_details) {
     let stat_header = "<div class=\"widget w-full p-2.5 rounded-lg bg-white border border-gray-100 dark:bg-gray-900 dark:border-gray-800\">\n";
     let stat_icon;
     let stat_text = "...";
-    let stat_color = "";
+    let stat_color_a = "";
+    let stat_color_b = "";
     // Construct status widget
     if (session_user.is_host) {
         if (game_details.status === "in_lobby") {
@@ -26,7 +27,8 @@ function sbr_update_widgets(game_details) {
                 "</svg>";
             stat_text = "Reset game";
         }
-        stat_color = "text-white";
+        stat_color_a = "text-white";
+        stat_color_b = "text-white";
     } else {
         if (game_details.status === "in_lobby") {
             stat_icon = "<svg class=\"stroke-current text-blue-500\" height=\"24\" width=\"24\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\">\n" +
@@ -39,16 +41,17 @@ function sbr_update_widgets(game_details) {
                 "</svg>\n";
             stat_text = "In game";
         }
-        stat_color = "text-gray-500";
+        stat_color_a = "text-gray-500";
+        stat_color_b = "text-black";
     }
     // Update status widget
     document.getElementById("sbr_ele_status").innerHTML = stat_header +
         "    <div class=\"flex flex-row items-center justify-between\">\n" +
-        "        <div class=\"flex flex-col text-left " + stat_color + "\">\n" +
-        "            <div class=\"text-xs uppercase truncate " + stat_color + "\">\n" +
+        "        <div class=\"flex flex-col text-left\">\n" +
+        "            <div class=\"text-xs uppercase truncate " + stat_color_a + "\">\n" +
         "                Status\n" +
         "            </div>\n" +
-        "            <div class=\"text-lg font-bold truncate\">\n" +
+        "            <div class=\"text-lg font-bold truncate " + stat_color_b + "\">\n" +
         "                " + stat_text + "\n" +
         "            </div>\n" +
         "        </div>\n" + stat_icon +
@@ -72,29 +75,30 @@ function sbr_update_players(game_details) {
         }
         // If host, add make host and kick options to each player
         let actions = "";
-        if (session_user.is_host && game_details.players[i]._id !== session_user._id) {
-            actions = "<div class=\"flex mt-0 ml-4\">\n" +
-                "    <span class=\"\">\n" +
-                "          <button type=\"button\" class=\"inline-flex items-center px-2 py-1 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500\">\n" +
-                "                <svg class=\"-ml-1 mr-1 h-5 w-5 text-gray-500\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\">\n" +
-                "                    <path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z\" />\n" +
-                "                </svg>\n" +
-                "                Make Host\n" +
-                "          </button>\n" +
-                "    </span>\n" +
-                "    <span class=\"ml-3\">\n" +
-                "          <button type=\"button\" class=\"inline-flex items-center px-2 py-1 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500\">\n" +
-                "                <svg class=\"-ml-1 mr-1 h-5 w-5\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 20 20\" fill=\"currentColor\" aria-hidden=\"true\">\n" +
-                "                    <path fill-rule=\"evenodd\" d=\"M13.477 14.89A6 6 0 015.11 6.524l8.367 8.368zm1.414-1.414L6.524 5.11a6 6 0 018.367 8.367zM18 10a8 8 0 11-16 0 8 8 0 0116 0z\" clip-rule=\"evenodd\" />\n" +
-                "                </svg>\n" +
-                "                Kick\n" +
-                "          </button>\n" +
-                "    </span>\n" +
-                "</div>";
-        }
+        // TODO Implement make host / kick actions
+        // if (session_user.is_host && game_details.players[i]._id !== session_user._id) {
+        //     actions = "<div class=\"flex mt-0 ml-4\">\n" +
+        //         "    <span class=\"\">\n" +
+        //         "          <button type=\"button\" class=\"inline-flex items-center px-2 py-1 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500\">\n" +
+        //         "                <svg class=\"-ml-1 mr-1 h-5 w-5 text-gray-500\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\">\n" +
+        //         "                    <path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z\" />\n" +
+        //         "                </svg>\n" +
+        //         "                Make Host\n" +
+        //         "          </button>\n" +
+        //         "    </span>\n" +
+        //         "    <span class=\"ml-3\">\n" +
+        //         "          <button type=\"button\" class=\"inline-flex items-center px-2 py-1 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500\">\n" +
+        //         "                <svg class=\"-ml-1 mr-1 h-5 w-5\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 20 20\" fill=\"currentColor\" aria-hidden=\"true\">\n" +
+        //         "                    <path fill-rule=\"evenodd\" d=\"M13.477 14.89A6 6 0 015.11 6.524l8.367 8.368zm1.414-1.414L6.524 5.11a6 6 0 018.367 8.367zM18 10a8 8 0 11-16 0 8 8 0 0116 0z\" clip-rule=\"evenodd\" />\n" +
+        //         "                </svg>\n" +
+        //         "                Kick\n" +
+        //         "          </button>\n" +
+        //         "    </span>\n" +
+        //         "</div>";
+        // }
         // Construct name for each player
         let name = game_details.players[i].nickname;
-        if (session_user.is_host && game_details.players[i]._id === session_user._id) {
+        if (game_details.players[i].type === "host") {
             name += ", Host"
         } else if (game_details.players[i]._id === session_user._id) {
             name += ", You"
@@ -131,7 +135,7 @@ function sbr_update_pstatus(game_details) {
         }
         // Update status for players element
         document.getElementById("sbr_stat_player_dot_" + game_details.players[i]._id).className = stat_dot_class(game_details.players[i].status, game_details.players[i].connection, "mx-0.5");
-        document.getElementById("sbr_stat_player_details_" + game_details.players[i]._id).className = game_details.players[i].status.charAt(0).toUpperCase() + game_details.players[i].status.slice(1) + ", " + game_details.players[i].connection;
+        document.getElementById("sbr_stat_player_details_" + game_details.players[i]._id).innerHTML = game_details.players[i].status.charAt(0).toUpperCase() + game_details.players[i].status.slice(1) + ", " + game_details.players[i].connection;
     }
 }
 
