@@ -17,7 +17,8 @@ const toast_alert = Swal.mixin({
 let allow_connect_msg = false;
 let session_user = {
     _id: undefined,
-    is_host: false
+    is_host: false,
+    can_draw: false
 };
 
 /*\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
@@ -181,8 +182,15 @@ function play_card(card_id) {
 // Name : frontend-game.draw_card()
 // Desc : emits the draw-card event when the draw deck is clicked
 function draw_card() {
-    socket.emit('draw-card', {
-        slug: window.location.pathname.substr(6),
-        player_id: session_user._id
-    })
+    if (session_user.can_draw) {
+        socket.emit('draw-card', {
+            slug: window.location.pathname.substr(6),
+            player_id: session_user._id
+        })
+    } else {
+        toast_alert.fire({
+            icon: 'error',
+            html: '<h1 class="text-lg font-bold pl-2 pr-1">You cannot draw a card</h1>'
+        });
+    }
 }

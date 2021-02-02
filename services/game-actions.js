@@ -95,13 +95,27 @@ exports.draw_card = async function (game_details, player_id) {
     let draw_deck = await card_actions.filter_cards("draw_deck", game_details.cards);
     // Filter player hand
     let player_hand = await card_actions.filter_cards(player_id, game_details.cards);
-    // Create new promise for game save
+    // Check if new card is a chicken
+    if (draw_deck[draw_deck.length-1].action === "chicken") {
+        for (let i = 0; i <= game_details.players.length - 1; i++) {
+            if (game_details.players[i]._id === player_id) {
+                game_details.players[i].status = "exploding";
+                i = game_details.players.length;
+            }
+        }
+    }
+    // Update card
+    for (let i = 0; i <= game_details.cards.length - 1; i++) {
+        if (game_details.cards[i]._id === draw_deck[draw_deck.length-1]._id) {
+            game_details.cards[i].assignment = player_id;
+            game_details.cards[i].position = player_hand.length;
+            i = game_details.cards.length;
+        }
+    }
+    // Create new promise to save game
     return await new Promise((resolve, reject) => {
-        // Update player with card that was drawn
-        game.findOneAndUpdate(
-            { slug: game_details.slug, "cards._id": draw_deck[draw_deck.length-1]._id},
-            { "$set": { "cards.$.assignment": player_id, "cards.$.position": player_hand.length }},
-            function (err) {
+        // Save updated game
+        game_details.save({}, function (err) {
             if (err) {
                 reject(err);
             } else {

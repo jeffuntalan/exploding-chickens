@@ -101,13 +101,18 @@ function itr_update_hand(game_details) {
     // Find current player
     for (let i = 0; i < game_details.players.length; i++) {
         if (game_details.players[i]._id === session_user._id) {
+            session_user.can_draw = true;
             // Add cards to hand
             for (let j = 0; j < game_details.players[i].cards.length; j++) {
                 let play_card_funct = "";
-                if (game_details.seat_playing === game_details.players[i].seat && game_details.players[i].cards[j].action !== "chicken") {
+                if (game_details.seat_playing === game_details.players[i].seat &&
+                    game_details.players[i].cards[j].action === "defuse" || game_details.players[i].status !== "exploding") {
                     play_card_funct = "play_card('" + game_details.players[i].cards[j]._id + "')";
-                } else if (game_details.players[i].cards[j].action === "chicken") {
-                    itr_trigger_exp(10, game_details.players[i].cards[j]._id, true, true);
+                }
+                // Check if chicken is active
+                if (game_details.players[i].cards[j].action === "chicken") {
+                    itr_trigger_exp(10, game_details.players[i].cards[j]._id, true);
+                    session_user.can_draw = false;
                 }
                 payload += "<div class=\"rounded-xl shadow-sm bottom-card bg-center bg-contain\" onclick=\"" + play_card_funct + "\" style=\"background-image: url('/" + game_details.players[i].cards[j].image_loc + "')\"></div>";
             }
@@ -121,13 +126,12 @@ function itr_update_hand(game_details) {
             } else if (game_details.seat_playing !== game_details.players[i].seat && game_details.status === "in_game") {
                 toast_turn.close();
                 is_turn = false;
+                session_user.can_draw = false;
             }
         } else {
-            // Check if chicken is in play
-            for (let j = 0; j < game_details.players[i].cards.length; j++) {
-                if (game_details.players[i].cards[j].action === "chicken") {
-                    itr_trigger_exp(10, game_details.players[i].cards[j]._id, true, false);
-                }
+            // Check if chicken is active
+            if (game_details.players[i].status === "exploding") {
+                itr_trigger_exp(10, false, true);
             }
         }
     }
@@ -136,7 +140,7 @@ function itr_update_hand(game_details) {
 
 // Name : frontend-game.itr_trigger_exp(count, card_id, setup)
 // Desc : triggers the exploding chicken ui to appear
-function itr_trigger_exp(count, card_id, setup, target) {
+function itr_trigger_exp(count, card_id, setup) {
     // Append html overlay if on first function call
     if (setup) {
         document.getElementById("itr_ele_discard_deck").innerHTML = "<div class=\"rounded-xl shadow-lg center-card bg-center bg-contain mx-1\" style=\"background-image: linear-gradient(rgba(0, 0, 0, .6), rgba(0, 0, 0, .6)), url('/public/cards/base/chicken-1.png');\">\n" +
@@ -159,7 +163,7 @@ function itr_trigger_exp(count, card_id, setup, target) {
     } else if (count > -1) {
         document.getElementById("itr_val_defuse_counter").innerHTML = "<i class=\"fas fa-skull-crossbones\"></i>"
         setTimeout(function(){ itr_trigger_exp(count, card_id, false) }, 1000);
-    } else if (target) {
+    } else if (card_id !== false) {
         // Force play chicken since time expired
         play_card(card_id);
     }
@@ -217,12 +221,12 @@ function create_stat_dot(status, connection, margin, id) {
 // Name : frontend-game.stat_dot_class(status, connection, margin)
 // Desc : returns the class for a status dot
 function stat_dot_class(status, connection, margin) {
-    if (status === "exploded") {
-        return "animate-pulse inline-flex rounded-full h-1.5 w-1.5 mb-0.5 " + margin + " align-middle bg-red-500"
+    if (status === "dead") {
+        return "animate-pulse inline-flex rounded-full h-1.5 w-1.5 mb-0.5 " + margin + " align-middle bg-yellow-500"
     } else if (connection === "connected") {
         return "animate-pulse inline-flex rounded-full h-1.5 w-1.5 mb-0.5 " + margin + " align-middle bg-green-500"
     } else if (connection === "offline") {
-        return "animate-pulse inline-flex rounded-full h-1.5 w-1.5 mb-0.5 " + margin + " align-middle bg-yellow-400"
+        return "animate-pulse inline-flex rounded-full h-1.5 w-1.5 mb-0.5 " + margin + " align-middle bg-red-400"
     } else {
         return "animate-pulse inline-flex rounded-full h-1.5 w-1.5 mb-0.5 " + margin + " align-middle bg-gray-500"
     }

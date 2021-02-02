@@ -49,7 +49,7 @@ exports.kill_player = async function (game_details, player_id) {
     // Find player and update status
     for (let i = 0; i <= game_details.players.length - 1; i++) {
         if (game_details.players[i]._id === player_id) {
-            game_details.players[i].status = "exploded";
+            game_details.players[i].status = "dead";
             i = game_details.players.length;
         }
     }
@@ -59,6 +59,17 @@ exports.kill_player = async function (game_details, player_id) {
             game_details.cards[i].assignment = "out_of_play";
         }
     }
+    // Create new promise for game save
+    return await new Promise((resolve, reject) => {
+        // Save updated game
+        game_details.save({}, function (err) {
+            if (err) {
+                reject(err);
+            } else {
+                resolve();
+            }
+        });
+    });
 }
 
 // Name : card_actions.defuse(game_details, player_id, target)
@@ -87,6 +98,24 @@ exports.defuse = async function (game_details, player_id, target) {
             game_details.cards[i].position++;
         }
     }
+    // Update player status
+    for (let i = 0; i <= game_details.players.length - 1; i++) {
+        if (game_details.players[i]._id === player_id) {
+            game_details.players[i].status = "playing";
+            i = game_details.players.length;
+        }
+    }
+    // Create new promise for game save
+    return await new Promise((resolve, reject) => {
+        // Save updated game
+        game_details.save({}, function (err) {
+            if (err) {
+                reject(err);
+            } else {
+                resolve();
+            }
+        });
+    });
 }
 
 // Name : card_actions.verify_favor(game_details, player_id, target)
