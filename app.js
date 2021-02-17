@@ -34,7 +34,10 @@ let socket_handler = require('./services/socket-handler.js');
 
 //Print header to console
 console.clear();
-console.log(chalk.blue.bold('\nExploding Chickens v' + pkg.version));
+if (process.argv[2] !== "develop") {
+
+}
+console.log(chalk.blue.bold('\nExploding Chickens v' + pkg.version + ((process.argv[2] !== undefined) ? ' | ' + process.argv[2].toUpperCase() : "" )));
 console.log(chalk.white('--> Contributors: ' + pkg.author));
 console.log(chalk.white('--> Description: ' + pkg.description));
 console.log(chalk.white('--> Github: ' + pkg.homepage + '\n'));

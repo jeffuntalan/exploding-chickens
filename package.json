@@ -4,7 +4,9 @@
   "description": "A beautiful, online alternative to the popular Exploding Kittens card game (just with chickens).",
   "main": "app.js",
   "scripts": {
-    "start": "node app.js",
+    "run": "node app.js",
+    "develop": "nodemon app.js develop --ignore public/ --ignore templates/",
+    "production": "node app.js production",
     "test": "node app.js test"
   },
   "repository": {
