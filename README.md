@@ -10,8 +10,8 @@ A beautiful, online alternative to the popular kitty-powered version of Russian 
 ##
 
 <p align="center">
-![](https://github.com/rak3rman/exploding-chickens/blob/main/public/cards/card_back.png?raw=true)
- </p>
+<img src="https://github.com/rak3rman/exploding-chickens/blob/main/public/cards/card_back.png?raw=true" width="100">
+</p>
 
 ### Project under active development!
 
