@@ -16,10 +16,6 @@ let card = require('../models/card.js');
 
 // Game schema
 let gameSchema = mongoose.Schema({
-    _id: {
-        type: String,
-        default: uuidv4()
-    },
     slug: {
         type: String,
         default: uniqueNamesGenerator({

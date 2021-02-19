@@ -40,7 +40,7 @@ The config file will be populated with the following default values:
 The npm package supports multiple ways to run the project.
 - ``npm run start`` Runs the project, plain and simple.
 - ``npm run develop`` Runs the project and watches for all file changes. Restarts the instance if critical files are updated.
-- ``npm run test`` Runs a test suite designed for this project, tests can be found in path ``/config/evaluation.js`` . Travis-CI also runs these tests.
+- ``npm run test`` Runs a test suite built using [mocha](https://mochajs.org/), tests can be found in path ``/test`` . Travis-CI also runs these tests.
 - ``npm run production`` **UNDER DEVELOPMENT**
 
 Use ``^C`` to exit any of these instances. Currently, there are no exit commands or words.

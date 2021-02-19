@@ -10,6 +10,7 @@ let game = require('../models/game.js');
 const chalk = require('chalk');
 const ora = require('ora');
 const spinner = ora('');
+var assert = require('assert');
 
 //Services
 let card_actions = require('../services/card-actions.js');

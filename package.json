@@ -4,10 +4,10 @@
   "description": "A beautiful, online alternative to the popular Exploding Kittens card game (just with chickens).",
   "main": "app.js",
   "scripts": {
-    "run": "node app.js",
+    "start": "node app.js",
     "develop": "nodemon app.js develop --ignore public/ --ignore templates/",
     "production": "node app.js production",
-    "test": "node app.js test"
+    "test": "mocha"
   },
   "repository": {
     "type": "git",
@@ -22,6 +22,7 @@
   "dependencies": {
     "autoprefixer": "^10.1.0",
     "body-parser": "^1.18.3",
+    "chai": "^4.3.0",
     "chalk": "^4.1.0",
     "cookie-parser": "^1.4.4",
     "data-store": "^3.1.0",
@@ -37,6 +38,7 @@
     "http": "0.0.0",
     "http-errors": "^1.7.2",
     "ip": "^1.1.5",
+    "mocha": "^8.3.0",
     "moment": "^2.29.1",
     "mongoose": "^5.7.12",
     "morgan": "^1.9.1",

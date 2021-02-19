@@ -26,9 +26,9 @@ module.exports = function (fastify) {
         spinner.info(`${chalk.bold.red('API')}:    ${chalk.dim.cyan('create-game     ')} Received request to create new game`);
         let game_details = await game_actions.create_game().catch(e => {failed_step(e, reply)});
         spinner.succeed(`${chalk.bold.red('API')}:    ${chalk.dim.cyan('create-game     ')} ${chalk.dim.yellow(game_details["slug"])} Created new game`);
-        let game_slug = game_details["slug"];
+        let game_id = game_details["_id"];
         //Import cards
-        let card_count = await game_actions.import_cards(game_slug, '../packs/base.json').catch(e => {failed_step(e, reply)});
+        let card_count = await game_actions.import_cards(game_id, '../packs/base.json').catch(e => {failed_step(e, reply)});
         spinner.succeed(`${chalk.bold.red('API')}:    ${chalk.dim.cyan('create-game     ')} ${chalk.dim.yellow(game_details["slug"])} Imported ` + chalk.bold(card_count) + ` cards from base.json`);
         //Redirect to game url
         reply.redirect("/game/" + game_details["slug"]);

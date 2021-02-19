@@ -4,9 +4,9 @@ Desc     : main application file
 Author(s): RAk3rman
 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\*/
 
-//Packages and configuration - - - - - - - - - - - - - - - - - - - - - - - - -
+// Packages and configuration - - - - - - - - - - - - - - - - - - - - - - - - -
 
-//Declare packages
+// Declare packages
 let game = require('./models/game.js');
 const pino = require('pino');
 const path = require('path')
@@ -21,39 +21,35 @@ const ora = require('ora');
 const spinner = ora('');
 const ip = require('ip');
 
-//Configuration & testing
+// Configuration & testing
 let setup = require('./config/setup.js');
 let evaluation = require('./config/evaluation.js');
 
-
-//Services
+// Services
 let card_actions = require('./services/card-actions.js');
 let game_actions = require('./services/game-actions.js');
 let player_actions = require('./services/player-actions.js');
 let socket_handler = require('./services/socket-handler.js');
 
-//Print header to console
+// Print header to console
 console.clear();
-if (process.argv[2] !== "develop") {
-
-}
 console.log(chalk.blue.bold('\nExploding Chickens v' + pkg.version + ((process.argv[2] !== undefined) ? ' | ' + process.argv[2].toUpperCase() : "" )));
 console.log(chalk.white('--> Contributors: ' + pkg.author));
 console.log(chalk.white('--> Description: ' + pkg.description));
 console.log(chalk.white('--> Github: ' + pkg.homepage + '\n'));
 
-//Check configuration values
+// Check configuration values
 setup.check_values(config_storage);
 
-//End of Packages and configuration - - - - - - - - - - - - - - - - - - - - - -
+// End of Packages and configuration - - - - - - - - - - - - - - - - - - - - - -
 
 
-//Fastify and main functions - - - - - - - - - - - - - - - - - - - - - - - - - -
+// Fastify and main functions - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-//Declare fastify
+// Declare fastify
 const fastify = require('fastify')({logger: false});
 
-//Prepare rendering template
+// Prepare rendering template
 fastify.register(require('point-of-view'), {
     engine: {
         handlebars: require('handlebars')
@@ -67,24 +63,24 @@ fastify.register(require('fastify-socket.io'), {})
 fastify.register(require('fastify-formbody'))
 fastify.register(require('fastify-rate-limit'), {
     max: 15,
-    timeWindow: '1 minutes' //Change to 5 for production
+    timeWindow: '1 minutes' // Change to 5 for production
 })
-//Routers
+// Routers
 let game_actions_api = require('./routes/game-actions-api.js');
 let error_routes = require('./routes/error-routes.js');
 
-//Import routes
+// Import routes
 game_actions_api(fastify);
 error_routes(fastify);
 
-//Home page
+// Home page
 fastify.get('/', (req, reply) => {
     reply.view('/templates/home.hbs', { active_games: 0, title: "Home" })
 })
 
-//Game page
+// Game page
 fastify.get('/game/:_id', async function (req, reply) {
-    //Make sure game exists
+    // Make sure game exists
     if (await game.exists({ slug: req.params._id })) {
         reply.view('/templates/game.hbs', { slug: req.params._id, version: pkg.version })
     } else {
@@ -92,37 +88,37 @@ fastify.get('/game/:_id', async function (req, reply) {
     }
 })
 
-//End of Fastify and main functions - - - - - - - - - - - - - - - - - - - - - -
+// End of Fastify and main functions - - - - - - - - - - - - - - - - - - - - - -
 
 
-//Setup external connections - - - - - - - - - - - - - - - - - - - - - - - - -
+// Setup external connections - - - - - - - - - - - - - - - - - - - - - - - - -
 
-//Prepare async mongoose connection messages
+// Prepare async mongoose connection messages
 mongoose.connection.on('connected', function () {mongoose_connected()});
 mongoose.connection.on('timeout', function () {spinner.fail(`${chalk.bold.yellow('Mongoose')}: Connection timed out`);mongoose_disconnected()});
 mongoose.connection.on('disconnected', function () {spinner.warn(`${chalk.bold.yellow('Mongoose')}: Connection was interrupted`);mongoose_disconnected()});
 
-//Connect to mongodb using mongoose
+// Connect to mongodb using mongoose
 spinner.start(`${chalk.bold.yellow('Mongoose')}: Attempting to connect using url "` + config_storage.get('mongodb_url') + `"`);
 mongoose.connect(config_storage.get('mongodb_url'), {useNewUrlParser: true,  useUnifiedTopology: true, connectTimeoutMS: 10000});
 mongoose.set('useFindAndModify', false);
 
-//When mongoose establishes a connection with mongodb
+// When mongoose establishes a connection with mongodb
 function mongoose_connected() {
     spinner.succeed(`${chalk.bold.yellow('Mongoose')}: Connected successfully at ` + config_storage.get('mongodb_url'));
-    //Start purge game cycle
+    // Start purge game cycle
     game_actions.game_purge().then(r => {});
     setInterval(game_actions.game_purge, 3600000);
-    //Start webserver using config values
+    // Start webserver using config values
     spinner.info(`${chalk.bold.magenta('Fastify')}: Attempting to start http webserver on port ` + config_storage.get('webserver_port'));
     fastify.listen(config_storage.get('webserver_port'), function (err, address) {
         if (err) {
             fastify.log.error(err)
             process.exit(1)
         }
-        //Open socket.io connection
+        // Open socket.io connection
         socket_handler(fastify);
-        //Check if we are in testing environment
+        // Check if we are in testing environment
         if (!(process.env.testENV || process.argv[2] !== "test")) {
             spinner.info(`${chalk.bold.red('Evaluation')}: ${chalk.bold.underline('Starting evaluation suite')}`);
             const run_eval = async () => {
@@ -140,10 +136,10 @@ function mongoose_connected() {
     })
 }
 
-//When mongoose losses a connection with mongodb
+// When mongoose losses a connection with mongodb
 function mongoose_disconnected() {
     spinner.succeed(`${chalk.bold.magenta('Fastify')}: Stopping http webserver on port ` + config_storage.get('webserver_port'));
     //server.close();
 }
 
-//End of Setup external connections - - - - - - - - - - - - - - - - - - - - - -
+// End of Setup external connections - - - - - - - - - - - - - - - - - - - - - -

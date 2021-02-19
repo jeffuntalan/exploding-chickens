@@ -29,8 +29,7 @@ exports.create_game = async function () {
     //Create new promise and return created_game after saved
     return await new Promise((resolve, reject) => {
         game.create({
-            _id: uuidv4(),
-            slug: uniqueNamesGenerator({dictionaries: [adjectives, animals, colors], separator: '-', length: 2})
+           slug: uniqueNamesGenerator({dictionaries: [adjectives, animals, colors], separator: '-', length: 2})
         }, function (err, created_game) {
             if (err) {
                 reject(err);
@@ -45,7 +44,7 @@ exports.create_game = async function () {
 // Desc : returns the details for a game slug
 // Author(s) : RAk3rman
 exports.game_details_slug = async function (slug) {
-    //Create new promise and return created_game after saved
+    //Create new promise and return found_game after saved
     return await new Promise((resolve, reject) => {
         game.findOne({ slug: slug }, function (err, found_game) {
             if (err) {
@@ -57,12 +56,28 @@ exports.game_details_slug = async function (slug) {
     });
 }
 
-// Name : game_actions.import_cards(game_slug)
+// Name : game_actions.game_details_id(_id)
+// Desc : returns the details for a game id
+// Author(s) : RAk3rman
+exports.game_details_id = async function (_id) {
+    //Create new promise and return found_game after saved
+    return await new Promise((resolve, reject) => {
+        game.findOne({ _id: _id }, function (err, found_game) {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(found_game);
+            }
+        });
+    });
+}
+
+// Name : game_actions.import_cards(game_id, pack_loc))
 // Desc : bulk import cards via json file
 // Author(s) : RAk3rman
-exports.import_cards = async function (game_slug, pack_loc) {
+exports.import_cards = async function (game_id, pack_loc) {
     //Get game details
-    let game_details = await game_actions.game_details_slug(game_slug);
+    let game_details = await game_actions.game_details_id(game_id);
     //Get json array of cards
     let pack_array = require(pack_loc);
     //Loop through each json value and add card
@@ -311,35 +326,39 @@ exports.reset_game = async function (game_details, player_status, game_status) {
 // Author(s) : RAk3rman
 exports.game_purge = async function () {
     spinner.info(`${chalk.bold.red('Game Purge')}: Purging all games older than 4 hours`);
-    game.find({}, function (err, found_games) {
-        if (err) {
-            spinner.fail(`${chalk.bold.red('Game Purge')}: Could not retrieve games`);
-        } else {
-            // Loop through each game
-            for (let i = 0; i < found_games.length; i++) {
-                // Determine if the game is more than 4 hours old
-                if (!moment(found_games[i].created).add(4, "hours").isSameOrAfter(moment())) {
-                    // Delete game
-                    game_actions.delete_game(found_games[i].slug).then(() => {
-                        spinner.succeed(`${chalk.bold.red('Game Purge')}: Deleted game with id:` + found_games[i]._id);
-                    });
+    await new Promise((resolve, reject) => {
+        game.find({}, function (err, found_games) {
+            if (err) {
+                spinner.fail(`${chalk.bold.red('Game Purge')}: Could not retrieve games`);
+                reject(err);
+            } else {
+                // Loop through each game
+                for (let i = 0; i < found_games.length; i++) {
+                    // Determine if the game is more than 4 hours old
+                    if (!moment(found_games[i].created).add(4, "hours").isSameOrAfter(moment())) {
+                        // Delete game
+                        game_actions.delete_game(found_games[i]._id).then(() => {
+                            spinner.succeed(`${chalk.bold.red('Game Purge')}: Deleted game with id:` + found_games[i]._id);
+                        });
+                    }
                 }
+                resolve();
             }
-        }
-    });
+        });
+    })
 }
 
-// Name : game_actions.delete_game()
-// Desc : deletes a existing game in mongodb, returns game_slug
+// Name : game_actions.delete_game(game_id)
+// Desc : deletes a existing game in mongodb, returns game_id
 // Author(s) : RAk3rman
-exports.delete_game = async function (game_slug) {
+exports.delete_game = async function (game_id) {
     //Create new promise and return delete_game _id after deleted
     return await new Promise((resolve, reject) => {
-        game.deleteOne({ slug: game_slug }, function (err) {
+        game.deleteOne({ _id: game_id }, function (err) {
             if (err) {
                 reject(err);
             } else {
-                resolve(game_slug);
+                resolve(game_id);
             }
         });
     });
