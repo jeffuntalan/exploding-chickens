@@ -1,8 +1,17 @@
 # Exploding Chickens
-[![Build Status](https://travis-ci.org/RAK3RMAN/exploding-chickens.svg?branch=main)](https://travis-ci.org/RAK3RMAN/exploding-chickens)
-![Language](https://img.shields.io/badge/language-Node.js-informational.svg?style=flat)
 
-A beautiful, online alternative to the popular Exploding Kittens card game (just with chickens).
+[![Build status](https://travis-ci.org/RAK3RMAN/exploding-chickens.svg?branch=main)](https://travis-ci.org/RAK3RMAN/exploding-chickens) ![Language](https://img.shields.io/badge/Language-Node.js-informational.svg?style=flat) ![License](https://img.shields.io/badge/License-MIT-red.svg)
+
+A beautiful, online alternative to the popular kitty-powered version of Russian Roulette, Exploding Kittens. Exploding Chickens is a card game with explosions and of course, chickens — all crafted in the Node.js platform. The rules are simple. Each player takes turns drawing a card or playing a card, rolling the dice of luck so that they can survive for yet another turn. From there, the drawing deck slowly shrinks and the explosions only start to occur. **So, who will be the last one standing?**
+
+- Supports up to **4-5 players**
+- Utilizes a **52-card** base deck
+
+##
+
+<p align="center">
+![](https://github.com/rak3rman/exploding-chickens/blob/main/public/cards/card_back.png?raw=true)
+ </p>
 
 ### Project under active development!
 
@@ -58,11 +67,11 @@ Author(s): RAk3rman
 - Make sure in line comments are clear. Use good coding practices...
 
 ## Contributors
-- **Radison Akerman** Project Manager
-- **Sengdao Inthavong** Frontend Design
-- **Vincent Do** Backend
-- **Richard Yang** Backend
-- **Evan Carlson** Code Review
+- **Radison Akerman** / Project Manager
+- **Sengdao Inthavong** / Front-end Designer
+- **Vincent Do** / Back-end Developer
+- **Richard Yang** / Back-end Developer
+- **Evan Carlson** / Code Review
 
 *Individual contributions are listed on most functions, for reference*
 ## License
