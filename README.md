@@ -13,7 +13,7 @@ A beautiful, online alternative to the popular kitty-powered version of Russian 
 <img src="https://github.com/rak3rman/exploding-chickens/blob/main/public/cards/card_back.png?raw=true" width="100">
 </p>
 
-### Project under active development!
+<h3 align="center">Project under active development!</h3>
 
 ## Purpose & Structure
 Exploding Chickens is an online alternative to the renowned Exploding Kittens card game that draws its strategy based off Russian Roulette. 
