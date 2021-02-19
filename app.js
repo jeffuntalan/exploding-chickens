@@ -24,7 +24,6 @@ const ip = require('ip');
 
 // Configuration & testing
 let setup = require('./config/setup.js');
-let evaluation = require('./config/evaluation.js');
 
 // Services
 let card_actions = require('./services/card-actions.js');
@@ -119,21 +118,6 @@ function mongoose_connected() {
         }
         // Open socket.io connection
         socket_handler(fastify);
-        // Check if we are in testing environment
-        if (!(process.env.testENV || process.argv[2] !== "test")) {
-            spinner.info(wipe(`${chalk.bold.red('Evaluation')}: ${chalk.bold.underline('Starting evaluation suite')}`));
-            const run_eval = async () => {
-                await evaluation.game_creation();
-                await evaluation.player_test();
-                //await evaluation.card_test();
-                //await evaluation.game_test();
-                await evaluation.game_deletion();
-            }
-            run_eval().then(() => {
-                spinner.succeed(wipe(`${chalk.bold.red('Evaluation')}: ${chalk.bold.underline('Evaluation suite completed successfully')}`));
-                process.exit(0);
-            });
-        }
     })
 }
 
