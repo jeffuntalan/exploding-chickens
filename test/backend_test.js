@@ -168,3 +168,12 @@ describe('Game deletion', function() {
         });
     });
 });
+
+// Name : test.after
+// Desc : clean everything up after test cases
+// Author(s) : RAk3rman
+after(done => {
+    // Close mongoose connection
+    spinner.info(`${chalk.bold.yellow('Mongoose')}: Closing mongodb connection`);
+    mongoose.disconnect().then(result => {done()});
+});
