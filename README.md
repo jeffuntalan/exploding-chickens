@@ -1,6 +1,6 @@
 # Exploding Chickens
 
-[![Build status](https://travis-ci.org/RAK3RMAN/exploding-chickens.svg?branch=main)](https://travis-ci.org/RAK3RMAN/exploding-chickens) ![Language](https://img.shields.io/badge/Language-Node.js-informational.svg?style=flat) ![License](https://img.shields.io/badge/License-MIT-red.svg)
+[![Build status](https://travis-ci.org/RAK3RMAN/exploding-chickens.svg?branch=main)](https://travis-ci.org/RAK3RMAN/exploding-chickens) ![Language](https://img.shields.io/badge/Language-Node.js-informational.svg?style=flat) ![License](https://img.shields.io/badge/License-MPL2.0-red.svg)
 
 A beautiful, online alternative to the popular kitty-powered version of Russian Roulette, Exploding Kittens. Exploding Chickens is a card game with explosions and of course, chickens — all crafted in the Node.js platform. The rules are simple. Each player takes turns drawing a card or playing a card, rolling the dice of luck so that they can survive for yet another turn. From there, the drawing deck slowly shrinks and the explosions only start to occur. **So, who will be the last one standing?**
 
@@ -75,4 +75,4 @@ Author(s): RAk3rman
 
 *Individual contributions are listed on most functions, for reference*
 ## License
-This project (exploding-chickens) is protected by the MIT License as disclosed in the [LICENSE](https://github.com/rak3rman/exploding-chickens/blob/main/LICENSE). You must adhere to the policies and terms listed. Copyright (c) 2020-2021 Radison Akerman
+This project (exploding-chickens) is protected by the Mozilla Public License 2.0 as disclosed in the [LICENSE](https://github.com/rak3rman/exploding-chickens/blob/main/LICENSE). Adherence to the policies and terms listed is required.
