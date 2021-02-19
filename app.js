@@ -19,6 +19,7 @@ const chalk = require('chalk');
 const pkg = require('./package.json');
 const ora = require('ora');
 const spinner = ora('');
+const wipe = chalk.white;
 const ip = require('ip');
 
 // Configuration & testing
@@ -95,22 +96,22 @@ fastify.get('/game/:_id', async function (req, reply) {
 
 // Prepare async mongoose connection messages
 mongoose.connection.on('connected', function () {mongoose_connected()});
-mongoose.connection.on('timeout', function () {spinner.fail(`${chalk.bold.yellow('Mongoose')}: Connection timed out`);mongoose_disconnected()});
-mongoose.connection.on('disconnected', function () {spinner.warn(`${chalk.bold.yellow('Mongoose')}: Connection was interrupted`);mongoose_disconnected()});
+mongoose.connection.on('timeout', function () {spinner.fail(wipe(`${chalk.bold.yellow('Mongoose')}: Connection timed out`));mongoose_disconnected()});
+mongoose.connection.on('disconnected', function () {spinner.warn(wipe(`${chalk.bold.yellow('Mongoose')}: Connection was interrupted`));mongoose_disconnected()});
 
 // Connect to mongodb using mongoose
-spinner.start(`${chalk.bold.yellow('Mongoose')}: Attempting to connect using url "` + config_storage.get('mongodb_url') + `"`);
+spinner.start(wipe(`${chalk.bold.yellow('Mongoose')}: Attempting to connect using url "` + config_storage.get('mongodb_url') + `"`));
 mongoose.connect(config_storage.get('mongodb_url'), {useNewUrlParser: true,  useUnifiedTopology: true, connectTimeoutMS: 10000});
 mongoose.set('useFindAndModify', false);
 
 // When mongoose establishes a connection with mongodb
 function mongoose_connected() {
-    spinner.succeed(`${chalk.bold.yellow('Mongoose')}: Connected successfully at ` + config_storage.get('mongodb_url'));
+    spinner.succeed(wipe(`${chalk.bold.yellow('Mongoose')}: Connected successfully at ` + config_storage.get('mongodb_url')));
     // Start purge game cycle
     game_actions.game_purge().then(r => {});
     setInterval(game_actions.game_purge, 3600000);
     // Start webserver using config values
-    spinner.info(`${chalk.bold.magenta('Fastify')}: Attempting to start http webserver on port ` + config_storage.get('webserver_port'));
+    spinner.info(wipe(`${chalk.bold.magenta('Fastify')}: Attempting to start http webserver on port ` + config_storage.get('webserver_port')));
     fastify.listen(config_storage.get('webserver_port'), function (err, address) {
         if (err) {
             fastify.log.error(err)
@@ -120,7 +121,7 @@ function mongoose_connected() {
         socket_handler(fastify);
         // Check if we are in testing environment
         if (!(process.env.testENV || process.argv[2] !== "test")) {
-            spinner.info(`${chalk.bold.red('Evaluation')}: ${chalk.bold.underline('Starting evaluation suite')}`);
+            spinner.info(wipe(`${chalk.bold.red('Evaluation')}: ${chalk.bold.underline('Starting evaluation suite')}`));
             const run_eval = async () => {
                 await evaluation.game_creation();
                 await evaluation.player_test();
@@ -129,7 +130,7 @@ function mongoose_connected() {
                 await evaluation.game_deletion();
             }
             run_eval().then(() => {
-                spinner.succeed(`${chalk.bold.red('Evaluation')}: ${chalk.bold.underline('Evaluation suite completed successfully')}`);
+                spinner.succeed(wipe(`${chalk.bold.red('Evaluation')}: ${chalk.bold.underline('Evaluation suite completed successfully')}`));
                 process.exit(0);
             });
         }
@@ -138,7 +139,7 @@ function mongoose_connected() {
 
 // When mongoose losses a connection with mongodb
 function mongoose_disconnected() {
-    spinner.succeed(`${chalk.bold.magenta('Fastify')}: Stopping http webserver on port ` + config_storage.get('webserver_port'));
+    spinner.succeed(wipe(`${chalk.bold.magenta('Fastify')}: Stopping http webserver on port ` + config_storage.get('webserver_port')));
     //server.close();
 }
 

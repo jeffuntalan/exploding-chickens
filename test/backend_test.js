@@ -14,6 +14,7 @@ const chalk = require('chalk');
 const pkg = require('../package.json');
 const ora = require('ora');
 const spinner = ora('');
+const wipe = chalk.white;
 const dataStore = require('data-store');
 const config_storage = new dataStore({path: '../config/config.json'});
 
@@ -34,10 +35,10 @@ before(done => {
     // Check configuration values
     setup.check_values(config_storage);
     // Connect to mongodb using mongoose
-    spinner.start(`${chalk.bold.yellow('Mongoose')}: Attempting to connect using url "` + config_storage.get('mongodb_url') + `"`);
+    spinner.start(wipe(`${chalk.bold.yellow('Mongoose')}: Attempting to connect using url "` + config_storage.get('mongodb_url') + `"`));
     mongoose.connection.on('connected', function () {
-        spinner.succeed(`${chalk.bold.yellow('Mongoose')}: Connected successfully at ` + config_storage.get('mongodb_url'));
-        spinner.info(`${chalk.bold.red('Mocha')}: Starting unit tests for BACKEND`);
+        spinner.succeed(wipe(`${chalk.bold.yellow('Mongoose')}: Connected successfully at ` + config_storage.get('mongodb_url')));
+        spinner.info(wipe(`${chalk.bold.red('Mocha')}: Starting unit tests for BACKEND`));
         done();
     });
     mongoose.connect(config_storage.get('mongodb_url'), {useNewUrlParser: true,  useUnifiedTopology: true, connectTimeoutMS: 10000});
@@ -132,7 +133,7 @@ describe('Game setup', function() {
 // Desc : deletes a test game and cleans up
 // Author(s) : RAk3rman
 describe('Game deletion', function() {
-    describe('#game_actions.game_purge()', function() {
+    describe('#game_actions.game_purge(debug)', function() {
         let game_id_temp;
         it('create purgeable game', function(done) {
             game.create({
@@ -145,14 +146,12 @@ describe('Game deletion', function() {
             });
         });
         it('purging games', function(done) {
-            game_actions.game_purge().then(result => {
+            game_actions.game_purge(false).then(result => {
                 done();
             })
         });
-        it('verifying purge', function() {
-            game.exists({ _id: game_id_temp }).then(result => {
-                assert(!result);
-            })
+        it('verifying purge', async function() {
+            assert.isNotOk(await game.exists({ _id: game_id_temp }));
         });
     });
     describe('#game_actions.delete_game(game_id))', function() {
@@ -161,10 +160,8 @@ describe('Game deletion', function() {
                 done();
             })
         });
-        it('verifying purge', function() {
-            game.exists({ _id: game_id }).then(result => {
-                assert(!result);
-            })
+        it('verifying deletion', async function() {
+            assert.isNotOk(await game.exists({ _id: game_id }));
         });
     });
 });
@@ -174,6 +171,6 @@ describe('Game deletion', function() {
 // Author(s) : RAk3rman
 after(done => {
     // Close mongoose connection
-    spinner.info(`${chalk.bold.yellow('Mongoose')}: Closing mongodb connection`);
+    spinner.info(wipe(`${chalk.bold.yellow('Mongoose')}: Closing mongodb connection`));
     mongoose.disconnect().then(result => {done()});
 });

@@ -11,6 +11,7 @@ const ora = require('ora');
 const chalk = require('chalk');
 const moment = require('moment');
 const spinner = ora('');
+const wipe = chalk.white;
 const { v4: uuidv4 } = require('uuid');
 const { uniqueNamesGenerator, adjectives, colors, animals } = require('unique-names-generator');
 const dataStore = require('data-store');
@@ -321,15 +322,17 @@ exports.reset_game = async function (game_details, player_status, game_status) {
     });
 }
 
-// Name : game_actions.game_purge()
+// Name : game_actions.game_purge(debug)
 // Desc : deletes all games that are over 4 hours old
 // Author(s) : RAk3rman
-exports.game_purge = async function () {
-    spinner.info(`${chalk.bold.red('Game Purge')}: Purging all games older than 4 hours`);
+exports.game_purge = async function (debug) {
+    if (debug !== false) {
+        spinner.info(wipe(`${chalk.bold.red('Game Purge')}: Purging all games older than 4 hours`));
+    }
     await new Promise((resolve, reject) => {
         game.find({}, function (err, found_games) {
             if (err) {
-                spinner.fail(`${chalk.bold.red('Game Purge')}: Could not retrieve games`);
+                spinner.fail(wipe(`${chalk.bold.red('Game Purge')}: Could not retrieve games`));
                 reject(err);
             } else {
                 // Loop through each game
@@ -338,7 +341,9 @@ exports.game_purge = async function () {
                     if (!moment(found_games[i].created).add(4, "hours").isSameOrAfter(moment())) {
                         // Delete game
                         game_actions.delete_game(found_games[i]._id).then(() => {
-                            spinner.succeed(`${chalk.bold.red('Game Purge')}: Deleted game with id:` + found_games[i]._id);
+                            if (debug !== false) {
+                                spinner.succeed(wipe(`${chalk.bold.red('Game Purge')}: Deleted game with id:` + found_games[i]._id));
+                            }
                         });
                     }
                 }
