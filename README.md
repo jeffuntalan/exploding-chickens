@@ -2,22 +2,19 @@
 
 [![Build status](https://travis-ci.org/RAK3RMAN/exploding-chickens.svg?branch=main)](https://travis-ci.org/RAK3RMAN/exploding-chickens) ![Language](https://img.shields.io/badge/Language-Node.js-informational.svg?style=flat) ![License](https://img.shields.io/badge/License-MPL2.0-red.svg)
 
-A beautiful, online alternative to the popular kitty-powered version of Russian Roulette, Exploding Kittens. Exploding Chickens is a card game with explosions and of course, chickens — all crafted on the Node.js platform. The rules are simple. Each player takes turns drawing a card or playing a card, rolling the dice of luck so that they can survive for yet another turn. From there, the drawing deck slowly shrinks and the explosions only start to occur. **So, who will be the last one standing?**
+A beautiful, online alternative to the popular kitty-powered version of Russian Roulette, Exploding Kittens. 
+Exploding Chickens is a card game with explosions and of course, chickens — all crafted on the Node.js platform. 
+The rules are simple. Each player takes turns drawing a card or playing a card, rolling the dice of luck so that they can survive for yet another turn. 
+From there, the drawing deck slowly shrinks and the explosions only become more frequent. **So, who will be the last one standing?**
 
-- Supports up to **4-5 players**
+- Supports up to **2-5 players**
 - Utilizes a **52-card** base deck
+- **30 min** average game time
 
-##
-
-<p align="center">
-<img src="https://github.com/rak3rman/exploding-chickens/blob/main/public/cards/card_back.png?raw=true" width="100">
-</p>
-
-<h3 align="center">Project under active development!</h3>
+TODO: Add game ui photos
 
 ## Purpose & Structure
-Exploding Chickens is an online alternative to the renowned Exploding Kittens card game that draws its strategy based off Russian Roulette. 
-Players take turns drawing from a draw pile until someone draws a bit more explosion than they can chew.
+TODO: Complete this section
 
 ## Install
 As easy as 1, 2, 3..... boom.
@@ -64,15 +61,15 @@ Author(s): RAk3rman
 // Author(s) : RAk3rman
 ```
 - Please use underscore separated function names (ex. my_function_is_awesome).
-- Make sure in line comments are clear. Use good coding practices...
+- Make sure in line comments are clear. Use good coding practices.
 
 ## Contributors
-- **Radison Akerman** / Project Manager
-- **Sengdao Inthavong** / Front-end Designer
+- **Radison Akerman** / Project Manager & Lead Developer
+- **Sengdao Inthavong** / Front-end Developer
 - **Vincent Do** / Back-end Developer
 - **Richard Yang** / Back-end Developer
 - **Evan Carlson** / Code Review
 
-*Individual contributions are listed on most functions, for reference*
+*Individual contributions are listed on most functions*
 ## License
 This project (exploding-chickens) is protected by the Mozilla Public License 2.0 as disclosed in the [LICENSE](https://github.com/rak3rman/exploding-chickens/blob/main/LICENSE). Adherence to the policies and terms listed is required.
