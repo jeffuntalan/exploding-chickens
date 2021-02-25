@@ -130,7 +130,7 @@ exports.verify_favor = async function (game_details, player_id, target) {
                 return true;
             }
         }
-        return "Player cannot give up a card";
+        return "favor_target"; // Request for valid target from client
     } else {
         return "You cannot ask yourself";
     }
@@ -139,10 +139,11 @@ exports.verify_favor = async function (game_details, player_id, target) {
 // Name : card_actions.verify_double(game_details, card_details, player_id)
 // Desc : verifies that the current player has two of a kind, discards second card
 // Author(s) : RAk3rman
-exports.verify_double = async function (game_details, card_details, player_id) {
+exports.verify_double = async function (game_details, card_details, player_id, card_id) {
     // See if we have another card of the same action
     for (let i = 0; i <= game_details.cards.length - 1; i++) {
-        if (game_details.cards[i].assignment === player_id && game_details.cards[i].action === card_details.action) {
+        if (game_details.cards[i].assignment === player_id && game_details.cards[i].action === card_details.action
+        && game_details.cards[i]._id !== card_id) {
             await game_actions.discard_card(game_details, game_details.cards[i]._id);
             return true;
         }
