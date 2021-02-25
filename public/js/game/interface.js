@@ -107,7 +107,7 @@ function itr_update_hand(game_details) {
                 let play_card_funct = "";
                 if (game_details.seat_playing === game_details.players[i].seat &&
                     game_details.players[i].cards[j].action === "defuse" || game_details.players[i].status !== "exploding") {
-                    play_card_funct = "play_card('" + game_details.players[i].cards[j]._id + "')";
+                    play_card_funct = "play_card('" + game_details.players[i].cards[j]._id + "', '')";
                 }
                 // Check if chicken is active
                 if (game_details.players[i].cards[j].action === "chicken") {
@@ -170,42 +170,69 @@ function itr_trigger_exp(count, card_id, setup) {
     count--;
 }
 
-// Name : frontend-game.itr_trigger_exp(game_details)
+// Name : frontend-game.itr_trigger_stf(top_3)
 // Desc : triggers the exploding chicken ui to appear
-function itr_trigger_stf(game_details) {
-    if (game_data.draw_deck !== undefined || game_data.draw_deck !== []) {
-        let card_payload;
-        // Check number of cards left in deck, prepare payload
-        if (game_data.draw_deck.length > 2) {
-            card_payload = "<div class=\"transform inline-block rounded-xl shadow-sm center-card bg-center bg-contain -rotate-12\" style=\"background-image: url('/" + game_data.draw_deck[game_data.draw_deck.length - 1].image_loc + "');width: 10.2rem;height: 14.4rem;border-radius: 1.6rem\"></div>\n" +
-                "<div class=\"transform inline-block rounded-xl shadow-sm center-card bg-center bg-contain mb-2\" style=\"background-image: url('/" + game_data.draw_deck[game_data.draw_deck.length - 2].image_loc + "');width: 10.2rem;height: 14.4rem;border-radius: 1.6rem\"></div>\n" +
-                "<div class=\"transform inline-block rounded-xl shadow-sm bottom-card bg-center bg-contain rotate-12\" style=\"background-image: url('/" + game_data.draw_deck[game_data.draw_deck.length - 3].image_loc + "');width: 10.2rem;height: 14.4rem;border-radius: 1.6rem\"></div>\n";
-        } else if (game_data.draw_deck.length > 1) {
-            card_payload = "<div class=\"transform inline-block rounded-xl shadow-sm center-card bg-center bg-contain -rotate-6\" style=\"background-image: url('/" + game_data.draw_deck[game_data.draw_deck.length - 1].image_loc + "');width: 10.2rem;height: 14.4rem;border-radius: 1.6rem\"></div>\n" +
-                "<div class=\"transform inline-block rounded-xl shadow-sm center-card bg-center bg-contain rotate-6\" style=\"background-image: url('/" + game_data.draw_deck[game_data.draw_deck.length - 2].image_loc + "');width: 10.2rem;height: 14.4rem;border-radius: 1.6rem\"></div>\n";
-        } else if (game_data.draw_deck.length > 0) {
-            card_payload = "<div class=\"transform inline-block rounded-xl shadow-sm center-card bg-center bg-contain\" style=\"background-image: url('/" + game_data.draw_deck[game_data.draw_deck.length - 1].image_loc + "');width: 10.2rem;height: 14.4rem;border-radius: 1.6rem\"></div>\n";
-        }
-        // Fire swal
-        Swal.fire({
-            html:
-                "<div class=\"inline-block\">" +
-                "    <h1 class=\"text-3xl font-semibold pb-1 text-white\"><i class=\"fas fa-eye\"></i> See the Future <i class=\"fas fa-eye\"></i></h1>" +
-                "    <h1 class=\"text-xl font-semibold pb-5 text-white\">Top <i class=\"fas fa-long-arrow-alt-right\"></i> Bottom</h1>" +
-                "    <div class=\"-space-x-24 rotate-12 inline-block\">" +
-                card_payload +
-                "    </div>" +
-                "</div>\n",
-            timer: 5000,
-            background: "transparent"
-        })
+function itr_trigger_stf(top_3) {
+    let card_payload;
+    // Check number of cards left in deck, prepare payload
+    if (top_3.length > 2) {
+        card_payload = "<div class=\"transform inline-block rounded-xl shadow-sm center-card bg-center bg-contain -rotate-12\" style=\"background-image: url('/" + top_3[top_3.length - 1].image_loc + "');width: 10.2rem;height: 14.4rem;border-radius: 1.6rem\"></div>\n" +
+            "<div class=\"transform inline-block rounded-xl shadow-sm center-card bg-center bg-contain mb-2\" style=\"background-image: url('/" + top_3[top_3.length - 2].image_loc + "');width: 10.2rem;height: 14.4rem;border-radius: 1.6rem\"></div>\n" +
+            "<div class=\"transform inline-block rounded-xl shadow-sm bottom-card bg-center bg-contain rotate-12\" style=\"background-image: url('/" + top_3[top_3.length - 3].image_loc + "');width: 10.2rem;height: 14.4rem;border-radius: 1.6rem\"></div>\n";
+    } else if (top_3.length > 1) {
+        card_payload = "<div class=\"transform inline-block rounded-xl shadow-sm center-card bg-center bg-contain -rotate-6\" style=\"background-image: url('/" + top_3[top_3.length - 1].image_loc + "');width: 10.2rem;height: 14.4rem;border-radius: 1.6rem\"></div>\n" +
+            "<div class=\"transform inline-block rounded-xl shadow-sm center-card bg-center bg-contain rotate-6\" style=\"background-image: url('/" + top_3[top_3.length - 2].image_loc + "');width: 10.2rem;height: 14.4rem;border-radius: 1.6rem\"></div>\n";
+    } else if (top_3.length > 0) {
+        card_payload = "<div class=\"transform inline-block rounded-xl shadow-sm center-card bg-center bg-contain\" style=\"background-image: url('/" + top_3[top_3.length - 1].image_loc + "');width: 10.2rem;height: 14.4rem;border-radius: 1.6rem\"></div>\n";
     }
+    // Fire swal
+    Swal.fire({
+        html:
+            "<div class=\"inline-block\">" +
+            "    <h1 class=\"text-3xl font-semibold pb-1 text-white\"><i class=\"fas fa-eye\"></i> See the Future <i class=\"fas fa-eye\"></i></h1>" +
+            "    <h1 class=\"text-xl font-semibold pb-5 text-white\">Top <i class=\"fas fa-long-arrow-alt-right\"></i> Bottom</h1>" +
+            "    <div class=\"-space-x-24 rotate-12 inline-block\">" +
+            card_payload +
+            "    </div>" +
+            "</div>\n",
+        timer: 5000,
+        background: "transparent"
+    })
 }
 
-// Name : frontend-game.itr_trigger_exp(game_details)
-// Desc : triggers the exploding chicken ui to appear
-function itr_trigger_pselect(game_details) {
-
+// Name : frontend-game.itr_trigger_pselect(game_details, card_id)
+// Desc : triggers the player selection ui to appear
+function itr_trigger_pselect(game_details, card_id) {
+    console.log(game_details);
+    console.log(card_id);
+    let payload = "";
+    // Check number of cards left in deck, prepare payload
+    for (let i = 0; i < game_details.players.length; i++) {
+        if (game_details.players[i].status === "playing" && session_user._id !== game_details.players[i]._id) {
+            payload += "<div class=\"block text-center p-3\" onclick=\"play_card('" + card_id + "', '" + game_details.players[i]._id + "');swal.close();\">\n" +
+                "    <h1 class=\"text-white font-medium text-sm\">\n" +
+                "        " + game_details.players[i].nickname + " " + create_stat_dot(game_details.players[i].status, game_details.players[i].connection, "", "") +
+                "    </h1>\n" +
+                "    <div class=\"flex flex-col items-center -space-y-3\">\n" +
+                "        <img class=\"h-12 w-12 rounded-full\" src=\"/public/avatars/" + game_details.players[i].avatar + "\" alt=\"\">\n" +
+                card_icon(game_details.players[i].card_num, 0, game_details) +
+                "    </div>\n" +
+                "</div>";
+        }
+    }
+    // Fire swal
+    Swal.fire({
+        html:
+            "<div class=\"inline-block\">" +
+            "    <h1 class=\"text-3xl font-semibold pb-1 text-white\">Ask a Favor</h1>" +
+            "    <h1 class=\"text-xl font-semibold pb-3 text-white\">Select a player below</h1>" +
+            "    <div class=\"inline-flex items-center p-2\">" +
+            payload +
+            "    </div>" +
+            "</div>\n",
+        background: "transparent",
+        showConfirmButton: false
+    })
 }
 
 /*\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\

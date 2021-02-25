@@ -177,7 +177,7 @@ exports.base_router = async function (game_details, player_id, card_id, target) 
         card_details.action === "randchick-3" || card_details.action === "randchick-4") { // Favor, expecting target player_id
         let v_favor = await card_actions.verify_favor(game_details, player_id, target);
         if (v_favor === true) {
-            let v_double = await card_actions.verify_double(game_details, card_details, player_id);
+            let v_double = await card_actions.verify_double(game_details, card_details, player_id, card_id);
             if (v_double === true) {
                 await card_actions.ask_favor(game_details, player_id, target);
                 await game_actions.discard_card(game_details, card_id);
@@ -195,7 +195,7 @@ exports.base_router = async function (game_details, player_id, card_id, target) 
         return true;
     } else if (card_details.action === "seethefuture") {
         await game_actions.discard_card(game_details, card_id);
-        return true;
+        return "seethefuture";
     } else if (card_details.action === "shuffle") {
         await card_actions.shuffle_draw_deck(game_details);
         await game_actions.discard_card(game_details, card_id);

@@ -166,18 +166,35 @@ module.exports = function (fastify) {
                 let game_details = await game_actions.game_details_slug(data.slug);
                 if (validate_turn(data.player_id, game_details)) {
                     if (game_details.status === "in_game") {
-
                         // Send card id to router
-                        let action_err = await game_actions.base_router(game_details, data.player_id, data.card_id, data.position);
-                        if (action_err === true) {
+                        let action_res = await game_actions.base_router(game_details, data.player_id, data.card_id, data.target);
+                        if (action_res === true) {
                             spinner.succeed(wipe(`${chalk.bold.blue('Socket')}: ${chalk.dim.cyan('play-card       ')} ${chalk.dim.yellow(data.slug)} Card successfully played and discarded`));
                             // Update clients
                             await update_game_ui(data.slug, "", "play-card       ");
+                        } else if (action_res === "seethefuture") {
+                            spinner.succeed(wipe(`${chalk.bold.blue('Socket')}: ${chalk.dim.cyan('play-card       ')} ${chalk.dim.yellow(data.slug)} Card successfully played and discarded, calling back top 3`));
+                            // Update clients
+                            await update_game_ui(data.slug, "", "play-card       ");
+                            // Trigger stf callback
+                            fastify.io.to(socket.id).emit(data.slug + "-callback", {
+                                trigger: "seethefuture",
+                                payload: await card_actions.filter_cards("draw_deck", game_details["cards"])
+                            });
+                        } else if (action_res === "favor_target") {
+                            spinner.succeed(wipe(`${chalk.bold.blue('Socket')}: ${chalk.dim.cyan('play-card       ')} ${chalk.dim.yellow(data.slug)} Requesting target from player for favor card`));
+                            // Trigger stf callback
+                            fastify.io.to(socket.id).emit(data.slug + "-callback", {
+                                trigger: "favor_target",
+                                payload: {
+                                    game_details: await get_game_export(data.slug, "play-card       "),
+                                    card_id: data.card_id
+                                }
+                            });
                         } else {
-                            spinner.warn(wipe(`${chalk.bold.blue('Socket')}: ${chalk.dim.cyan('play-card       ')} ${chalk.dim.yellow(data.slug)} Error while playing card: ` + action_err));
-                            fastify.io.to(socket.id).emit(data.slug + "-error", action_err);
+                            spinner.warn(wipe(`${chalk.bold.blue('Socket')}: ${chalk.dim.cyan('play-card       ')} ${chalk.dim.yellow(data.slug)} Error while playing card: ` + action_res));
+                            fastify.io.to(socket.id).emit(data.slug + "-error", action_res);
                         }
-
                     } else {
                         spinner.warn(wipe(`${chalk.bold.blue('Socket')}: ${chalk.dim.cyan('play-card       ')} ${chalk.dim.yellow(data.slug)} Game has not started`));
                         fastify.io.to(socket.id).emit(data.slug + "-error", "Game has not started");
@@ -310,6 +327,25 @@ module.exports = function (fastify) {
     // Desc : sends an event containing game data
     // Author(s) : RAk3rman
     async function update_game_ui(slug, target, source) {
+        //Get raw pretty game details
+        let pretty_game_details = await get_game_export(slug, source);
+        if (pretty_game_details !== {}) {
+            //Send game data
+            if (target === "") {
+                fastify.io.emit(slug + "-update", pretty_game_details);
+            } else {
+                fastify.io.to(target).emit(slug + "-update", pretty_game_details);
+            }
+            spinner.succeed(wipe(`${chalk.bold.blue('Socket')}: ${chalk.dim.cyan(source)} ${chalk.dim.yellow(slug)} Sent game update event`));
+        } else {
+            spinner.fail(wipe(`${chalk.bold.blue('Socket')}: ${chalk.dim.cyan(source)} ${chalk.dim.yellow(slug)} Game does not exist`));
+        }
+    }
+
+    // Name : update_game_ui(slug, target, source)
+    // Desc : sends an event containing game data
+    // Author(s) : RAk3rman
+    async function get_game_export(slug, source) {
         //Get raw game details from mongodb
         let raw_game_details = await game_actions.game_details_slug(slug);
         if (raw_game_details !== null) {
@@ -326,7 +362,6 @@ module.exports = function (fastify) {
             let pretty_game_details = {
                 players: [],
                 discard_deck: [],
-                draw_deck: draw_deck,
                 slug: raw_game_details["slug"],
                 created: moment(raw_game_details["created"]).calendar(),
                 status: raw_game_details["status"],
@@ -359,15 +394,10 @@ module.exports = function (fastify) {
             }
             //Get discard deck
             pretty_game_details.discard_deck = await card_actions.filter_cards("discard_deck", raw_game_details["cards"]);
-            //Send game-data
-            if (target === "") {
-                fastify.io.emit(slug + "-update", pretty_game_details);
-            } else {
-                fastify.io.to(target).emit(slug + "-update", pretty_game_details);
-            }
-            spinner.succeed(wipe(`${chalk.bold.blue('Socket')}: ${chalk.dim.cyan(source)} ${chalk.dim.yellow(slug)} Sent game update event`));
+            //Send game data
+            return pretty_game_details;
         } else {
-            spinner.fail(wipe(`${chalk.bold.blue('Socket')}: ${chalk.dim.cyan(source)} ${chalk.dim.yellow(slug)} Game does not exist`));
+            return {};
         }
     }
 

@@ -36,6 +36,7 @@ socket.on(window.location.pathname.substr(6) + "-update", function (data) {
     if (data.trigger === "player-connected") { // Existing player connected
         sbr_update_pstatus(data);
         itr_update_pstatus(data);
+        itr_update_hand(data);
     } else if (data.trigger === "create-player") { // New player was created
         if (user_prompt_open) {
             setup_update_options(data);
@@ -86,7 +87,12 @@ socket.on(window.location.pathname.substr(6) + "-update", function (data) {
 // Name : frontend-game.socket.on.{slug}-callback
 // Desc : whenever an event occurs related to an error
 socket.on(window.location.pathname.substr(6) + "-callback", function (data) {
-    console.log(data);
+    // See the future callback
+    if (data.trigger === "seethefuture") {
+        itr_trigger_stf(data.payload);
+    } else if (data.trigger === "favor_target") {
+        itr_trigger_pselect(data.payload.game_details, data.payload.card_id);
+    }
 });
 
 // Name : frontend-game.socket.on.player-created
@@ -169,13 +175,14 @@ function reset_game() {
     })
 }
 
-// Name : frontend-game.play_card(card_id)
+// Name : frontend-game.play_card(card_id, target)
 // Desc : emits the play-card event when a card in the players hand is clicked
-function play_card(card_id) {
+function play_card(card_id, target) {
     socket.emit('play-card', {
         slug: window.location.pathname.substr(6),
         player_id: session_user._id,
-        card_id: card_id
+        card_id: card_id,
+        target: target
     })
 }
 
