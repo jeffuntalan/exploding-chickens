@@ -379,6 +379,10 @@ module.exports = function (fastify) {
             //Loop through each player
             for (let i = 0; i < raw_game_details["players"].length; i++) {
                 let card_array = await card_actions.filter_cards(raw_game_details["players"][i]._id, raw_game_details["cards"]);
+                // Sort card hand in reverse order
+                card_array.sort(function(a, b) {
+                    return b.position - a.position;
+                });
                 //Found current player, return extended details
                 pretty_game_details.players.push({
                     _id: raw_game_details["players"][i]._id,
