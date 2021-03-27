@@ -235,6 +235,35 @@ function itr_trigger_pselect(game_details, card_id) {
     })
 }
 
+// Name : frontend-game.itr_display_winner(name, count)
+// Desc : displays the winner graphic
+function itr_display_winner(name, count) {
+    // Fire swal once and repeat
+    if (count === 0) {
+        Swal.fire({
+            html: "<h1 class=\"text-4xl text-gray-700 mt-3\" style=\"font-family: Bebas Neue\">WINNER WINNER <a class=\"text-yellow-400\">CHICKEN</a> DINNER</h1>\n" +
+                "<h1 class=\"text-xl text-gray-700 mt-1 font-bold\">" + name + "</h1>\n" +
+                "<h1 class=\"text-md text-gray-700 mt-2\">After the smoke has cleared, it appears that " + name + " was the last one standing. Test your odds again by staying in the lobby.</h1>\n",
+            showConfirmButton: false,
+            showCancelButton: true,
+            backdrop: "transparent",
+            background: "#F8F8F8",
+            cancelButtonColor: '#374151',
+            cancelButtonText: 'Return to Lobby'
+        })
+    }
+    if (count < 7) {
+        setTimeout(() => {  itr_display_winner(name, count + 1); }, 500);
+    }
+    // Call confetti function
+    confetti({
+        angle: Math.random() * (125 - 55) + 55,
+        spread: Math.random() * (70 - 50) + 50,
+        particleCount: Math.random() * (100 - 50) + 50,
+        origin: { y: 0.6 }
+    });
+}
+
 /*\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
  GAME UI HELPER FUNCTIONS
 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\*/

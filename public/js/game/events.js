@@ -55,26 +55,39 @@ socket.on(window.location.pathname.substr(6) + "-update", function (data) {
             icon: 'info',
             html: '<h1 class="text-lg font-bold pl-2 pr-1">Game has started</h1>'
         });
-    } else if (data.trigger === "reset-game") { // Game was reset
+    } else if (data.trigger === "reset-game") { // Game was reset or there is a winner
         sbr_update_widgets(data);
         sbr_update_pstatus(data);
         itr_update_pstatus(data);
         itr_update_pcards(data);
         itr_update_discard(data);
         itr_update_hand(data);
-        toast_alert.fire({
-            icon: 'info',
-            html: '<h1 class="text-lg font-bold pl-2 pr-1">Game has been reset</h1>'
-        });
+        // Check if we have a winner
+        let winner = false;
+        for (let i = 0; i < data.players.length; i++) {
+            if (data.players[i].status === "winner") {
+                itr_display_winner(data.players[i].nickname, 0);
+                winner = true;
+                break;
+            }
+        }
+        if (winner === false) {
+            toast_alert.fire({
+                icon: 'info',
+                html: '<h1 class="text-lg font-bold pl-2 pr-1">Game has been reset</h1>'
+            });
+        }
     } else if (data.trigger === "play-card") { // A card was played by a player
         itr_update_pcards(data);
         itr_update_discard(data);
         itr_update_hand(data);
     } else if (data.trigger === "draw-card") { // A card was drawn by a player
+        sbr_update_widgets(data);
         itr_update_pcards(data);
         itr_update_hand(data);
     } else if (data.trigger === "disconnect") { // Existing player disconnected
         sbr_update_pstatus(data);
+        itr_update_pstatus(data);
     } else { // Update entire ui
         sbr_update_widgets(data);
         sbr_update_players(data);

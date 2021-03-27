@@ -191,6 +191,10 @@ module.exports = function (fastify) {
                                     card_id: data.card_id
                                 }
                             });
+                        } else if (action_res === "winner") {
+                            // Emit reset game event and winner
+                            spinner.succeed(wipe(`${chalk.bold.blue('Socket')}: ${chalk.dim.cyan('play-card       ')} ${chalk.dim.yellow(data.slug)} Game ended due to player win`));
+                            await update_game_ui(data.slug, "", "reset-game      ");
                         } else {
                             spinner.warn(wipe(`${chalk.bold.blue('Socket')}: ${chalk.dim.cyan('play-card       ')} ${chalk.dim.yellow(data.slug)} Error while playing card: ` + action_res));
                             fastify.io.to(socket.id).emit(data.slug + "-error", action_res);

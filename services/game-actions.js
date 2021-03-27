@@ -157,8 +157,7 @@ exports.base_router = async function (game_details, player_id, card_id, target) 
         await game_actions.discard_card(game_details, card_id);
         game_details.turns_remaining = 0;
         await game_actions.advance_turn(game_details);
-        await game_actions.check_winner(game_details);
-        return true;
+        return await game_actions.check_winner(game_details);
     } else if (card_details.action === "defuse") {
         if (await card_actions.defuse(game_details, player_id, target) === true) {
             await game_actions.discard_card(game_details, card_id);
@@ -279,7 +278,7 @@ exports.check_winner = async function (game_details) {
     if (ctn === 1) {
         await game_actions.reset_game(game_details, "idle", "in_lobby");
         // Create new promise to save game
-        return await new Promise((resolve, reject) => {
+        await new Promise((resolve, reject) => {
             game.findOneAndUpdate(
                 { slug: game_details.slug, "players._id": player_id },
                 {"$set": { "players.$.status": "winner" }},
@@ -291,6 +290,9 @@ exports.check_winner = async function (game_details) {
                     }
                 });
         })
+        return "winner";
+    } else {
+        return true;
     }
 }
 
