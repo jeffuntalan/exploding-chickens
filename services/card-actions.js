@@ -76,6 +76,15 @@ exports.kill_player = async function (game_details, player_id) {
 // Desc : removes exploding chicken from hand and inserts randomly in deck
 // Author(s) : RAk3rman
 exports.defuse = async function (game_details, player_id, target) {
+    // Verify player is exploding
+    for (let i = 0; i <= game_details.players.length - 1; i++) {
+        if (game_details.players[i]._id === player_id) {
+            if (game_details.players[i].status !== "exploding") {
+                return false;
+            }
+            i = game_details.players.length;
+        }
+    }
     // TEMP: Loop through each card to create array
     let ctn = 0;
     for (let i = 0; i <= game_details.cards.length - 1; i++) {
@@ -106,7 +115,7 @@ exports.defuse = async function (game_details, player_id, target) {
         }
     }
     // Create new promise for game save
-    return await new Promise((resolve, reject) => {
+    await new Promise((resolve, reject) => {
         // Save updated game
         game_details.save({}, function (err) {
             if (err) {
@@ -116,6 +125,7 @@ exports.defuse = async function (game_details, player_id, target) {
             }
         });
     });
+    return true;
 }
 
 // Name : card_actions.verify_favor(game_details, player_id, target)
