@@ -47,7 +47,7 @@ socket.on(window.location.pathname.substr(6) + "-update", function (data) {
     } else if (data.trigger === "start-game") { // Game started
         sbr_update_widgets(data);
         sbr_update_pstatus(data);
-        itr_update_pstatus(data);
+        itr_update_players(data);
         itr_update_pcards(data);
         itr_update_discard(data);
         itr_update_hand(data);
@@ -78,6 +78,7 @@ socket.on(window.location.pathname.substr(6) + "-update", function (data) {
             });
         }
     } else if (data.trigger === "play-card") { // A card was played by a player
+        itr_update_players(data);
         itr_update_pcards(data);
         itr_update_discard(data);
         itr_update_hand(data);
