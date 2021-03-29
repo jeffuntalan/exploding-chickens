@@ -105,7 +105,7 @@ module.exports = function (fastify) {
                 // Verify host
                 if (validate_host(data.player_id, game_details)) {
                     //Make sure we have the correct number of players
-                    if (game_details.players.length > 1 && game_details.players.length < 5) {
+                    if (game_details.players.length > 1 && game_details.players.length < 6) {
                         // Reset game
                         await game_actions.reset_game(game_details, "playing", "in_game");
                         // Create hand for each player
