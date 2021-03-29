@@ -116,7 +116,7 @@ exports.draw_card = async function (game_details, player_id) {
         for (let i = 0; i <= game_details.players.length - 1; i++) {
             if (game_details.players[i]._id === player_id) {
                 game_details.players[i].status = "exploding";
-                i = game_details.players.length;
+                break;
             }
         }
     }
@@ -125,7 +125,7 @@ exports.draw_card = async function (game_details, player_id) {
         if (game_details.cards[i]._id === draw_deck[draw_deck.length-1]._id) {
             game_details.cards[i].assignment = player_id;
             game_details.cards[i].position = player_hand.length;
-            i = game_details.cards.length;
+            break;
         }
     }
     // Create new promise to save game

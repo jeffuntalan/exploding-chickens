@@ -224,7 +224,6 @@ module.exports = function (fastify) {
                 let game_details = await game_actions.game_details_slug(data.slug);
                 if (validate_turn(data.player_id, game_details)) {
                     if (game_details.status === "in_game") {
-
                         // Draw card from draw deck and place in hand
                         let card_drawn = await game_actions.draw_card(game_details, data.player_id);
                         // Check if card drawn in an ec
