@@ -69,7 +69,18 @@ function setup_user_prompt(game_details, err, nickname) {
         Swal.fire({
             html: "<h1 class=\"text-4xl text-gray-700 mt-3\" style=\"font-family: Bebas Neue\"><a class=\"text-yellow-400\"><i class=\"fas fa-exclamation-triangle\"></i> EXPLODING</a> CHICKENS</h1>\n" +
                 "<h1 class=\"text-sm text-gray-700\">Game ID: " + game_details.slug + " | Created: " + game_details.created + "</a><br><br><a class=\"text-red-500\">" + err + "</a></h1>\n" +
-                "<h1 class=\"text-md text-gray-700\">The game has already started. Please refresh this page when the lobby is open.</h1>\n",
+                "<h1 class=\"text-md text-gray-700\">The game has already started. Please refresh this page when the lobby is open to join.</h1>\n",
+            showConfirmButton: false,
+            showCancelButton: true,
+            cancelButtonColor: '#374151',
+            cancelButtonText: 'Spectate'
+        })
+    } else if (game_details.players.length > 5) {
+        prompt_open = false;
+        Swal.fire({
+            html: "<h1 class=\"text-4xl text-gray-700 mt-3\" style=\"font-family: Bebas Neue\"><a class=\"text-yellow-400\"><i class=\"fas fa-exclamation-triangle\"></i> EXPLODING</a> CHICKENS</h1>\n" +
+                "<h1 class=\"text-sm text-gray-700\">Game ID: " + game_details.slug + " | Created: " + game_details.created + "</a><br><br><a class=\"text-red-500\">" + err + "</a></h1>\n" +
+                "<h1 class=\"text-md text-gray-700\">The player limit has been reached for this game. Please refresh this page when there is room for new players.</h1>\n",
             showConfirmButton: false,
             showCancelButton: true,
             cancelButtonColor: '#374151',

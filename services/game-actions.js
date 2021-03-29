@@ -156,15 +156,18 @@ exports.base_router = async function (game_details, player_id, card_id, target) 
         await card_actions.kill_player(game_details, player_id);
         await game_actions.discard_card(game_details, card_id);
         game_details.turns_remaining = 0;
-        await game_actions.advance_turn(game_details);
-        return await game_actions.check_winner(game_details);
+        let winner = await game_actions.check_winner(game_details);
+        if (winner === true) {
+            await game_actions.advance_turn(game_details);
+        }
+        return winner;
     } else if (card_details.action === "defuse") {
         if (await card_actions.defuse(game_details, player_id, target) === true) {
             await game_actions.discard_card(game_details, card_id);
             await game_actions.advance_turn(game_details);
             return true;
         } else {
-            return "You must draw an Exploding Chicken";
+            return "You cannot play this card now";
         }
     } else if (card_details.action === "favor") { // Favor, expecting target player_id
         let v_favor = await card_actions.verify_favor(game_details, player_id, target);
