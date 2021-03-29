@@ -78,6 +78,7 @@ socket.on(window.location.pathname.substr(6) + "-update", function (data) {
             });
         }
     } else if (data.trigger === "play-card") { // A card was played by a player
+        sbr_update_widgets(data);
         itr_update_players(data);
         itr_update_pcards(data);
         itr_update_discard(data);
