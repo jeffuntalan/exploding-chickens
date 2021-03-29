@@ -187,6 +187,7 @@ exports.next_seat = async function (game_details) {
         console.log(game_details.players[pos].nickname + " " + game_details.players[pos].status);
         if (game_details.players[pos].status === "playing") {
             found_seat = true;
+            console.log("POS" + pos);
             return pos;
         }
     }
