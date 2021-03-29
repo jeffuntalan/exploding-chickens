@@ -183,12 +183,16 @@ exports.next_seat = async function (game_details) {
                 pos = game_details.players.length - 1;
             }
         }
-        // Check to see if current seat is playing
-        console.log(game_details.players[pos].nickname + " " + game_details.players[pos].status);
-        if (game_details.players[pos].status === "playing") {
-            found_seat = true;
-            console.log("POS" + pos);
-            return pos;
+        // Find current seat and check to see if current seat is playing
+        for (let i = 0; i < game_details.players.length; i++) {
+            if (game_details.players[i].seat === pos) {
+                if (game_details.players[i].status === "playing") {
+                    found_seat = true;
+                    return pos;
+                } else {
+                    break;
+                }
+            }
         }
     }
 }

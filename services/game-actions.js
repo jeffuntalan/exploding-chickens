@@ -247,7 +247,6 @@ exports.advance_turn = async function (game_details) {
     if (game_details.turns_remaining <= 1) { // Only one turn left, player seat advances
         // Advance to the next seat
         game_details.seat_playing = await player_actions.next_seat(game_details);
-        console.log(game_details.seat_playing);
         // Make sure the number of turns remaining is not 0
         game_details.turns_remaining = 1;
     } else { // Multiple turns left, player seat remains the same and turns_remaining decreases by one
