@@ -203,8 +203,6 @@ function itr_trigger_stf(top_3) {
 // Name : frontend-game.itr_trigger_pselect(game_details, card_id)
 // Desc : triggers the player selection ui to appear
 function itr_trigger_pselect(game_details, card_id) {
-    console.log(game_details);
-    console.log(card_id);
     let payload = "";
     // Check number of cards left in deck, prepare payload
     for (let i = 0; i < game_details.players.length; i++) {
@@ -278,7 +276,7 @@ function create_stat_dot(status, connection, margin, id) {
 // Desc : returns the class for a status dot
 function stat_dot_class(status, connection, margin) {
     if (status === "dead") {
-        return "animate-pulse inline-flex rounded-full h-1.5 w-1.5 mb-0.5 " + margin + " align-middle bg-red-500"
+        return "inline-flex rounded-full h-1.5 w-1.5 mb-0.5 " + margin + " align-middle bg-red-500"
     } else if (connection === "connected") {
         return "animate-pulse inline-flex rounded-full h-1.5 w-1.5 mb-0.5 " + margin + " align-middle bg-green-500"
     } else if (connection === "offline") {

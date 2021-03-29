@@ -180,18 +180,19 @@ exports.base_router = async function (game_details, player_id, card_id, target) 
         }
     } else if (card_details.action === "randchick-1" || card_details.action === "randchick-2" ||
         card_details.action === "randchick-3" || card_details.action === "randchick-4") { // Favor, expecting target player_id
-        let v_favor = await card_actions.verify_favor(game_details, player_id, target);
-        if (v_favor === true) {
-            let v_double = await card_actions.verify_double(game_details, card_details, player_id, card_id);
-            if (v_double === true) {
+        let v_double = await card_actions.verify_double(game_details, card_details, player_id, card_id);
+        if (v_double !== false) {
+            let v_favor = await card_actions.verify_favor(game_details, player_id, target);
+            if (v_favor === true) {
                 await card_actions.ask_favor(game_details, player_id, target);
+                await game_actions.discard_card(game_details, v_double);
                 await game_actions.discard_card(game_details, card_id);
                 return true;
             } else {
-                return v_double;
+                return v_favor;
             }
         } else {
-            return v_favor;
+            return "You must have a card of the same type";
         }
     } else if (card_details.action === "reverse") {
         await card_actions.reverse(game_details);

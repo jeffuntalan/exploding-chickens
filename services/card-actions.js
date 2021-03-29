@@ -154,11 +154,10 @@ exports.verify_double = async function (game_details, card_details, player_id, c
     for (let i = 0; i <= game_details.cards.length - 1; i++) {
         if (game_details.cards[i].assignment === player_id && game_details.cards[i].action === card_details.action
         && game_details.cards[i]._id !== card_id) {
-            await game_actions.discard_card(game_details, game_details.cards[i]._id);
-            return true;
+            return game_details.cards[i]._id;
         }
     }
-    return "You must have a card of the same type";
+    return false;
 }
 
 // Name : card_actions.ask_favor(game_details, player_id, target)
