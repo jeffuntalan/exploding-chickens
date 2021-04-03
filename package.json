@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node app.js",
     "develop": "cd public/css && NODE_ENV=production npx tailwindcss-cli@latest build -o tailwind.css -c tailwind.config.js && cd ../../ && nodemon app.js develop --ignore public/ --ignore templates/",
-    "production": "cd public/css && NODE_ENV=production npx tailwindcss-cli@latest build -o tailwind.css -c tailwind.config.js && cd ../../ && node app.js",
+    "build": "cd public/css && NODE_ENV=production npx tailwindcss-cli@latest build -o tailwind.css -c tailwind.config.js && cd ../../",
     "test": "mocha"
   },
   "repository": {

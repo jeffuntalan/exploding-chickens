@@ -1,6 +1,7 @@
 module.exports = {
   purge: [
-      '../../templates/*.hbs'
+      '../../templates/*.hbs',
+      '../js/game/*.hbs'
   ],
   darkMode: false, // or 'media' or 'class'
   theme: {
