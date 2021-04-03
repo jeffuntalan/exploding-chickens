@@ -68,7 +68,7 @@ function setup_user_prompt(game_details, err, nickname) {
         prompt_open = false;
         Swal.fire({
             html: "<h1 class=\"text-4xl text-gray-700 mt-3\" style=\"font-family: Bebas Neue\"><a class=\"text-yellow-400\"><i class=\"fas fa-exclamation-triangle\"></i> EXPLODING</a> CHICKENS</h1>\n" +
-                "<h1 class=\"text-sm text-gray-700\">Game ID: " + game_details.slug + " | Created: " + game_details.created + "</a><br><br><a class=\"text-red-500\">" + err + "</a></h1>\n" +
+                "<h1 class=\"text-sm text-gray-700\">Game Code: " + game_details.slug + " | Created: " + game_details.created + "</a><br><br><a class=\"text-red-500\">" + err + "</a></h1>\n" +
                 "<h1 class=\"text-md text-gray-700\">The game has already started. Please refresh this page when the lobby is open to join.</h1>\n",
             showConfirmButton: false,
             showCancelButton: true,
@@ -79,7 +79,7 @@ function setup_user_prompt(game_details, err, nickname) {
         prompt_open = false;
         Swal.fire({
             html: "<h1 class=\"text-4xl text-gray-700 mt-3\" style=\"font-family: Bebas Neue\"><a class=\"text-yellow-400\"><i class=\"fas fa-exclamation-triangle\"></i> EXPLODING</a> CHICKENS</h1>\n" +
-                "<h1 class=\"text-sm text-gray-700\">Game ID: " + game_details.slug + " | Created: " + game_details.created + "</a><br><br><a class=\"text-red-500\">" + err + "</a></h1>\n" +
+                "<h1 class=\"text-sm text-gray-700\">Game Code: " + game_details.slug + " | Created: " + game_details.created + "</a><br><br><a class=\"text-red-500\">" + err + "</a></h1>\n" +
                 "<h1 class=\"text-md text-gray-700\">The player limit has been reached for this game. Please refresh this page when there is room for new players.</h1>\n",
             showConfirmButton: false,
             showCancelButton: true,
@@ -89,7 +89,7 @@ function setup_user_prompt(game_details, err, nickname) {
     } else {
         Swal.fire({
             html: "<h1 class=\"text-4xl text-gray-700 mt-3\" style=\"font-family: Bebas Neue\">Welcome to <a class=\"text-yellow-400\">EXPLODING</a> CHICKENS</h1>\n" +
-                "<h1 class=\"text-sm text-gray-700\">Game ID: " + game_details.slug + " | Created: " + game_details.created + "</a><br><br><a class=\"text-red-500\">" + err + "</a></h1>\n" +
+                "<h1 class=\"text-sm text-gray-700\">Game Code: " + game_details.slug + " | Created: " + game_details.created + "</a><br><br><a class=\"text-red-500\">" + err + "</a></h1>\n" +
                 "<div class=\"my-3 flex w-full max-w-sm mx-auto space-x-3 shadow-md\">\n" +
                 "    <input\n" +
                 "        class=\"text-center flex-1 appearance-none border border-transparent w-full py-2 px-10 bg-white text-gray-700 placeholder-gray-400 rounded-sm text-base border-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500\"\n" +
