@@ -5,7 +5,7 @@
   "main": "app.js",
   "scripts": {
     "start": "node app.js",
-    "develop": "cd public/css && cross-env NODE_ENV=production npx tailwindcss-cli@latest build -o tailwind.css -c tailwind.config.js && cd ../../ && nodemon app.js develop --ignore public/ --ignore templates/ --ignore config/stats.json",
+    "develop": "npm i && cd public/css && cross-env NODE_ENV=production npx tailwindcss-cli@latest build -o tailwind.css -c tailwind.config.js && cd ../../ && nodemon app.js develop --ignore public/ --ignore templates/ --ignore config/stats.json",
     "build": "cd public/css && cross-env NODE_ENV=production npx tailwindcss-cli@latest build -o tailwind.css -c tailwind.config.js && cd ../../",
     "test": "mocha"
   },

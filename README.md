@@ -11,7 +11,7 @@ From there, the drawing deck slowly shrinks and the explosions only become more 
 - Utilizes a **52-card** base deck
 - **30 min** average game time
 
-TODO: Add game ui photos
+![Home UI](public/home_ui.png)
 
 ## Purpose & Structure
 TODO: Complete this section

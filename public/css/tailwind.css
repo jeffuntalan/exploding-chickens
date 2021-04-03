@@ -1053,10 +1053,6 @@ video {
   line-height: 1;
 }
 
-.leading-6 {
-  line-height: 1.5rem;
-}
-
 .leading-tight {
   line-height: 1.25;
 }
@@ -1300,8 +1296,8 @@ video {
   padding: 0.75rem;
 }
 
-.p-12 {
-  padding: 3rem;
+.p-6 {
+  padding: 1.5rem;
 }
 
 .p-2\.5 {
@@ -1407,6 +1403,10 @@ video {
 
 .pl-10 {
   padding-left: 2.5rem;
+}
+
+.pt-12 {
+  padding-top: 3rem;
 }
 
 .pb-12 {
