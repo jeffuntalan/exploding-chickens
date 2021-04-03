@@ -22,7 +22,14 @@ module.exports = function (fastify) {
     let player_actions = require('../services/player-actions.js');
 
     //Create game route, expecting a player nickname
-    fastify.post('/game/create', async function (req, reply) {
+    fastify.post('/game/create', {
+        config: {
+            rateLimit: {
+                max: 5,
+                timeWindow: '1 minute'
+            }
+        }
+    }, async function (req, reply) {
         //Create sample game
         spinner.info(wipe(`${chalk.bold.red('API')}:    ${chalk.dim.cyan('create-game     ')} Received request to create new game`));
         let game_details = await game_actions.create_game().catch(e => {failed_step(e, reply)});

@@ -19,7 +19,7 @@ let game_actions = require('../services/game-actions.js');
 let player_actions = require('../services/player-actions.js');
 
 //Export to app.js file
-module.exports = function (fastify) {
+module.exports = function (fastify, stats_storage) {
     spinner.succeed(wipe(`${chalk.bold.blue('Socket')}: Successfully opened socket.io connection`));
 
     // Name : socket.on.connection
@@ -115,6 +115,8 @@ module.exports = function (fastify) {
                         // Emit start game event
                         spinner.succeed(wipe(`${chalk.bold.blue('Socket')}: ${chalk.dim.cyan('start-game      ')} ${chalk.dim.yellow(data.slug)} Game has started`));
                         await update_game_ui(data.slug, "", "start-game      ");
+                        // Update stats
+                        stats_storage.set('games_played', stats_storage.get('games_played') + 1);
                     } else {
                         spinner.warn(wipe(`${chalk.bold.blue('Socket')}: ${chalk.dim.cyan('start-game      ')} ${chalk.dim.yellow(data.slug)} 2-5 players are required`));
                         fastify.io.to(socket.id).emit(data.slug + "-error", "You must have 2-5 players");
@@ -167,7 +169,7 @@ module.exports = function (fastify) {
                 if (validate_turn(data.player_id, game_details)) {
                     if (game_details.status === "in_game") {
                         // Send card id to router
-                        let action_res = await game_actions.base_router(game_details, data.player_id, data.card_id, data.target);
+                        let action_res = await game_actions.base_router(game_details, data.player_id, data.card_id, data.target, stats_storage);
                         if (action_res === true) {
                             spinner.succeed(wipe(`${chalk.bold.blue('Socket')}: ${chalk.dim.cyan('play-card       ')} ${chalk.dim.yellow(data.slug)} Card successfully played and discarded`));
                             // Update clients

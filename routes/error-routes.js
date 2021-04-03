@@ -6,12 +6,12 @@ Author(s): RAk3rman
 
 //Export to app.js file
 module.exports = function (fastify) {
-    //Services
+    // Services
     let card_actions = require('../services/card-actions.js');
     let game_actions = require('../services/game-actions.js');
     let player_actions = require('../services/player-actions.js');
 
-    //404 error handler
+    // 404 error handler
     fastify.setNotFoundHandler({
         preValidation: (req, reply, done) => {
             // your code
@@ -25,7 +25,7 @@ module.exports = function (fastify) {
         reply.status(404).view('/templates/error.hbs', { error_code: "404", title: "Page does not exist", desc_1: "Unfortunately, we could not find the page you are looking for.", desc_2: "Try a different link or visit the home page." });
     })
 
-    //Other error code handler
+    // Other error code handler
     fastify.setErrorHandler(function (error, request, reply) {
         // Log error
         this.log.error(error);

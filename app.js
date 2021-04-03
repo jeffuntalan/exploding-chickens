@@ -13,6 +13,7 @@ const path = require('path')
 let mongoose = require('mongoose');
 const dataStore = require('data-store');
 const config_storage = new dataStore({path: './config/config.json'});
+const stats_storage = new dataStore({path: './config/stats.json'});
 const { v4: uuidv4 } = require('uuid');
 const moment = require('moment');
 const chalk = require('chalk');
@@ -39,7 +40,7 @@ console.log(chalk.white('--> Description: ' + pkg.description));
 console.log(chalk.white('--> Github: ' + pkg.homepage + '\n'));
 
 // Check configuration values
-setup.check_values(config_storage);
+setup.check_values(config_storage, stats_storage);
 
 // End of Packages and configuration - - - - - - - - - - - - - - - - - - - - - -
 
@@ -62,8 +63,9 @@ fastify.register(require('fastify-static'), {
 fastify.register(require('fastify-socket.io'), {})
 fastify.register(require('fastify-formbody'))
 fastify.register(require('fastify-rate-limit'), {
-    max: 15,
-    timeWindow: '1 minutes' // Change to 5 for production
+    global: false,
+    max: 250,
+    timeWindow: '1 minute'
 })
 // Routers
 let game_actions_api = require('./routes/game-actions-api.js');
@@ -75,11 +77,23 @@ error_routes(fastify);
 
 // Home page
 fastify.get('/', (req, reply) => {
-    reply.view('/templates/home.hbs', { active_games: 0, title: "Home", version: pkg.version })
+    reply.view('/templates/home.hbs', {
+        title: "Exploding Chickens",
+        version: pkg.version,
+        stat_games_played: stats_storage.get('games_played').toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,'),
+        stat_explosions: stats_storage.get('explosions').toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
+    })
 })
 
 // Game page
-fastify.get('/game/:_id', async function (req, reply) {
+fastify.get('/game/:_id', {
+    config: {
+        rateLimit: {
+            max: 15,
+            timeWindow: '1 minute'
+        }
+    }
+}, async function (req, reply) {
     // Make sure game exists
     if (await game.exists({ slug: req.params._id })) {
         reply.view('/templates/game.hbs', { slug_1: req.params._id, slug_2: req.params._id, version: pkg.version })
@@ -117,7 +131,7 @@ function mongoose_connected() {
             process.exit(1)
         }
         // Open socket.io connection
-        socket_handler(fastify);
+        socket_handler(fastify, stats_storage);
     })
 }
 

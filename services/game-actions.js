@@ -141,16 +141,17 @@ exports.draw_card = async function (game_details, player_id) {
     });
 }
 
-// Name : game_actions.base_router(game_details, player_id, card_id, target)
+// Name : game_actions.base_router(game_details, player_id, card_id, target, stats_storage)
 // Desc : base deck - calls the appropriate card function based on card action
 // Author(s) : RAk3rman
-exports.base_router = async function (game_details, player_id, card_id, target) {
+exports.base_router = async function (game_details, player_id, card_id, target, stats_storage) {
     // Find card details from id
     let card_details = await card_actions.find_card(card_id, game_details.cards);
     // Determine which function to run
     if (card_details.action === "attack") {
         await card_actions.attack(game_details);
         await game_actions.discard_card(game_details, card_id);
+        stats_storage.set('attacks', stats_storage.get('attacks') + 1);
         return true;
     } else if (card_details.action === "chicken") { // Signals that the player is dead
         await card_actions.kill_player(game_details, player_id);
@@ -160,11 +161,13 @@ exports.base_router = async function (game_details, player_id, card_id, target) 
         if (winner === true) {
             await game_actions.advance_turn(game_details);
         }
+        stats_storage.set('explosions', stats_storage.get('explosions') + 1);
         return winner;
     } else if (card_details.action === "defuse") {
         if (await card_actions.defuse(game_details, player_id, target) === true) {
             await game_actions.discard_card(game_details, card_id);
             await game_actions.advance_turn(game_details);
+            stats_storage.set('defuses', stats_storage.get('defuses') + 1);
             return true;
         } else {
             return "You cannot play this card now";
@@ -174,6 +177,7 @@ exports.base_router = async function (game_details, player_id, card_id, target) 
         if (v_favor === true) {
             await card_actions.ask_favor(game_details, player_id, target);
             await game_actions.discard_card(game_details, card_id);
+            stats_storage.set('favors', stats_storage.get('favors') + 1);
             return true;
         } else {
             return v_favor;
@@ -187,6 +191,7 @@ exports.base_router = async function (game_details, player_id, card_id, target) 
                 await card_actions.ask_favor(game_details, player_id, target);
                 await game_actions.discard_card(game_details, v_double);
                 await game_actions.discard_card(game_details, card_id);
+                stats_storage.set('favors', stats_storage.get('favors') + 1);
                 return true;
             } else {
                 return v_favor;
@@ -198,17 +203,21 @@ exports.base_router = async function (game_details, player_id, card_id, target) 
         await card_actions.reverse(game_details);
         await game_actions.discard_card(game_details, card_id);
         await game_actions.advance_turn(game_details);
+        stats_storage.set('reverses', stats_storage.get('reverses') + 1);
         return true;
     } else if (card_details.action === "seethefuture") {
         await game_actions.discard_card(game_details, card_id);
+        stats_storage.set('seethefutures', stats_storage.get('seethefutures') + 1);
         return "seethefuture";
     } else if (card_details.action === "shuffle") {
         await card_actions.shuffle_draw_deck(game_details);
         await game_actions.discard_card(game_details, card_id);
+        stats_storage.set('shuffles', stats_storage.get('shuffles') + 1);
         return true;
     } else if (card_details.action === "skip") {
         await game_actions.discard_card(game_details, card_id);
         await game_actions.advance_turn(game_details);
+        stats_storage.set('skips', stats_storage.get('skips') + 1);
         return true;
     } else {
         // Houston, we have a problem
