@@ -5,6 +5,15 @@ Desc     : handles socket.io connection
 Author(s): RAk3rman, SengdowJones
 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\*/
 
+// Swal toast settings
+const toast_alert = Swal.mixin({
+    toast: true,
+    position: 'top-end',
+    showConfirmButton: false,
+    timer: 5000,
+    padding: '0.4rem'
+});
+
 // Declare socket.io
 let socket = io();
 
@@ -22,40 +31,19 @@ function join_game() {
     }
 }
 
-//Invalid game slug
+// Invalid game slug
 function invalid_game_slug() {
-    Swal.fire({
-        html: "<h1 class=\"text-5xl text-gray-700 mt-4\" style=\"font-family: Bebas Neue\">Invalid<a class=\"text-yellow-400\"> </a>Code</h1>\n" +
-            "<div class=\"mt-3 flex w-full max-w-sm mx-auto space-x-3 shadow-md\">\n" +
-            "    <input\n" +
-            "        class=\"text-center flex-1 appearance-none border border-transparent w-full py-2 px-10 bg-white text-gray-700 placeholder-gray-400 rounded-sm text-base border-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500\"\n" +
-            "        type=\"text\" id=\"game_slug\" placeholder=\"Please enter a game code\">\n" +
-            "</div>",
-        showCancelButton: true,
-        confirmButtonColor: '#fbbf24',
-        cancelButtonColor: '#374151',
-        cancelButtonText: 'Close',
-        confirmButtonText: 'Join',
-        icon: "error"
-    }).then((result) => {
-        if (result.isConfirmed) {
-            //Get game slug from input
-            let passed_slug = document.getElementById("game_slug").value;
-            //Input validation
-            if (passed_slug !== "" && /^[a-z-]+$/.test(passed_slug)) {
-                socket.emit('check-slug', {
-                    slug: passed_slug
-                });
-            } else {
-                invalid_game_slug();
-            }
-        }
-    })
+    // Clear input
+    document.getElementById("game_slug").value = "";
+    // Fire error toast
+    toast_alert.fire({
+        icon: 'error',
+        html: '<h1 class="text-lg font-bold pl-2 pr-1">Invalid game code</h1>'
+    });
 }
 
-//Handle incoming slug response
+// Handle incoming slug response
 socket.on("slug-response", function (data) {
-    console.log(data);
     if (data === false) {
         invalid_game_slug();
     } else {

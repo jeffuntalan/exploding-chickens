@@ -82,7 +82,7 @@ fastify.get('/', (req, reply) => {
 fastify.get('/game/:_id', async function (req, reply) {
     // Make sure game exists
     if (await game.exists({ slug: req.params._id })) {
-        reply.view('/templates/game.hbs', { slug: req.params._id, version: pkg.version })
+        reply.view('/templates/game.hbs', { slug_1: req.params._id, slug_2: req.params._id, version: pkg.version })
     } else {
         reply.status(404).view('/templates/error.hbs', { error_code: "404", title: "Game does not exist", desc_1: "Unfortunately, we could not find the game lobby you are looking for.", desc_2: "Try a different link or create a new game on the home page." });
     }

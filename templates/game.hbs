@@ -2,13 +2,58 @@
 <html class='h-full'>
 <head>
     <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>Exploding Chickens: {{ slug_1 }}</title>
+    <meta name="HandheldFriendly" content="True" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link href="/public/css/tailwind.css" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css"
           integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+    <meta name="description" content="A beautiful, online alternative to the popular Exploding Kittens card game (just with chickens)" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/public/favicon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/public/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/public/favicon/favicon-16x16.png">
+    <link rel="manifest" href="/public/favicon/site.webmanifest">
+    <link rel="canonical" href="https://chickens.rakerman.com/" />
+    <meta name="referrer" content="no-referrer-when-downgrade" />
+    <meta property="og:site_name" content="Exploding Chickens" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Exploding Chickens" />
+    <meta property="og:description" content="A beautiful, online alternative to the popular Exploding Kittens card game (just with chickens)" />
+    <meta property="og:url" content="https://chickens.rakerman.com/" />
+    <meta property="og:image" content="https://chickens.rakerman.com/public/home_ui.png" />
+    <meta property="og:image:width" content="800" />
+    <meta property="og:image:height" content="440" />
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.4.0/dist/confetti.browser.min.js"></script>
+    <style>
+        .bottom-card {
+            width: 12.75rem;
+            height: 18rem;
+            border-radius: 2rem;
+        }
+        .center-card {
+            width: 10.2rem;
+            height: 14.4rem;
+            border-radius: 1.6rem;
+        }
+        @media (min-width: 640px) {
+            .center-card {
+                width: 12.75rem;
+                height: 18rem;
+                border-radius: 2rem;
+            }
+        }
+        .center-card-text {
+            height: 14.4rem;
+        }
+        @media (min-width: 640px) {
+            .center-card-text {
+                height: 18rem;
+            }
+        }
+    </style>
 </head>
 <!-- Exploding Chickens, game interface // RAk3rman -->
 <body class='flex flex-col h-full' x-data="{ sidebar_open: false }" @keydown.window.escape="sidebar_open = false">
@@ -27,9 +72,7 @@
                 <div class="ml-4 flex items-center md:ml-6">
                     <span class="relative inline-flex">
                         {{! Active users }}
-                        <div class="inline-flex items-center -space-x-1 overflow-hidden p-2" id="itr_ele_players_top">
-
-                        </div>
+                        <div class="inline-flex items-center -space-x-1 overflow-hidden p-2" id="itr_ele_players_top"></div>
                         {{! Slide over button }}
                         <button @click="sidebar_open = true" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white">
                             <svg class="block h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
@@ -68,33 +111,6 @@
         </div>
     </div>
     <div class="flex align-bottom">
-        <style>
-            .bottom-card {
-                width: 12.75rem;
-                height: 18rem;
-                border-radius: 2rem;
-            }
-            .center-card {
-                width: 10.2rem;
-                height: 14.4rem;
-                border-radius: 1.6rem;
-            }
-            @media (min-width: 640px) {
-                .center-card {
-                    width: 12.75rem;
-                    height: 18rem;
-                    border-radius: 2rem;
-                }
-            }
-            .center-card-text {
-                height: 14.4rem;
-            }
-            @media (min-width: 640px) {
-                .center-card-text {
-                    height: 18rem;
-                }
-            }
-        </style>
         <div class="rounded-xl shadow-lg center-card bg-center bg-contain mx-1" onclick="draw_card()" style="background-image: url('/public/cards/card_back.png');"></div>
         <div id="itr_ele_discard_deck">
             <div class="rounded-xl shadow-lg center-card bg-center bg-contain mx-1 border-dashed border-4 border-gray-400">
@@ -174,7 +190,7 @@
                                                 Game Code
                                             </div>
                                             <div class="text-lg font-bold" id="sidebar_game_code">
-                                                {{ slug }}
+                                                {{ slug_2 }}
                                             </div>
                                         </div>
                                         <svg class="stroke-current text-purple-500" height="24" width="24" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
