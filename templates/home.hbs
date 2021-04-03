@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <title>Exploding Chickens</title>
+    <title>{{ title }}</title>
     <meta name="HandheldFriendly" content="True" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link href="/public/css/tailwind.css" rel="stylesheet">
@@ -58,8 +58,11 @@
                     boom!
                 </span>
             </h1>
-            <p class="leading-normal text-white opacity-80 text-lg md:text-2xl mb-8 text-left">
+            <p class="leading-normal text-white opacity-80 text-lg md:text-2xl mb-2 text-left">
                 A beautiful, online alternative to the popular Exploding Kittens card game (just with chickens)
+            </p>
+            <p class="leading-normal text-white opacity-80 text-lg md:text-2xl mb-8 text-left">
+                <strong>{{ stat_games_played }}</strong> games played. <strong>{{ stat_explosions }}</strong> chickens exploded.
             </p>
             <div class="flex flex-wrap space-y-4 sm:space-y-0 sm:space-x-4 text-center">
                 <form class="pr-3 mb-3" action="/game/create" method="POST" enctype="application/x-www-form-urlencoded">
