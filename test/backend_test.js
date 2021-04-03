@@ -17,6 +17,7 @@ const spinner = ora('');
 const wipe = chalk.white;
 const dataStore = require('data-store');
 const config_storage = new dataStore({path: '../config/config.json'});
+const stats_storage = new dataStore({path: './config/stats.json'});
 
 //Services
 let setup = require('../config/setup.js');
@@ -33,7 +34,7 @@ let game_id;
 before(done => {
     console.log(chalk.blue.bold('\nExploding Chickens v' + pkg.version + ' | BACKEND TEST'));
     // Check configuration values
-    setup.check_values(config_storage);
+    setup.check_values(config_storage, stats_storage);
     // Connect to mongodb using mongoose
     spinner.start(wipe(`${chalk.bold.yellow('Mongoose')}: Attempting to connect using url "` + config_storage.get('mongodb_url') + `"`));
     mongoose.connection.on('connected', function () {
