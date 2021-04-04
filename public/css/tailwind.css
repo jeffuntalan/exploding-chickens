@@ -922,10 +922,6 @@ video {
   flex-shrink: 0;
 }
 
-.float-left {
-  float: left;
-}
-
 .font-light {
   font-weight: 300;
 }
@@ -1804,6 +1800,10 @@ video {
   width: 20rem;
 }
 
+.w-auto {
+  width: auto;
+}
+
 .w-1\.5 {
   width: 0.375rem;
 }
@@ -2056,10 +2056,6 @@ video {
     width: 24rem;
   }
 
-  .sm\:w-auto {
-    width: auto;
-  }
-
   .sm\:duration-700 {
     transition-duration: 700ms;
   }
@@ -2084,6 +2080,10 @@ video {
     float: right;
   }
 
+  .md\:float-left {
+    float: left;
+  }
+
   .md\:h-auto {
     height: auto;
   }
@@ -2101,6 +2101,10 @@ video {
   .md\:text-5xl {
     font-size: 3rem;
     line-height: 1;
+  }
+
+  .md\:mr-1 {
+    margin-right: 0.25rem;
   }
 
   .md\:ml-6 {

@@ -20,7 +20,7 @@ After a couple of weeks, we had a playable game that was cracked out nearly ever
 Then the coronavirus pandemic came around, which made the prospects of playing any card game quite difficult.
 We resulted to the many games already on the internet, but we still had the urge to play this explosive game.
 Introducing the most overkill method to play Exploding Chickens.
-We hope you enjoy playing the game as much as we did making it.
+We hope you enjoy playing this game as much as we did making it.
 
 ## Install
 As easy as 1, 2, 3..... boom.
