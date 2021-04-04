@@ -106,7 +106,8 @@ module.exports = function (fastify, stats_storage) {
                 if (validate_host(data.player_id, game_details)) {
                     //Make sure we have the correct number of players
                     if (game_details.players.length > 1 && game_details.players.length < 6) {
-                        // Reset game
+                        // Reset game and update start time
+                        game_details.start_time = moment();
                         await game_actions.reset_game(game_details, "playing", "in_game");
                         // Create hand for each player
                         await player_actions.create_hand(data.slug);
@@ -194,8 +195,9 @@ module.exports = function (fastify, stats_storage) {
                                 }
                             });
                         } else if (action_res === "winner") {
-                            // Emit reset game event and winner
+                            // Emit reset game event and winner, update stats
                             spinner.succeed(wipe(`${chalk.bold.blue('Socket')}: ${chalk.dim.cyan('play-card       ')} ${chalk.dim.yellow(data.slug)} Game ended due to player win`));
+                            stats_storage.set('mins_played', stats_storage.get('mins_played') + moment().diff(moment(game_details.start_time), 'minutes'));
                             await update_game_ui(data.slug, "", "reset-game      ");
                         } else {
                             spinner.warn(wipe(`${chalk.bold.blue('Socket')}: ${chalk.dim.cyan('play-card       ')} ${chalk.dim.yellow(data.slug)} Error while playing card: ` + action_res));
@@ -229,22 +231,15 @@ module.exports = function (fastify, stats_storage) {
                         // Draw card from draw deck and place in hand
                         let card_drawn = await game_actions.draw_card(game_details, data.player_id);
                         // Check if card drawn in an ec
-                        console.log("");
-                        console.log(card_drawn["action"]);
                         if (card_drawn["action"] !== "chicken") {
                             game_details = await game_actions.game_details_slug(data.slug);
                             await game_actions.advance_turn(game_details);
                             spinner.succeed(wipe(`${chalk.bold.blue('Socket')}: ${chalk.dim.cyan('draw-card       ')} ${chalk.dim.yellow(data.slug)} Drew new card and advanced turn for player_id:` + data.player_id));
                         } else {
-                            // fastify.io.emit(data.slug + "-callback", {
-                            //     player_id: data.player_id,
-                            //     action: "chicken"
-                            // });
                             spinner.succeed(wipe(`${chalk.bold.blue('Socket')}: ${chalk.dim.cyan('draw-card       ')} ${chalk.dim.yellow(data.slug)} Drew chicken for player_id:` + data.player_id));
                         }
                         // Update clients
                         await update_game_ui(data.slug, "", "draw-card       ");
-
                     } else {
                         spinner.warn(wipe(`${chalk.bold.blue('Socket')}: ${chalk.dim.cyan('play-card       ')} ${chalk.dim.yellow(data.slug)} Game has not started`));
                         fastify.io.to(socket.id).emit(data.slug + "-error", "Game has not started");
@@ -257,15 +252,6 @@ module.exports = function (fastify, stats_storage) {
                 spinner.warn(wipe(`${chalk.bold.blue('Socket')}: ${chalk.dim.cyan('draw-card       ')} ${chalk.dim.yellow(data.slug)} Game does not exist`));
                 fastify.io.to(socket.id).emit(data.slug + "-error", "Game does not exist");
             }
-        })
-
-        // Name : socket.on.retrieve-stats
-        // Desc : runs when stats are requested from the home page
-        // Author(s) : RAk3rman
-        socket.on('retrieve-stats', async function (data) {
-            spinner.start(wipe(`${chalk.bold.blue('Socket')}: ${chalk.dim.cyan('retrieve-stats  ')} ${chalk.dim.yellow(data.slug)} Retrieving statistics`));
-            //Send statistics
-
         })
 
         // Name : socket.on.check-slug
@@ -409,23 +395,6 @@ module.exports = function (fastify, stats_storage) {
             return pretty_game_details;
         } else {
             return {};
-        }
-    }
-
-    // Name : emit_statistics(target)
-    // Desc : sends statistics used on the home page
-    // Author(s) : RAk3rman
-    function emit_statistics(target) {
-        if (target === undefined) {
-            fastify.io.emit('statistics', {
-                games_online: 0,
-                players_online: 0
-            })
-        } else {
-            fastify.io.to(target).emit('statistics', {
-                games_online: 0,
-                players_online: 0
-            })
         }
     }
 };

@@ -44,6 +44,10 @@ let gameSchema = mongoose.Schema({
         type: Date,
         default: Date.now
     },
+    start_time: {
+        type: Date,
+        default: Date.now
+    },
     players: [player],
     cards: [card]
 });
