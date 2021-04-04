@@ -11,7 +11,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css"
         integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
-    <meta name="description" content="A beautiful, online alternative to the popular Exploding Kittens card game (just with chickens)" />
+    <meta name="description" content="A beautiful, online alternative to the popular Exploding Kittens card game (just with chickens). Who will be the last one standing?" />
     <link rel="apple-touch-icon" sizes="180x180" href="/public/favicon/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="/public/favicon/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="/public/favicon/favicon-16x16.png">
@@ -21,7 +21,7 @@
     <meta property="og:site_name" content="Exploding Chickens" />
     <meta property="og:type" content="website" />
     <meta property="og:title" content="Exploding Chickens" />
-    <meta property="og:description" content="A beautiful, online alternative to the popular Exploding Kittens card game (just with chickens)" />
+    <meta property="og:description" content="A beautiful, online alternative to the popular Exploding Kittens card game (just with chickens). Who will be the last one standing?" />
     <meta property="og:url" content="https://chickens.rakerman.com/" />
     <meta property="og:image" content="https://chickens.rakerman.com/public/home_ui.png" />
     <meta property="og:image:width" content="800" />
@@ -43,7 +43,7 @@
                 <h1 class="h-8 text-4xl text-white opacity-80" style="font-family: Bebas Neue"><a class="text-yellow-400">EXPLODING</a> CHICKENS</h1>
             </div>
             <div class="flex w-1/2 justify-end content-center">
-                <a class="inline-block text-white opacity-80 no-underline hover:text-underline text-center h-10 p-2 md:h-auto md:p-4 transform hover:scale-125 duration-300 ease-in-out" href="https://github.com/rak3rman/exploding-chickens">
+                <a class="inline-block text-white opacity-80 no-underline hover:text-underline text-center h-10 p-2 md:h-auto md:p-4 transform hover:scale-125 duration-300 ease-in-out" href="https://github.com/rak3rman/exploding-chickens" target="_blank">
                     <svg class="fill-current h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
                 </a>
             </div>
@@ -102,6 +102,9 @@
         <div class="flex flex-col w-full justify-center overflow-y-hidden pt-2 pb-5">
             <p class="leading-normal text-white opacity-80 text-2xl md:text-3xl text-left">
                 Game Structure
+            </p>
+            <p class="leading-normal text-white opacity-60 text-lg md:text-2xl pt-1.5 text-left">
+                Supports 2-5 players. {{ stats_avg_play_time }} min average play time.
             </p>
         </div>
         <div class="space-y-10 md:space-y-0 md:grid md:grid-cols-2 md:gap-x-8 md:gap-y-10">
@@ -169,17 +172,20 @@
         {{! How to Play: Base Card Pack }}
         <div class="flex flex-col w-full justify-center overflow-y-hidden pt-10 pb-5">
             <p class="leading-normal text-white opacity-80 text-2xl md:text-3xl text-left">
-                Base Card Pack
+                51 Card Base Pack
+            </p>
+            <p class="leading-normal text-white opacity-60 text-lg md:text-2xl pt-1.5 text-left">
+                The classics. Used by default in every game.
             </p>
         </div>
-        <div class="space-y-10 md:space-y-0 md:grid md:grid-cols-2 md:gap-x-8 md:gap-y-10">
+        <div class="space-y-10 md:space-y-0 md:grid md:grid-cols-2 xl:grid-cols-3 md:gap-x-8 md:gap-y-10">
             <div class="flex">
                 <div class="flex-shrink-0">
                     <div class="rounded-xl shadow-lg center-card bg-center bg-contain mx-1" style="background-image: url('/public/cards/base/chicken-1.png');"></div>
                 </div>
                 <div class="ml-4">
                     <dt class="text-xl text-white opacity-80">
-                        <span class="bg-clip-text text-transparent bg-gradient-to-r from-red-600 via-red-500 to-yellow-500">The Exploding Chicken</span>
+                        The <span class="bg-clip-text text-transparent bg-gradient-to-r from-red-600 via-red-500 to-yellow-500">Exploding</span> Chicken <i class="opacity-30 text-lg">1-4</i>
                     </dt>
                     <dd class="mt-2 text-base text-white opacity-60">
                         Avoid this little guy <i>at all costs</i>. Once this card is drawn, you must use a defuse card to stop the ticking time bomb. If you don't have a defuse card, it looks like your time is up.
@@ -192,7 +198,7 @@
                 </div>
                 <div class="ml-4">
                     <dt class="text-xl text-white opacity-80">
-                        Defuse
+                        Defuse <i class="opacity-30 text-lg">6</i>
                     </dt>
                     <dd class="mt-2 text-base text-white opacity-60">
                         Clip the wires and stop the Exploding Chicken from exploding. Once defused, the Exploding Chicken is placed <i>randomly</i> back in the deck.
@@ -205,7 +211,7 @@
                 </div>
                 <div class="ml-4">
                     <dt class="text-xl text-white opacity-80">
-                        Attack
+                        Attack <i class="opacity-30 text-lg">4</i>
                     </dt>
                     <dd class="mt-2 text-base text-white opacity-60">
                         Seek vengeance on your friends by forcing the next player in line to take 2 turns. Attack cards can be stacked to force the next player to take 4, 6, and even 8+ turns.
@@ -218,7 +224,7 @@
                 </div>
                 <div class="ml-4">
                     <dt class="text-xl text-white opacity-80">
-                        See the Future
+                        See the Future <i class="opacity-30 text-lg">5</i>
                     </dt>
                     <dd class="mt-2 text-base text-white opacity-60">
                         Allow yourself to see the top three cards in the deck. Be quick though, because you only have 5 seconds. Does not count as a turn.
@@ -231,7 +237,7 @@
                 </div>
                 <div class="ml-4">
                     <dt class="text-xl text-white opacity-80">
-                        Skip
+                        Skip <i class="opacity-30 text-lg">4</i>
                     </dt>
                     <dd class="mt-2 text-base text-white opacity-60">
                         Effectively skips your turn without having to draw a card. If you are stuck with multiple turns, the skip card only removes one turn.
@@ -244,7 +250,7 @@
                 </div>
                 <div class="ml-4">
                     <dt class="text-xl text-white opacity-80">
-                        Reverse
+                        Reverse <i class="opacity-30 text-lg">4</i>
                     </dt>
                     <dd class="mt-2 text-base text-white opacity-60">
                         Skips your turn and reverses the turn direction, all without having to draw a card. If you are stuck with multiple turns, the reverse card only removes one turn.
@@ -257,7 +263,7 @@
                 </div>
                 <div class="ml-4">
                     <dt class="text-xl text-white opacity-80">
-                        Shuffle
+                        Shuffle <i class="opacity-30 text-lg">4</i>
                     </dt>
                     <dd class="mt-2 text-base text-white opacity-60">
                         Shuffles the deck to <i>hopefully</i> decrease your odds at drawing an Exploding Chicken. Plain and simple. Does not count as a turn.
@@ -270,7 +276,7 @@
                 </div>
                 <div class="ml-4">
                     <dt class="text-xl text-white opacity-80">
-                        Favor
+                        Favor <i class="opacity-30 text-lg">4</i>
                     </dt>
                     <dd class="mt-2 text-base text-white opacity-60">
                         Allows you to ask for a favor <i>(aka steal a card)</i> from anyone still in the game. Your target really can't do much about it. Does not count as a turn.
@@ -283,7 +289,7 @@
                 </div>
                 <div class="ml-4">
                     <dt class="text-xl text-white opacity-80">
-                        Random Chickens
+                        Random Chickens <i class="opacity-30 text-lg">4(4)</i>
                     </dt>
                     <dd class="mt-2 text-base text-white opacity-60">
                         Does the exact same thing as the favor card with a small caveat. You must have <strong>two identical</strong> random chickens to use this action. Both cards will be discarded.
@@ -293,7 +299,7 @@
         </div>
         {{! Footer }}
         <div class="w-full pt-16 pb-12 text-sm text-center md:text-left fade-in">
-            <h1 class="text-white opacity-80 pb-1 float-left">Exploding Chickens 2021. Made with <i class="fas fa-heart text-red-500"></i> by our <a class="text-blue-400" href="https://github.com/rak3rman/exploding-chickens">contributors</a>.</h1>
+            <h1 class="text-white opacity-80 pb-1 float-left">Exploding Chickens <script>document.write(new Date().getFullYear())</script>. Made with <i class="fas fa-heart text-red-500"></i> by our <a class="text-blue-400" href="https://github.com/rak3rman/exploding-chickens" target="_blank">contributors</a>.</h1>
             <h2 class="text-white opacity-80 pb-1 md:float-right">Release v{{ version }}</h2>
         </div>
     </div>

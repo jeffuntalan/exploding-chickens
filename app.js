@@ -81,7 +81,8 @@ fastify.get('/', (req, reply) => {
         title: "Exploding Chickens",
         version: pkg.version,
         stat_games_played: stats_storage.get('games_played').toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,'),
-        stat_explosions: stats_storage.get('explosions').toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
+        stat_explosions: stats_storage.get('explosions').toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,'),
+        stats_avg_play_time: Math.round(stats_storage.get('mins_played') / stats_storage.get('games_played'))
     })
 })
 
