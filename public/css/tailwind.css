@@ -874,6 +874,10 @@ video {
   display: table;
 }
 
+.hidden {
+  display: none;
+}
+
 .flex-row {
   flex-direction: row;
 }
