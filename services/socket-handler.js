@@ -231,7 +231,7 @@ module.exports = function (fastify, stats_storage) {
                         // Draw card from draw deck and place in hand
                         let card_drawn = await game_actions.draw_card(game_details, data.player_id);
                         // Check if card drawn in an ec
-                        if (card_drawn["action"] !== "chicken") {
+                        if (card_drawn !== "chicken") {
                             game_details = await game_actions.game_details_slug(data.slug);
                             await game_actions.advance_turn(game_details);
                             spinner.succeed(wipe(`${chalk.bold.blue('Socket')}: ${chalk.dim.cyan('draw-card       ')} ` + socket.id + ` ${chalk.dim.yellow(data.slug)} Drew new card and advanced turn for player_id:` + data.player_id));

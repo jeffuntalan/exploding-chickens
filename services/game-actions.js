@@ -112,12 +112,14 @@ exports.draw_card = async function (game_details, player_id) {
     // Filter player hand
     let player_hand = await card_actions.filter_cards(player_id, game_details.cards);
     // Check if new card is a chicken
-    if (draw_deck[draw_deck.length-1].action === "chicken") {
-        for (let i = 0; i <= game_details.players.length - 1; i++) {
-            if (game_details.players[i]._id === player_id) {
+    for (let i = 0; i <= game_details.players.length - 1; i++) {
+        if (game_details.players[i]._id === player_id) {
+            if (game_details.players[i].status === "exploding") {
+                return "chicken";
+            } else if (draw_deck[draw_deck.length-1].action === "chicken") {
                 game_details.players[i].status = "exploding";
-                break;
             }
+            break;
         }
     }
     // Update card
@@ -135,7 +137,7 @@ exports.draw_card = async function (game_details, player_id) {
             if (err) {
                 reject(err);
             } else {
-                resolve(draw_deck[draw_deck.length-1]);
+                resolve(draw_deck[draw_deck.length-1].action);
             }
         });
     });
