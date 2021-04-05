@@ -339,18 +339,18 @@ module.exports = function (fastify, stats_storage) {
     // Desc : prepares game data for export to client
     // Author(s) : RAk3rman
     async function get_game_export(slug, source) {
-        //Get raw game details from mongodb
+        // Get raw game details from mongodb
         let raw_game_details = await game_actions.game_details_slug(slug);
         if (raw_game_details !== null) {
-            //Determine number of exploding chickens
+            // Determine number of exploding chickens
             let ec_count = 0;
             for (let i = 0; i < raw_game_details["cards"].length; i++) {
-                //If the card is assigned to this player, add to hand
-                if (raw_game_details["cards"][i].action === "chicken" && raw_game_details["cards"][i].assignment === "draw_deck") {
+                // If the card is assigned to this player, add to hand
+                if (raw_game_details["cards"][i].action === "chicken" && raw_game_details["cards"][i].assignment !== "out_of_play") {
                     ec_count += 1;
                 }
             }
-            //Prepare pretty game details
+            // Prepare pretty game details
             let draw_deck = await card_actions.filter_cards("draw_deck", raw_game_details["cards"]);
             let pretty_game_details = {
                 players: [],
@@ -365,18 +365,18 @@ module.exports = function (fastify, stats_storage) {
                 ec_remaining: ec_count,
                 trigger: source.trim()
             }
-            //Sort and add players to json array
+            // Sort and add players to json array
             raw_game_details["players"].sort(function(a, b) {
                 return a.seat - b.seat;
             });
-            //Loop through each player
+            // Loop through each player
             for (let i = 0; i < raw_game_details["players"].length; i++) {
                 let card_array = await card_actions.filter_cards(raw_game_details["players"][i]._id, raw_game_details["cards"]);
                 // Sort card hand in reverse order
                 card_array.sort(function(a, b) {
                     return b.position - a.position;
                 });
-                //Found current player, return extended details
+                // Found current player, return extended details
                 pretty_game_details.players.push({
                     _id: raw_game_details["players"][i]._id,
                     cards: card_array,
@@ -389,9 +389,9 @@ module.exports = function (fastify, stats_storage) {
                     seat: raw_game_details["players"][i].seat,
                 });
             }
-            //Get discard deck
+            // Get discard deck
             pretty_game_details.discard_deck = await card_actions.filter_cards("discard_deck", raw_game_details["cards"]);
-            //Send game data
+            // Send game data
             return pretty_game_details;
         } else {
             return {};
