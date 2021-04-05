@@ -58,7 +58,12 @@ function sbr_update_widgets(game_details) {
         "    </div>\n" +
         "</div>";
     // Update ec count widget
-    document.getElementById("sbr_ele_ec_count").innerHTML = game_details.ec_remaining + "<a class=\"font-light\"> / " +  Math.floor((game_details.ec_remaining/game_details.cards_remaining)*100) + "% chance</a>";
+    let p_chance = 100;
+    if (game_details.cards_remaining !== 0) {
+        p_chance = Math.floor((game_details.ec_remaining/game_details.cards_remaining)*100);
+    }
+    document.getElementById("sbr_ele_ec_count").innerHTML = game_details.ec_remaining + "<a class=\"font-light\"> / " +  p_chance + "% chance</a>";
+    document.getElementById("itr_ele_ec_count").innerHTML = "<i class=\"fas fa-bomb\"></i> " + game_details.ec_remaining + "<a class=\"font-light\"> / " +  p_chance + "%</a>";
     // Update cards remaining widget
     document.getElementById("sbr_ele_cards_remain").innerHTML = game_details.cards_remaining;
 }
