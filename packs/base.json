@@ -25,22 +25,22 @@
   },
   {
     "_id": "chicken-1",
-    "file_name": "chicken-1.png",
+    "file_name": "chicken.png",
     "action": "chicken"
   },
   {
     "_id": "chicken-2",
-    "file_name": "chicken-2.png",
+    "file_name": "chicken.png",
     "action": "chicken"
   },
   {
     "_id": "chicken-3",
-    "file_name": "chicken-3.png",
+    "file_name": "chicken.png",
     "action": "chicken"
   },
   {
     "_id": "chicken-4",
-    "file_name": "chicken-4.png",
+    "file_name": "chicken.png",
     "action": "chicken"
   },
   {
