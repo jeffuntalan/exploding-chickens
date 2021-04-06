@@ -65,7 +65,7 @@ function setup_session_check(game_details) {
 function setup_user_prompt(game_details, err, nickname) {
     // Check if in game already
     if (game_details.status === "in_game") {
-        prompt_open = false;
+        user_prompt_open = false;
         Swal.fire({
             html: "<h1 class=\"text-4xl text-gray-700 mt-3\" style=\"font-family: Bebas Neue\"><a class=\"text-yellow-400\"><i class=\"fas fa-exclamation-triangle\"></i> EXPLODING</a> CHICKENS</h1>\n" +
                 "<h1 class=\"text-sm text-gray-700\">Game Code: " + game_details.slug + " | Created: " + game_details.created + "</a><br><br><a class=\"text-red-500\">" + err + "</a></h1>\n" +
@@ -76,7 +76,7 @@ function setup_user_prompt(game_details, err, nickname) {
             cancelButtonText: 'Spectate'
         })
     } else if (game_details.players.length > 5) {
-        prompt_open = false;
+        user_prompt_open = false;
         Swal.fire({
             html: "<h1 class=\"text-4xl text-gray-700 mt-3\" style=\"font-family: Bebas Neue\"><a class=\"text-yellow-400\"><i class=\"fas fa-exclamation-triangle\"></i> EXPLODING</a> CHICKENS</h1>\n" +
                 "<h1 class=\"text-sm text-gray-700\">Game Code: " + game_details.slug + " | Created: " + game_details.created + "</a><br><br><a class=\"text-red-500\">" + err + "</a></h1>\n" +
@@ -111,10 +111,10 @@ function setup_user_prompt(game_details, err, nickname) {
             if (result.isConfirmed) {
                 // Validate input
                 let selected_nickname = document.getElementById("nickname_swal").value;
-                if (selected_nickname === "" || !/^[a-zA-Z]/.test(selected_nickname)) {
-                    setup_user_prompt("<i class=\"fas fa-exclamation-triangle\"></i> Please enter a valid nickname (letters only)", "");
+                if (selected_nickname === "" || !/^[a-zA-Z]/.test(selected_nickname) || selected_nickname.length > 12) {
+                    setup_user_prompt(game_details, "<i class=\"fas fa-exclamation-triangle\"></i> Please enter a valid nickname (letters only)", "");
                 } else if (selected_avatar === "default.png") {
-                    setup_user_prompt("<i class=\"fas fa-exclamation-triangle\"></i> Please select an avatar", selected_nickname);
+                    setup_user_prompt(game_details, "<i class=\"fas fa-exclamation-triangle\"></i> Please select an avatar", selected_nickname);
                 } else {
                     // Create new player
                     socket.emit('create-player', {

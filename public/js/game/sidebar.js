@@ -136,10 +136,10 @@ function sbr_update_pstatus(game_details) {
     for (let i = 0; i < game_details.players.length; i++) {
         // Check if we found current user, append to top
         if (game_details.players[i]._id === session_user._id) {
-            document.getElementById("sbr_stat_usertop_" + game_details.players[i]._id).className = stat_dot_class(game_details.players[i].status, game_details.players[i].connection, "mx-1.5");
+            document.getElementById("sbr_stat_usertop_" + game_details.players[i]._id).className = stat_dot_class(game_details.players[i].connection, "mx-1.5");
         }
         // Update status for players element
-        document.getElementById("sbr_stat_player_dot_" + game_details.players[i]._id).className = stat_dot_class(game_details.players[i].status, game_details.players[i].connection, "mx-0.5");
+        document.getElementById("sbr_stat_player_dot_" + game_details.players[i]._id).className = stat_dot_class(game_details.players[i].connection, "mx-0.5");
         document.getElementById("sbr_stat_player_details_" + game_details.players[i]._id).innerHTML = game_details.players[i].status.charAt(0).toUpperCase() + game_details.players[i].status.slice(1) + ", " + game_details.players[i].connection;
     }
 }

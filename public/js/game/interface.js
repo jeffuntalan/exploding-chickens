@@ -23,17 +23,16 @@ function itr_update_players(game_details) {
         // Construct top player payload
         top_payload += "<img class=\"inline-block h-6 w-6 rounded-full ring-2 ring-white\" src=\"/public/avatars/" + game_details.players[i].avatar + "\" alt=\"\">";
         // Construct center player payload
-        let turns = 0;
-        if (game_details.seat_playing === game_details.players[i].seat) {
-            turns = game_details.turns_remaining;
-        }
+        let turns = game_details.seat_playing === game_details.players[i].seat ? game_details.turns_remaining : 0;
+        // Check for dead filter
+        let filter = game_details.players[i].status === "dead" ? "filter grayscale" : "";
         center_payload += "<div class=\"block text-center\">\n" +
             "    <h1 class=\"text-gray-600 font-medium text-sm\">\n" +
             "        " + game_details.players[i].nickname + " " + create_stat_dot(game_details.players[i].status, game_details.players[i].connection, "", "itr_stat_player_dot_" + game_details.players[i]._id) + "\n" +
             "    </h1>\n" +
             "    <div class=\"flex flex-col items-center -space-y-3\" id=\"itr_stat_player_halo_" + game_details.players[i]._id + "\">\n" +
-            "        <img class=\"h-12 w-12 rounded-full\" src=\"/public/avatars/" + game_details.players[i].avatar + "\" alt=\"\">\n" +
-            card_icon(game_details.players[i].card_num, turns, game_details) +
+            "        <img class=\"h-12 w-12 rounded-full " + filter + "\" src=\"/public/avatars/" + game_details.players[i].avatar + "\" alt=\"\">\n" +
+            card_icon(game_details.players[i].status === "dead" ? -1: game_details.players[i].card_num, turns, game_details) +
             "    </div>\n" +
             "</div>";
         // If we are not at the end of the number of players, indicate direction
@@ -65,7 +64,7 @@ function itr_update_players(game_details) {
 function itr_update_pstatus(game_details) {
     // Loop through each player and update status
     for (let i = 0; i < game_details.players.length; i++) {
-        document.getElementById("itr_stat_player_dot_" + game_details.players[i]._id).className = stat_dot_class(game_details.players[i].status, game_details.players[i].connection, "mx-0.5");
+        document.getElementById("itr_stat_player_dot_" + game_details.players[i]._id).className = stat_dot_class(game_details.players[i].connection, "mx-0.5");
     }
 }
 
@@ -269,15 +268,13 @@ function itr_display_winner(name, count) {
 // Name : frontend-game.create_stat_dot(status, connection, margin, id)
 // Desc : returns the html for a pulsating status dot
 function create_stat_dot(status, connection, margin, id) {
-    return "<span class=\"" + stat_dot_class(status, connection, margin) + "\" id=\"" + id + "\"></span>"
+    return "<span class=\"" + stat_dot_class(connection, margin) + "\" id=\"" + id + "\"></span>"
 }
 
-// Name : frontend-game.stat_dot_class(status, connection, margin)
+// Name : frontend-game.stat_dot_class(connection, margin)
 // Desc : returns the class for a status dot
-function stat_dot_class(status, connection, margin) {
-    if (status === "dead") {
-        return "inline-flex rounded-full h-1.5 w-1.5 mb-0.5 " + margin + " align-middle bg-red-500"
-    } else if (connection === "connected") {
+function stat_dot_class(connection, margin) {
+    if (connection === "connected") {
         return "animate-pulse inline-flex rounded-full h-1.5 w-1.5 mb-0.5 " + margin + " align-middle bg-green-500"
     } else if (connection === "offline") {
         return "animate-pulse inline-flex rounded-full h-1.5 w-1.5 mb-0.5 " + margin + " align-middle bg-yellow-500"
@@ -289,15 +286,19 @@ function stat_dot_class(status, connection, margin) {
 // Name : frontend-game.cards_icon(card_num, turns)
 // Desc : returns the html for cards in a players hand (as well as blue card for turns)
 function card_icon(card_num, turns, game_details) {
-    //Check to see if target player has any turns remaining
+    // Check to see if target player has any turns remaining
     let turns_payload = "";
     if (turns !== 0 && game_details.status === "in_game") {
         turns_payload = "<div class=\"transform inline-block rounded-md bg-blue-500 shadow-md h-5 w-4 ml-1\">\n" +
             "    <h1 class=\"text-white text-sm\">" + turns + "</h1>\n" +
             "</div>\n"
     }
-    //Determine number of cards in hand
-    if (card_num === 2) {
+    // Determine number of cards in hand
+    if (card_num === -1) {
+        return "<div class=\"inline-block\"><div class=\"-space-x-4 rotate-12 inline-block\"><div class=\"transform inline-block rounded-md bg-red-500 shadow-md h-5 w-4\">\n" +
+            "    <h1 class=\"text-white text-sm\"><i class=\"fas fa-skull-crossbones\"></i></h1>\n" +
+            "</div></div></div>\n"
+    } else if (card_num === 2) {
         return "<div class=\"inline-block\"><div class=\"-space-x-4 rotate-12 inline-block\"><div class=\"transform inline-block rounded-md bg-gray-600 shadow-md h-5 w-4 -rotate-6\"><h1 class=\"text-gray-600 text-sm\">1</h1></div>\n" +
             "<div class=\"transform inline-block rounded-md bg-gray-500 shadow-md h-5 w-4 rotate-6\">\n" +
             "    <h1 class=\"text-white text-sm\">" + card_num + "</h1>\n" +
@@ -316,7 +317,7 @@ function card_icon(card_num, turns, game_details) {
             "    <h1 class=\"text-white text-sm\">" + card_num + "</h1>\n" +
             "</div></div>" +  turns_payload + "</div>\n"
     } else {
-        return "<div class=\"inline-block\"><div class=\"-space-x-4 rotate-12 inline-block\"><div class=\"transform inline-block rounded-md bg-gray-500 shadow-md h-5 w-4\">\n" +
+        return "<div class=\"inline-block\"><div class=\"-space-x-4 rotate-12 inline-block\"><div class=\"transform inline-block rounded-md bg-yellow-500 shadow-md h-5 w-4\">\n" +
             "    <h1 class=\"text-white text-sm\">" + card_num + "</h1>\n" +
             "</div></div>" +  turns_payload + "</div>\n"
     }

@@ -346,7 +346,7 @@ module.exports = function (fastify, stats_storage) {
             let ec_count = 0;
             for (let i = 0; i < raw_game_details["cards"].length; i++) {
                 // If the card is assigned to this player, add to hand
-                if (raw_game_details["cards"][i].action === "chicken" && raw_game_details["cards"][i].assignment !== "out_of_play") {
+                if (raw_game_details["cards"][i].action === "chicken" && raw_game_details["cards"][i].assignment === "draw_deck") {
                     ec_count += 1;
                 }
             }

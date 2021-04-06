@@ -28,8 +28,6 @@ let session_user = {
 // Name : frontend-game.socket.on.{slug}-update
 // Desc : whenever an event occurs containing a game update
 socket.on(window.location.pathname.substr(6) + "-update", function (data) {
-    console.log(data);
-    console.log(data.trigger);
     // Check browser session
     setup_session_check(data);
     // Update elements based on update trigger
