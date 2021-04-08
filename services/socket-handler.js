@@ -171,11 +171,11 @@ module.exports = function (fastify, stats_storage) {
                     if (game_details.status === "in_game") {
                         // Send card id to router
                         let action_res = await game_actions.base_router(game_details, data.player_id, data.card_id, data.target, stats_storage);
-                        if (action_res === true) {
+                        if (action_res.data === "true") {
                             spinner.succeed(wipe(`${chalk.bold.blue('Socket')}: ${chalk.dim.cyan('play-card       ')} ` + socket.id + ` ${chalk.dim.yellow(data.slug)} Card action completed successfully, no callbacks`));
                             // Update clients
                             await update_game_ui(data.slug, "", "play-card       ", socket.id);
-                        } else if (action_res === "seethefuture") {
+                        } else if (action_res.trigger === "seethefuture") {
                             spinner.succeed(wipe(`${chalk.bold.blue('Socket')}: ${chalk.dim.cyan('play-card       ')} ` + socket.id + ` ${chalk.dim.yellow(data.slug)} Card action completed successfully, seethefuture callback`));
                             // Update clients
                             await update_game_ui(data.slug, "", "play-card       ", socket.id);
@@ -184,9 +184,9 @@ module.exports = function (fastify, stats_storage) {
                                 trigger: "seethefuture",
                                 payload: await card_actions.filter_cards("draw_deck", game_details["cards"])
                             });
-                        } else if (action_res === "favor_target") {
+                        } else if (action_res.trigger === "favor_target") {
                             spinner.succeed(wipe(`${chalk.bold.blue('Socket')}: ${chalk.dim.cyan('play-card       ')} ` + socket.id + ` ${chalk.dim.yellow(data.slug)} Favor callback, requesting target player`));
-                            // Trigger stf callback
+                            // Trigger favor_target callback
                             fastify.io.to(socket.id).emit(data.slug + "-callback", {
                                 trigger: "favor_target",
                                 payload: {
@@ -194,14 +194,28 @@ module.exports = function (fastify, stats_storage) {
                                     card_id: data.card_id
                                 }
                             });
-                        } else if (action_res === "winner") {
+                        } else if (action_res.trigger === "favor_taken") {
+                            spinner.succeed(wipe(`${chalk.bold.blue('Socket')}: ${chalk.dim.cyan('play-card       ')} ` + socket.id + ` ${chalk.dim.yellow(data.slug)} Favor callback, notifying player of card taken`));
+                            // Trigger favor_taken callback
+                            fastify.io.emit(data.slug + "-callback", {
+                                trigger: "favor_taken",
+                                payload: {
+                                    game_details: await get_game_export(data.slug, "play-card       "),
+                                    target_player_id: action_res.data["target_player_id"],
+                                    favor_player_name: action_res.data["favor_player_name"],
+                                    card_image_loc: action_res.data["card_image_loc"]
+                                }
+                            });
+                        } else if (action_res.trigger === "winner") {
                             // Emit reset game event and winner, update stats
                             spinner.succeed(wipe(`${chalk.bold.blue('Socket')}: ${chalk.dim.cyan('play-card       ')} ` + socket.id + ` ${chalk.dim.yellow(data.slug)} Existing game has ended, a player has won`));
                             stats_storage.set('mins_played', stats_storage.get('mins_played') + moment().diff(moment(game_details.start_time), 'minutes'));
                             await update_game_ui(data.slug, "", "reset-game      ", socket.id);
+                        } else if (action_res.trigger === "error") {
+                            spinner.fail(wipe(`${chalk.bold.blue('Socket')}: ${chalk.dim.cyan('play-card       ')} ` + socket.id + ` ${chalk.dim.yellow(data.slug)} Error while playing card: ` + action_res.data));
+                            fastify.io.to(socket.id).emit(data.slug + "-error", action_res.data);
                         } else {
-                            spinner.fail(wipe(`${chalk.bold.blue('Socket')}: ${chalk.dim.cyan('play-card       ')} ` + socket.id + ` ${chalk.dim.yellow(data.slug)} Error while playing card: ` + action_res));
-                            fastify.io.to(socket.id).emit(data.slug + "-error", action_res);
+                            spinner.fail(wipe(`${chalk.bold.blue('Socket')}: ${chalk.dim.cyan('play-card       ')} ` + socket.id + ` ${chalk.dim.yellow(data.slug)} Invalid error when playing card`));
                         }
                     } else {
                         spinner.warn(wipe(`${chalk.bold.blue('Socket')}: ${chalk.dim.cyan('play-card       ')} ` + socket.id + ` ${chalk.dim.yellow(data.slug)} Player attempted to play card while game is in lobby`));

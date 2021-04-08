@@ -74,6 +74,19 @@ exports.update_connection = async function (game_slug, player_id, p_connection) 
     })
 };
 
+// Name : player_actions.get_player(game_details, player_id)
+// Desc : return the details for a target player
+// Author(s) : RAk3rman
+exports.get_player = async function (game_details, player_id) {
+    // Find player and return details
+    for (let i = 0; i < game_details.players.length; i++) {
+        //If the card is assigned to this player, add to hand
+        if (game_details.players[i]._id === player_id) {
+            return game_details.players[i];
+        }
+    }
+}
+
 // Name : player_actions.create_hand(game_slug)
 // Desc : gives each player a defuse card and 4 random cards from the draw_deck, rations ec
 // Author(s) : RAk3rman

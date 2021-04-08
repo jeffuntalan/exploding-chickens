@@ -105,6 +105,15 @@ socket.on(window.location.pathname.substr(6) + "-callback", function (data) {
         itr_trigger_stf(data.payload);
     } else if (data.trigger === "favor_target") {
         itr_trigger_pselect(data.payload.game_details, data.payload.card_id);
+    } else if (data.trigger === "favor_taken") {
+        sbr_update_widgets(data.payload.game_details);
+        itr_update_players(data.payload.game_details);
+        itr_update_pcards(data.payload.game_details);
+        itr_update_discard(data.payload.game_details);
+        itr_update_hand(data.payload.game_details);
+        if (session_user._id === data.payload.target_player_id) {
+            itr_trigger_taken(data.payload.favor_player_name, data.payload.card_image_loc);
+        }
     }
 });
 

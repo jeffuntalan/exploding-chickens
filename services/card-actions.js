@@ -140,9 +140,9 @@ exports.verify_favor = async function (game_details, player_id, target) {
                 return true;
             }
         }
-        return "favor_target"; // Request for valid target from client
+        return {trigger: "favor_target", data: ""}; // Request for valid target from client
     } else {
-        return "You cannot ask yourself";
+        return {trigger: "error", data: "You cannot ask yourself"};
     }
 }
 
@@ -170,7 +170,7 @@ exports.ask_favor = async function (game_details, player_id, target) {
     // Determine random card
     let rand_pos = Math.floor(Math.random() * (target_hand.length - 1));
     // Create new promise for game save
-    return await new Promise((resolve, reject) => {
+    await new Promise((resolve, reject) => {
         // Update player with card that was chosen
         game.findOneAndUpdate(
             { slug: game_details.slug, "cards._id": target_hand[rand_pos]._id},
@@ -184,6 +184,7 @@ exports.ask_favor = async function (game_details, player_id, target) {
                 }
             });
     });
+    return target_hand[rand_pos];
 }
 
 // Name : card_actions.shuffle_draw_deck(game_details)

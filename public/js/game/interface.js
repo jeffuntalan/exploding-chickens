@@ -199,6 +199,24 @@ function itr_trigger_stf(top_3) {
     })
 }
 
+// Name : frontend-game.itr_trigger_taken(card_url)
+// Desc : triggers the card taken ui to appear
+function itr_trigger_taken(player_name, card_url) {
+    // Fire swal
+    Swal.fire({
+        html:
+            "<div class=\"inline-block\">" +
+            "    <h1 class=\"text-3xl font-semibold pb-1 text-white\">" + player_name + " asked for a Favor</h1>" +
+            "    <h1 class=\"text-xl font-semibold pb-5 text-white\">Looks like you got robbed</h1>" +
+            "    <div class=\"-space-x-24 rotate-12 inline-block\">" +
+            "    <div class=\"transform inline-block rounded-xl shadow-sm center-card bg-center bg-contain\" style=\"background-image: url('/" + card_url + "');width: 10.2rem;height: 14.4rem;border-radius: 1.6rem\"></div>\n" +
+            "    </div>" +
+            "</div>\n",
+        timer: 5000,
+        background: "transparent"
+    })
+}
+
 // Name : frontend-game.itr_trigger_pselect(game_details, card_id)
 // Desc : triggers the player selection ui to appear
 function itr_trigger_pselect(game_details, card_id) {
@@ -317,7 +335,7 @@ function card_icon(card_num, turns, game_details) {
             "    <h1 class=\"text-white text-sm\">" + card_num + "</h1>\n" +
             "</div></div>" +  turns_payload + "</div>\n"
     } else {
-        return "<div class=\"inline-block\"><div class=\"-space-x-4 rotate-12 inline-block\"><div class=\"transform inline-block rounded-md bg-yellow-500 shadow-md h-5 w-4\">\n" +
+        return "<div class=\"inline-block\"><div class=\"-space-x-4 rotate-12 inline-block\"><div class=\"transform inline-block rounded-md bg-gray-600 shadow-md h-5 w-4\">\n" +
             "    <h1 class=\"text-white text-sm\">" + card_num + "</h1>\n" +
             "</div></div>" +  turns_payload + "</div>\n"
     }

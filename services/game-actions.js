@@ -154,33 +154,36 @@ exports.base_router = async function (game_details, player_id, card_id, target, 
         await card_actions.attack(game_details);
         await game_actions.discard_card(game_details, card_id);
         stats_storage.set('attacks', stats_storage.get('attacks') + 1);
-        return true;
+        return {trigger: "attack", data: "true"};
     } else if (card_details.action === "chicken") { // Signals that the player is dead
         await card_actions.kill_player(game_details, player_id);
         await game_actions.discard_card(game_details, card_id);
         game_details.turns_remaining = 0;
-        let winner = await game_actions.check_winner(game_details);
-        if (winner === true) {
-            await game_actions.advance_turn(game_details);
-        }
         stats_storage.set('explosions', stats_storage.get('explosions') + 1);
-        return winner;
+        if ((await game_actions.is_winner(game_details)) === true) {
+            return {trigger: "winner", data: ""};
+        } else {
+            await game_actions.advance_turn(game_details);
+            return {trigger: "chicken", data: "true"};
+        }
     } else if (card_details.action === "defuse") {
         if (await card_actions.defuse(game_details, player_id, target) === true) {
             await game_actions.discard_card(game_details, card_id);
             await game_actions.advance_turn(game_details);
             stats_storage.set('defuses', stats_storage.get('defuses') + 1);
-            return true;
+            return {trigger: "defuse", data: "true"};
         } else {
-            return "You cannot play this card now";
+            return {trigger: "error", data: "You cannot play this card now"};
         }
     } else if (card_details.action === "favor") { // Favor, expecting target player_id
         let v_favor = await card_actions.verify_favor(game_details, player_id, target);
         if (v_favor === true) {
-            await card_actions.ask_favor(game_details, player_id, target);
+            let card_taken = await card_actions.ask_favor(game_details, player_id, target);
             await game_actions.discard_card(game_details, card_id);
             stats_storage.set('favors', stats_storage.get('favors') + 1);
-            return true;
+            return {trigger: "favor_taken", data: {
+                target_player_id: target, favor_player_name: (await player_actions.get_player(game_details, player_id)).nickname, card_image_loc: card_taken.image_loc
+            }};
         } else {
             return v_favor;
         }
@@ -194,36 +197,36 @@ exports.base_router = async function (game_details, player_id, card_id, target, 
                 await game_actions.discard_card(game_details, v_double);
                 await game_actions.discard_card(game_details, card_id);
                 stats_storage.set('favors', stats_storage.get('favors') + 1);
-                return true;
+                return {trigger: "randchick", data: "true"};
             } else {
                 return v_favor;
             }
         } else {
-            return "You must have a card of the same type";
+            return {trigger: "error", data: "You must have a card of the same type"};
         }
     } else if (card_details.action === "reverse") {
         await card_actions.reverse(game_details);
         await game_actions.discard_card(game_details, card_id);
         await game_actions.advance_turn(game_details);
         stats_storage.set('reverses', stats_storage.get('reverses') + 1);
-        return true;
+        return {trigger: "reverse", data: "true"};
     } else if (card_details.action === "seethefuture") {
         await game_actions.discard_card(game_details, card_id);
         stats_storage.set('seethefutures', stats_storage.get('seethefutures') + 1);
-        return "seethefuture";
+        return {trigger: "seethefuture", data: {}};
     } else if (card_details.action === "shuffle") {
         await card_actions.shuffle_draw_deck(game_details);
         await game_actions.discard_card(game_details, card_id);
         stats_storage.set('shuffles', stats_storage.get('shuffles') + 1);
-        return true;
+        return {trigger: "shuffle", data: "true"};
     } else if (card_details.action === "skip") {
         await game_actions.discard_card(game_details, card_id);
         await game_actions.advance_turn(game_details);
         stats_storage.set('skips', stats_storage.get('skips') + 1);
-        return true;
+        return {trigger: "skip", data: "true"};
     } else {
         // Houston, we have a problem
-        return "Invalid card";
+        return {trigger: "error", data: "Invalid card"};
     }
 }
 
@@ -276,10 +279,10 @@ exports.advance_turn = async function (game_details) {
     });
 }
 
-// Name : game_actions.check_winner(game_details)
+// Name : game_actions.is_winner(game_details)
 // Desc : check to see if there is a winner
 // Author(s) : RAk3rman
-exports.check_winner = async function (game_details) {
+exports.is_winner = async function (game_details) {
     // Count the number of active players
     let ctn = 0;
     let player_id = undefined;
@@ -305,9 +308,9 @@ exports.check_winner = async function (game_details) {
                     }
                 });
         })
-        return "winner";
-    } else {
         return true;
+    } else {
+        return false;
     }
 }
 
