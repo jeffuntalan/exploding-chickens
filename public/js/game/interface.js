@@ -199,7 +199,7 @@ function itr_trigger_stf(top_3) {
     })
 }
 
-// Name : frontend-game.itr_trigger_taken(card_url)
+// Name : frontend-game.itr_trigger_taken(player_name, card_url)
 // Desc : triggers the card taken ui to appear
 function itr_trigger_taken(player_name, card_url) {
     // Fire swal
@@ -209,10 +209,32 @@ function itr_trigger_taken(player_name, card_url) {
             "    <h1 class=\"text-3xl font-semibold pb-1 text-white\">" + player_name + " asked for a Favor</h1>" +
             "    <h1 class=\"text-xl font-semibold pb-5 text-white\">Looks like you got robbed</h1>" +
             "    <div class=\"-space-x-24 rotate-12 inline-block\">" +
-            "    <div class=\"transform inline-block rounded-xl shadow-sm center-card bg-center bg-contain\" style=\"background-image: url('/" + card_url + "');width: 10.2rem;height: 14.4rem;border-radius: 1.6rem\"></div>\n" +
+            "       <div class=\"transform inline-block rounded-xl shadow-sm center-card bg-center bg-contain\" style=\"background-image: url('/" + card_url + "');width: 10.2rem;height: 14.4rem;border-radius: 1.6rem\"></div>\n" +
             "    </div>" +
             "</div>\n",
         timer: 5000,
+        background: "transparent"
+    })
+}
+
+// Name : frontend-game.itr_trigger_chicken_pos(game_details)
+// Desc : triggers the choose chicken position ui to appear
+function itr_trigger_chicken_pos(game_details) {
+    // Fire swal
+    Swal.fire({
+        html:
+            "<div class=\"inline-block\">" +
+            "    <h1 class=\"text-3xl font-semibold pb-1 text-white\">Place the Exploding Chicken</h1>" +
+            "    <h1 class=\"text-xl font-semibold pb-5 text-white\">Choose where to put the card in the deck</h1>" +
+            "    <div class=\"inline-block\">" +
+            "       <div class=\"transform inline-block rounded-xl shadow-sm center-card bg-center bg-contain\" style=\"background-image: url('/public/cards/card_back.png');width: 10.2rem;height: 14.4rem;border-radius: 1.6rem\"></div>\n" +
+            "    </div>" +
+            "    <div class=\"inline-block\">" +
+            "       <div class=\"transform inline-block rounded-xl shadow-sm center-card bg-center bg-contain\" style=\"width: 10.2rem;height: 14.4rem;border-radius: 1.6rem\">" +
+            "           <h1 class=\"text-gray-400 font-bold flex items-center justify-center center-card-text\">Discard Pile</h1>" +
+            "       </div>\n" +
+            "    </div>" +
+            "</div>\n",
         background: "transparent"
     })
 }

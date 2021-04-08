@@ -94,6 +94,7 @@ socket.on(window.location.pathname.substr(6) + "-update", function (data) {
         itr_update_players(data);
         itr_update_discard(data);
         itr_update_hand(data);
+        //itr_trigger_chicken_pos();
     }
 });
 
