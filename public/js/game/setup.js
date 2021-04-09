@@ -176,5 +176,4 @@ function setup_select_option(avatar) {
     // Update new selection
     selected_avatar = avatar;
     document.getElementById(selected_avatar).className = "h-16 w-16 rounded-full ring-2 ring-offset-2 ring-green-500";
-
 }

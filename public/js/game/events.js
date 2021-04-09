@@ -94,7 +94,6 @@ socket.on(window.location.pathname.substr(6) + "-update", function (data) {
         itr_update_players(data);
         itr_update_discard(data);
         itr_update_hand(data);
-        //itr_trigger_chicken_pos();
     }
 });
 
@@ -106,6 +105,8 @@ socket.on(window.location.pathname.substr(6) + "-callback", function (data) {
         itr_trigger_stf(data.payload);
     } else if (data.trigger === "favor_target") {
         itr_trigger_pselect(data.payload.game_details, data.payload.card_id);
+    } else if (data.trigger === "chicken_target") {
+        itr_trigger_chicken_target(parseInt(data.payload.max_pos), data.payload.card_id);
     } else if (data.trigger === "favor_taken") {
         sbr_update_widgets(data.payload.game_details);
         itr_update_players(data.payload.game_details);

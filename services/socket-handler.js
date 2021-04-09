@@ -194,6 +194,16 @@ module.exports = function (fastify, stats_storage) {
                                     card_id: data.card_id
                                 }
                             });
+                        } else if (action_res.trigger === "chicken_target") {
+                            spinner.succeed(wipe(`${chalk.bold.blue('Socket')}: ${chalk.dim.cyan('play-card       ')} ` + socket.id + ` ${chalk.dim.yellow(data.slug)} Chicken placement callback, requesting target position`));
+                            // Trigger favor_target callback
+                            fastify.io.to(socket.id).emit(data.slug + "-callback", {
+                                trigger: "chicken_target",
+                                payload: {
+                                    max_pos: action_res.data["max_pos"],
+                                    card_id: action_res.data["card_id"]
+                                }
+                            });
                         } else if (action_res.trigger === "favor_taken") {
                             spinner.succeed(wipe(`${chalk.bold.blue('Socket')}: ${chalk.dim.cyan('play-card       ')} ` + socket.id + ` ${chalk.dim.yellow(data.slug)} Favor callback, notifying player of card taken`));
                             // Trigger favor_taken callback

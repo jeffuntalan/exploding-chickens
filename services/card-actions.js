@@ -72,20 +72,11 @@ exports.kill_player = async function (game_details, player_id) {
     });
 }
 
-// Name : card_actions.defuse(game_details, player_id, target)
+// Name : card_actions.defuse(game_details, player_id, target, card_id)
 // Desc : removes exploding chicken from hand and inserts randomly in deck
 // Author(s) : RAk3rman
-exports.defuse = async function (game_details, player_id, target) {
-    // Verify player is exploding
-    for (let i = 0; i <= game_details.players.length - 1; i++) {
-        if (game_details.players[i]._id === player_id) {
-            if (game_details.players[i].status !== "exploding") {
-                return false;
-            }
-            i = game_details.players.length;
-        }
-    }
-    // TEMP: Loop through each card to create array
+exports.defuse = async function (game_details, player_id, target, card_id) {
+    // Verify target
     let ctn = 0;
     for (let i = 0; i <= game_details.cards.length - 1; i++) {
         // Increment draw deck count
@@ -93,17 +84,29 @@ exports.defuse = async function (game_details, player_id, target) {
             ctn++;
         }
     }
-    // Determine random position
-    let rand_pos = Math.floor(Math.random() * ctn);
+    if (target < 0 || ctn < target || target === "") {
+        return {trigger: "chicken_target", data: {
+            max_pos: ctn, card_id: card_id
+        }};
+    }
+    // Verify player is exploding
+    for (let i = 0; i <= game_details.players.length - 1; i++) {
+        if (game_details.players[i]._id === player_id) {
+            if (game_details.players[i].status !== "exploding") {
+                return {trigger: "error", data: "You cannot play this card now"};
+            }
+            i = game_details.players.length;
+        }
+    }
     // Loop through each card to create array
     for (let i = 0; i <= game_details.cards.length - 1; i++) {
         // Find chicken that is assigned to target player
         if (game_details.cards[i].assignment === player_id && game_details.cards[i].action === "chicken") {
             game_details.cards[i].assignment = "draw_deck";
-            game_details.cards[i].position = rand_pos;
+            game_details.cards[i].position = ctn - target;
         }
         // Add to new array
-        if (game_details.cards[i].assignment === "draw_deck" && game_details.cards[i].position >= rand_pos) {
+        if (game_details.cards[i].assignment === "draw_deck" && game_details.cards[i].position >= ctn - target) {
             game_details.cards[i].position++;
         }
     }

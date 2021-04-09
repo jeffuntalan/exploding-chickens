@@ -167,13 +167,14 @@ exports.base_router = async function (game_details, player_id, card_id, target, 
             return {trigger: "chicken", data: "true"};
         }
     } else if (card_details.action === "defuse") {
-        if (await card_actions.defuse(game_details, player_id, target) === true) {
+        let defuse_stat = await card_actions.defuse(game_details, player_id, target, card_id);
+        if (defuse_stat === true) {
             await game_actions.discard_card(game_details, card_id);
             await game_actions.advance_turn(game_details);
             stats_storage.set('defuses', stats_storage.get('defuses') + 1);
             return {trigger: "defuse", data: "true"};
         } else {
-            return {trigger: "error", data: "You cannot play this card now"};
+            return defuse_stat;
         }
     } else if (card_details.action === "favor") { // Favor, expecting target player_id
         let v_favor = await card_actions.verify_favor(game_details, player_id, target);

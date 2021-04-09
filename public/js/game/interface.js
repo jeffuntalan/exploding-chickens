@@ -110,7 +110,7 @@ function itr_update_hand(game_details) {
                 }
                 // Check if chicken is active
                 if (game_details.players[i].cards[j].action === "chicken") {
-                    itr_trigger_exp(10, game_details.players[i].cards[j]._id, true);
+                    itr_trigger_exp(15, game_details.players[i].cards[j]._id, true);
                     session_user.can_draw = false;
                 }
                 payload += "<div class=\"rounded-xl shadow-sm bottom-card bg-center bg-contain\" onclick=\"" + play_card_funct + "\" style=\"background-image: url('/" + game_details.players[i].cards[j].image_loc + "')\"></div>";
@@ -130,7 +130,7 @@ function itr_update_hand(game_details) {
         } else {
             // Check if chicken is active
             if (game_details.players[i].status === "exploding") {
-                itr_trigger_exp(10, false, true);
+                itr_trigger_exp(15, false, true);
             }
         }
     }
@@ -217,26 +217,92 @@ function itr_trigger_taken(player_name, card_url) {
     })
 }
 
-// Name : frontend-game.itr_trigger_chicken_pos(game_details)
+// Name : frontend-game.itr_trigger_chicken_target(game_details)
 // Desc : triggers the choose chicken position ui to appear
-function itr_trigger_chicken_pos(game_details) {
+function itr_trigger_chicken_target(max_pos, card_id) {
     // Fire swal
     Swal.fire({
         html:
             "<div class=\"inline-block\">" +
             "    <h1 class=\"text-3xl font-semibold pb-1 text-white\">Place the Exploding Chicken</h1>" +
-            "    <h1 class=\"text-xl font-semibold pb-5 text-white\">Choose where to put the card in the deck</h1>" +
-            "    <div class=\"inline-block\">" +
-            "       <div class=\"transform inline-block rounded-xl shadow-sm center-card bg-center bg-contain\" style=\"background-image: url('/public/cards/card_back.png');width: 10.2rem;height: 14.4rem;border-radius: 1.6rem\"></div>\n" +
-            "    </div>" +
-            "    <div class=\"inline-block\">" +
-            "       <div class=\"transform inline-block rounded-xl shadow-sm center-card bg-center bg-contain\" style=\"width: 10.2rem;height: 14.4rem;border-radius: 1.6rem\">" +
-            "           <h1 class=\"text-gray-400 font-bold flex items-center justify-center center-card-text\">Discard Pile</h1>" +
-            "       </div>\n" +
+            "    <h1 class=\"text-xl font-semibold pb-5 text-white\">Use the toggles below to rig the deck</h1>" +
+            "    <div class=\"inline-block sm:flex items-center justify-center\">\n" +
+            "        <div class=\"rounded-xl shadow-lg center-card bg-center bg-contain\" style=\"background-image: url('/public/cards/base/chicken.png');width: 12rem;height: 16.9rem;border-radius: 1.8rem\"></div>\n" +
+            "        <div class=\"mt-0 sm:ml-3\">" +
+            "            <button onclick=\"place_chicken('" + card_id + "', 'random', '" + max_pos + "')\" class=\"mb-2 w-48 h-12 bg-yellow-500 hover:bg-yellow-600 text-white text-lg font-semibold border border-transparent rounded-xl focus:outline-none transition-colors duration-200\">\n" +
+            "                 <i class=\"fas fa-random pr-2\"></i>Place Randomly\n" +
+            "            </button>\n" +
+            "            <div class=\"bg-transparent mb-2\">\n" +
+            "                <div class=\"flex justify-center items-center\">\n" +
+            "                    <div class=\"relative\">\n" +
+            "                        <input type=\"text\" class=\"h-12 w-48 pl-4 pr-20 font-semibold rounded-xl text-lg z-0 text-white bg-transparent border-2 border-gray-500 focus:outline-none\">\n" +
+            "                        <div class=\"absolute top-0 left-0\">\n" +
+            "                            <button class=\"h-12 w-24 text-white text-3xl font-semibold rounded-l-xl bg-green-500 hover:bg-green-600 focus:outline-none\" onclick=\"_itr_dec_chicken_pos('" + max_pos + "')\"><i class=\"fas fa-caret-up\"></i></button>\n" +
+            "                        </div>\n" +
+            "                        <div class=\"absolute top-0 right-0\">\n" +
+            "                            <button class=\"h-12 w-24 text-white text-3xl font-semibold rounded-r-xl bg-red-500 hover:bg-red-600 focus:outline-none\" onclick=\"_itr_inc_chicken_pos('" + max_pos + "')\"><i class=\"fas fa-caret-down\"></i></button>\n" +
+            "                        </div>\n" +
+            "                    </div>\n" +
+            "                </div>\n" +
+            "            </div>" +
+            "            <button id=\"custom_chicken_pos\" onclick=\"place_chicken('" + card_id + "', 'custom', '" + max_pos + "')\" class=\"w-48 h-12 bg-purple-500 hover:bg-purple-600 text-white text-lg font-semibold border border-transparent rounded-xl focus:outline-none transition-colors duration-200\">\n" +
+            "                 Place on Top\n" +
+            "            </button>\n" +
+            "        </div>" +
             "    </div>" +
             "</div>\n",
-        background: "transparent"
+        background: "transparent",
+        showConfirmButton: false,
+        allowOutsideClick: false,
     })
+}
+
+// Name : frontend-game._itr_inc_chicken_pos(max_pos)
+// Desc : increments the # of cards deep in the chicken pos ui
+function _itr_inc_chicken_pos(max_pos) {
+    let cur = document.getElementById("custom_chicken_pos").innerHTML.trim();
+    if (cur === "Place on Top" && max_pos === 1) {
+        document.getElementById("custom_chicken_pos").innerHTML = "Place on Bottom";
+    } else if (cur === "Place on Top" && max_pos > 1) {
+        document.getElementById("custom_chicken_pos").innerHTML = "Place 1 Card Deep";
+    } else if (cur !== "Place on Bottom" && max_pos > parseInt(cur.substr(6,2)) + 1) {
+        document.getElementById("custom_chicken_pos").innerHTML = "Place " + (parseInt(cur.substr(6,2)) + 1) + " Cards Deep";
+    } else if (cur !== "Place on Bottom" && max_pos > parseInt(cur.substr(6,2))) {
+        document.getElementById("custom_chicken_pos").innerHTML = "Place on Bottom";
+    }
+}
+
+// Name : frontend-game._itr_dec_chicken_pos(max_pos)
+// Desc : decrements the # of cards deep in the chicken pos ui
+function _itr_dec_chicken_pos(max_pos) {
+    let cur = document.getElementById("custom_chicken_pos").innerHTML.trim();
+    let cur_place = parseInt(cur.substr(6,2));
+    if ((max_pos <= 1 || cur_place === 1) && cur !== "Place on Top") {
+        document.getElementById("custom_chicken_pos").innerHTML = "Place on Top";
+    } else if ((max_pos <= 2 || cur_place === 2) && cur !== "Place on Top") {
+        document.getElementById("custom_chicken_pos").innerHTML = "Place 1 Card Deep";
+    } else if (cur_place > 2) {
+        document.getElementById("custom_chicken_pos").innerHTML = "Place " + (parseInt(cur.substr(6,2)) - 1) + " Cards Deep";
+    } else if (cur === "Place on Bottom") {
+        document.getElementById("custom_chicken_pos").innerHTML = "Place " + (max_pos - 1) + " Cards Deep";
+    }
+}
+
+// Name : frontend-game.place_chicken(card_id, source, max_pos)
+// Desc : emits the play-card event when a card in the players hand is clicked
+function place_chicken(card_id, source, max_pos) {
+    let position = Math.floor(Math.random() * (parseInt(max_pos) + 1));
+    if (source === "custom") {
+        let cur = document.getElementById("custom_chicken_pos").innerHTML.trim();
+        if (cur === "Place on Top") {
+            position = 0;
+        } else if (cur === "Place on Bottom") {
+            position = max_pos
+        } else {
+            position = parseInt(cur.substr(6,2));
+        }
+    }
+    play_card(card_id, position);
 }
 
 // Name : frontend-game.itr_trigger_pselect(game_details, card_id)
