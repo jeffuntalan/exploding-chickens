@@ -76,6 +76,15 @@ exports.kill_player = async function (game_details, player_id) {
 // Desc : removes exploding chicken from hand and inserts randomly in deck
 // Author(s) : RAk3rman
 exports.defuse = async function (game_details, player_id, target, card_id) {
+    // Verify player is exploding
+    for (let i = 0; i <= game_details.players.length - 1; i++) {
+        if (game_details.players[i]._id === player_id) {
+            if (game_details.players[i].status !== "exploding") {
+                return {trigger: "error", data: "You cannot play this card now"};
+            }
+            i = game_details.players.length;
+        }
+    }
     // Verify target
     let ctn = 0;
     for (let i = 0; i <= game_details.cards.length - 1; i++) {
@@ -88,15 +97,6 @@ exports.defuse = async function (game_details, player_id, target, card_id) {
         return {trigger: "chicken_target", data: {
             max_pos: ctn, card_id: card_id
         }};
-    }
-    // Verify player is exploding
-    for (let i = 0; i <= game_details.players.length - 1; i++) {
-        if (game_details.players[i]._id === player_id) {
-            if (game_details.players[i].status !== "exploding") {
-                return {trigger: "error", data: "You cannot play this card now"};
-            }
-            i = game_details.players.length;
-        }
     }
     // Loop through each card to create array
     for (let i = 0; i <= game_details.cards.length - 1; i++) {
