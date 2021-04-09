@@ -72,7 +72,7 @@
                     <span class="relative inline-flex">
                         {{! Active users }}
                         <div class="text-lg font-bold truncate text-gray-700 py-2" id="itr_ele_ec_count"></div>
-                        <div class="inline-flex items-center -space-x-1 overflow-hidden p-2" id="itr_ele_players_top"></div>
+                        <div class="inline-flex items-center -space-x-1 overflow-hidden p-2 hidden sm:block" id="itr_ele_players_top"></div>
                         {{! Slide over button }}
                         <button @click="sidebar_open = true" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white">
                             <svg class="block h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
@@ -168,11 +168,11 @@
                             <div style="width: 40%" id="sbr_ele_status">
                                 <div class="widget w-full p-2.5 rounded-lg bg-white border border-gray-100">
                                     <div class="flex flex-row items-center justify-between">
-                                        <div class="flex flex-col">
+                                        <div class="flex flex-col text-left">
                                             <div class="text-xs uppercase text-gray-500 truncate">
                                                 Status
                                             </div>
-                                            <div class="text-lg font-bold truncate">
+                                            <div class="text-lg font-bold">
                                                 ...
                                             </div>
                                         </div>
@@ -274,7 +274,7 @@
                                 </h3>
                                 <div class="mt-1 flex flex-col sm:flex-row sm:flex-wrap sm:mt-0 sm:space-x-6">
                                     <div class="flex items-center text-sm text-gray-500">
-                                        52 cards, 5 actions
+                                        51 cards, 9 actions
                                     </div>
                                 </div>
                             </div>

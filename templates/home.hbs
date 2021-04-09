@@ -76,9 +76,9 @@
                             <div class="absolute sm:top-4 top-3 left-3">
                                 <i class="fa fa-search text-gray-400 z-20 hover:text-gray-400"></i>
                             </div>
-                            <input type="text" id="game_slug" class="sm:h-14 h-12 sm:w-96 w-80 pl-10 pr-20 rounded-xl text-lg z-0 bg-transparent text-gray-100 border-2 border-gray-500 focus:outline-none" placeholder="Enter a game code...">
+                            <input type="text" id="game_slug" class="sm:h-14 h-12 sm:w-96 w-80 pl-9 pr-20 rounded-xl text-lg z-0 bg-transparent text-gray-100 border-2 border-gray-500 focus:outline-none" placeholder="Enter a game code...">
                             <div class="absolute top-0 right-0">
-                                <button class="sm:h-14 h-12 w-28 text-gray-100 font-semibold rounded-r-xl border-2 border-gray-500 hover:bg-red-600 duration-300 ease-in-out focus:outline-none" onclick="join_game()">Join Game</button>
+                                <button class="sm:h-14 h-12 w-28 text-gray-100 font-semibold rounded-r-xl border-2 border-gray-500 bg-red-600 hover:bg-red-700 focus:outline-none" onclick="join_game()">Join Game</button>
                             </div>
                         </div>
                     </div>
@@ -86,7 +86,7 @@
             </div>
         </div>
         {{! UI Demo }}
-        <div class="w-full xl:w-3/5 p-6 pt-20 overflow-hidden">
+        <div class="w-full xl:w-3/5 p-2 sm:p-6 pt-20 overflow-hidden">
             <img class="mx-auto w-full md:w-11/12 transform -rotate-6 transition hover:scale-105 duration-700 ease-in-out hover:-rotate-3" src="/public/game_ui.png" />
         </div>
         {{! How to Play }}
@@ -301,7 +301,7 @@
         <div class="w-full pt-16 pb-12 text-sm text-center md:text-left fade-in">
             <h1 class="text-white opacity-80 pb-1 md:float-left md:mr-1">Exploding Chickens <script>document.write(new Date().getFullYear())</script>.</h1>
             <h1 class="text-white opacity-80 pb-1 md:float-left">Made with <i class="fas fa-heart text-red-500"></i> by our <a class="text-blue-400" href="https://github.com/rak3rman/exploding-chickens" target="_blank">contributors</a>.</h1>
-            <h2 class="text-white opacity-80 pb-1 md:float-right">Release v{{ version }}</h2>
+            <h1 class="text-white opacity-80 pb-1 md:float-right">Release v{{ version }}</h1>
         </div>
     </div>
 </div>

@@ -177,14 +177,14 @@ function itr_trigger_stf(top_3) {
     let card_payload;
     // Check number of cards left in deck, prepare payload
     if (top_3.length > 2) {
-        card_payload = "<div class=\"transform inline-block rounded-xl shadow-sm center-card bg-center bg-contain -rotate-12\" style=\"background-image: url('/" + top_3[top_3.length - 1].image_loc + "');width: 10.2rem;height: 14.4rem;border-radius: 1.6rem\"></div>\n" +
-            "<div class=\"transform inline-block rounded-xl shadow-sm center-card bg-center bg-contain mb-2\" style=\"background-image: url('/" + top_3[top_3.length - 2].image_loc + "');width: 10.2rem;height: 14.4rem;border-radius: 1.6rem\"></div>\n" +
-            "<div class=\"transform inline-block rounded-xl shadow-sm bottom-card bg-center bg-contain rotate-12\" style=\"background-image: url('/" + top_3[top_3.length - 3].image_loc + "');width: 10.2rem;height: 14.4rem;border-radius: 1.6rem\"></div>\n";
+        card_payload = "<div class=\"transform inline-block rounded-xl shadow-sm center-card bg-center bg-contain mt-2 -rotate-12\" style=\"background-image: url('/" + top_3[top_3.length - 1].image_loc + "')\"></div>\n" +
+            "<div class=\"transform inline-block rounded-xl shadow-sm center-card bg-center bg-contain mb-2\" style=\"background-image: url('/" + top_3[top_3.length - 2].image_loc + "')\"></div>\n" +
+            "<div class=\"transform inline-block rounded-xl shadow-sm center-card bg-center bg-contain mt-2 rotate-12\" style=\"background-image: url('/" + top_3[top_3.length - 3].image_loc + "')\"></div>\n";
     } else if (top_3.length > 1) {
-        card_payload = "<div class=\"transform inline-block rounded-xl shadow-sm center-card bg-center bg-contain -rotate-6\" style=\"background-image: url('/" + top_3[top_3.length - 1].image_loc + "');width: 10.2rem;height: 14.4rem;border-radius: 1.6rem\"></div>\n" +
-            "<div class=\"transform inline-block rounded-xl shadow-sm center-card bg-center bg-contain rotate-6\" style=\"background-image: url('/" + top_3[top_3.length - 2].image_loc + "');width: 10.2rem;height: 14.4rem;border-radius: 1.6rem\"></div>\n";
+        card_payload = "<div class=\"transform inline-block rounded-xl shadow-sm center-card bg-center bg-contain -rotate-6\" style=\"background-image: url('/" + top_3[top_3.length - 1].image_loc + "')\"></div>\n" +
+            "<div class=\"transform inline-block rounded-xl shadow-sm center-card bg-center bg-contain rotate-6\" style=\"background-image: url('/" + top_3[top_3.length - 2].image_loc + "')\"></div>\n";
     } else if (top_3.length > 0) {
-        card_payload = "<div class=\"transform inline-block rounded-xl shadow-sm center-card bg-center bg-contain\" style=\"background-image: url('/" + top_3[top_3.length - 1].image_loc + "');width: 10.2rem;height: 14.4rem;border-radius: 1.6rem\"></div>\n";
+        card_payload = "<div class=\"transform inline-block rounded-xl shadow-sm center-card bg-center bg-contain\" style=\"background-image: url('/" + top_3[top_3.length - 1].image_loc + "')\"></div>\n";
     }
     // Fire swal
     Swal.fire({
@@ -196,8 +196,9 @@ function itr_trigger_stf(top_3) {
             card_payload +
             "    </div>" +
             "</div>\n",
-        timer: 5000,
-        background: "transparent"
+        // timer: 5000,
+        background: "transparent",
+        padding: '0'
     })
 }
 
@@ -230,7 +231,7 @@ function itr_trigger_chicken_target(max_pos, card_id) {
             "    <h1 class=\"text-xl font-semibold pb-5 text-white\">Use the toggles below to rig the deck</h1>" +
             "    <div class=\"inline-block sm:flex items-center justify-center\">\n" +
             "        <div class=\"rounded-xl shadow-lg center-card bg-center bg-contain\" style=\"background-image: url('/public/cards/base/chicken.png');width: 12rem;height: 16.9rem;border-radius: 1.8rem\"></div>\n" +
-            "        <div class=\"mt-0 sm:ml-3\">" +
+            "        <div class=\"mt-2 sm:ml-3\">" +
             "            <button onclick=\"place_chicken('" + card_id + "', 'random', '" + max_pos + "')\" class=\"mb-2 w-48 h-12 bg-yellow-500 hover:bg-yellow-600 text-white text-lg font-semibold border border-transparent rounded-xl focus:outline-none transition-colors duration-200\">\n" +
             "                 <i class=\"fas fa-random pr-2\"></i>Place Randomly\n" +
             "            </button>\n" +
@@ -267,9 +268,9 @@ function _itr_inc_chicken_pos(max_pos) {
         document.getElementById("custom_chicken_pos").innerHTML = "Place on Bottom";
     } else if (cur === "Place on Top" && max_pos > 1) {
         document.getElementById("custom_chicken_pos").innerHTML = "Place 1 Card Deep";
-    } else if (cur !== "Place on Bottom" && max_pos > parseInt(cur.substr(6,2)) + 1) {
+    } else if (cur !== "Place on Bottom" && max_pos >= parseInt(cur.substr(6,2)) + 1) {
         document.getElementById("custom_chicken_pos").innerHTML = "Place " + (parseInt(cur.substr(6,2)) + 1) + " Cards Deep";
-    } else if (cur !== "Place on Bottom" && max_pos > parseInt(cur.substr(6,2))) {
+    } else if (cur !== "Place on Bottom" && max_pos >= parseInt(cur.substr(6,2))) {
         document.getElementById("custom_chicken_pos").innerHTML = "Place on Bottom";
     }
 }

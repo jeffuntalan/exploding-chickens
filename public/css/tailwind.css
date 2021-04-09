@@ -1304,10 +1304,6 @@ video {
   padding: 0.75rem;
 }
 
-.p-6 {
-  padding: 1.5rem;
-}
-
 .p-2\.5 {
   padding: 0.625rem;
 }
@@ -1398,6 +1394,10 @@ video {
 
 .pb-5 {
   padding-bottom: 1.25rem;
+}
+
+.pl-9 {
+  padding-left: 2.25rem;
 }
 
 .pt-10 {
@@ -1989,6 +1989,14 @@ video {
     margin-left: calc(1.5rem * calc(1 - var(--tw-space-x-reverse)));
   }
 
+  .sm\:block {
+    display: block;
+  }
+
+  .sm\:inline-block {
+    display: inline-block;
+  }
+
   .sm\:flex {
     display: flex;
   }
@@ -2015,6 +2023,10 @@ video {
 
   .sm\:-ml-10 {
     margin-left: -2.5rem;
+  }
+
+  .sm\:p-6 {
+    padding: 1.5rem;
   }
 
   .sm\:px-0 {
