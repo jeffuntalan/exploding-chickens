@@ -194,11 +194,13 @@ exports.base_router = async function (game_details, player_id, card_id, target, 
         if (v_double !== false) {
             let v_favor = await card_actions.verify_favor(game_details, player_id, target);
             if (v_favor === true) {
-                await card_actions.ask_favor(game_details, player_id, target);
+                let card_taken = await card_actions.ask_favor(game_details, player_id, target);
                 await game_actions.discard_card(game_details, v_double);
                 await game_actions.discard_card(game_details, card_id);
                 stats_storage.set('favors', stats_storage.get('favors') + 1);
-                return {trigger: "randchick", data: "true"};
+                return {trigger: "favor_taken", data: {
+                    target_player_id: target, favor_player_name: (await player_actions.get_player(game_details, player_id)).nickname, card_image_loc: card_taken.image_loc
+                }};
             } else {
                 return v_favor;
             }

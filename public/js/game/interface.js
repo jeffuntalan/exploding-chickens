@@ -77,7 +77,9 @@ function itr_update_pcards(game_details) {
         if (game_details.seat_playing === game_details.players[i].seat) {
             turns = game_details.turns_remaining;
         }
-        document.getElementById("itr_stat_player_halo_" + game_details.players[i]._id).innerHTML = "<img class=\"h-12 w-12 rounded-full\" src=\"/public/avatars/" + game_details.players[i].avatar + "\" alt=\"\">\n" + card_icon(game_details.players[i].status === "dead" ? -1: game_details.players[i].card_num, turns, game_details);
+        // Check for dead filter
+        let filter = game_details.players[i].status === "dead" ? "filter grayscale" : "";
+        document.getElementById("itr_stat_player_halo_" + game_details.players[i]._id).innerHTML = "<img class=\"h-12 w-12 rounded-full " + filter + "\" src=\"/public/avatars/" + game_details.players[i].avatar + "\" alt=\"\">\n" + card_icon(game_details.players[i].status === "dead" ? -1: game_details.players[i].card_num, turns, game_details);
     }
 }
 
