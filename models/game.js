@@ -13,6 +13,7 @@ const { uniqueNamesGenerator, adjectives, colors, animals } = require('unique-na
 // Imported schemas
 let player = require('../models/player.js');
 let card = require('../models/card.js');
+let event = require('../models/event.js');
 
 // Game schema
 let gameSchema = mongoose.Schema({
@@ -49,8 +50,9 @@ let gameSchema = mongoose.Schema({
         default: Date.now
     },
     players: [player],
-    cards: [card]
+    cards: [card],
+    events: [event]
 });
 
-//Export game model
+// Export game model
 module.exports = mongoose.model('game', gameSchema);

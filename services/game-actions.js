@@ -5,7 +5,7 @@ Desc     : all actions and helper functions
 Author(s): RAk3rman
 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\*/
 
-//Packages
+// Packages
 let game = require('../models/game.js');
 const ora = require('ora');
 const chalk = require('chalk');
@@ -27,7 +27,7 @@ let player_actions = require('./player-actions.js');
 // Desc : creates a new game in mongodb, returns game details
 // Author(s) : RAk3rman
 exports.create_game = async function () {
-    //Create new promise and return created_game after saved
+    // Create new promise and return created_game after saved
     return await new Promise((resolve, reject) => {
         game.create({
            slug: uniqueNamesGenerator({dictionaries: [adjectives, animals, colors], separator: '-', length: 2})
@@ -45,7 +45,7 @@ exports.create_game = async function () {
 // Desc : returns the details for a game slug
 // Author(s) : RAk3rman
 exports.game_details_slug = async function (slug) {
-    //Create new promise and return found_game after saved
+    // Create new promise and return found_game after saved
     return await new Promise((resolve, reject) => {
         game.findOne({ slug: slug }, function (err, found_game) {
             if (err) {
@@ -61,7 +61,7 @@ exports.game_details_slug = async function (slug) {
 // Desc : returns the details for a game id
 // Author(s) : RAk3rman
 exports.game_details_id = async function (_id) {
-    //Create new promise and return found_game after saved
+    // Create new promise and return found_game after saved
     return await new Promise((resolve, reject) => {
         game.findOne({ _id: _id }, function (err, found_game) {
             if (err) {
@@ -73,15 +73,15 @@ exports.game_details_id = async function (_id) {
     });
 }
 
-// Name : game_actions.import_cards(game_id, pack_loc))
+// Name : game_actions.import_cards(game_id, pack_loc)
 // Desc : bulk import cards via json file
 // Author(s) : RAk3rman
 exports.import_cards = async function (game_id, pack_loc) {
-    //Get game details
+    // Get game details
     let game_details = await game_actions.game_details_id(game_id);
-    //Get json array of cards
+    // Get json array of cards
     let pack_array = require(pack_loc);
-    //Loop through each json value and add card
+    // Loop through each json value and add card
     for (let i = 1; i <= pack_array.length - 1; i++) {
         game_details.cards.push({
             _id: pack_array[i]._id,
@@ -89,14 +89,16 @@ exports.import_cards = async function (game_id, pack_loc) {
             action: pack_array[i].action, position: i
         });
     }
-    //Create new promise
+    // Save event
+    game_details = await game_actions.log_event(game_details, "import_cards", "");
+    // Create new promise
     return await new Promise((resolve, reject) => {
-        //Save existing game
+        // Save existing game
         game_details.save(function (err) {
             if (err) {
                 reject(err);
             } else {
-                //Resolve promise when the last card has been pushed
+                // Resolve promise when the last card has been pushed
                 resolve(pack_array.length - 1);
             }
         });
@@ -130,6 +132,8 @@ exports.draw_card = async function (game_details, player_id) {
             break;
         }
     }
+    // Save event
+    game_details = await game_actions.log_event(game_details, "draw_card", "");
     // Create new promise to save game
     return await new Promise((resolve, reject) => {
         // Save updated game
@@ -161,12 +165,6 @@ exports.base_router = async function (game_details, player_id, card_id, target, 
         game_details.turns_remaining = 0;
         stats_storage.set('explosions', stats_storage.get('explosions') + 1);
         if ((await game_actions.is_winner(game_details)) === true) {
-            // let play_time = stats_storage.get('mins_played') + moment().diff(moment(game_details.start_time), 'minutes');
-            // if (play_time > 1) { // Attempt to catch spamming reset
-            //     stats_storage.set('mins_played', stats_storage.get('mins_played') + moment().diff(moment(game_details.start_time), 'minutes'));
-            // } else {
-            //     stats_storage.set('games_played', stats_storage.get('games_played') - 1);
-            // }
             stats_storage.set('mins_played', stats_storage.get('mins_played') + moment().diff(moment(game_details.start_time), 'minutes'));
             return {trigger: "winner", data: ""};
         } else {
@@ -276,6 +274,8 @@ exports.advance_turn = async function (game_details) {
     } else { // Multiple turns left, player seat remains the same and turns_remaining decreases by one
         game_details.turns_remaining--;
     }
+    // Save event
+    game_details = await game_actions.log_event(game_details, "advance_turn", "");
     // Create new promise to save game
     return await new Promise((resolve, reject) => {
         // Save updated game
@@ -342,6 +342,8 @@ exports.reset_game = async function (game_details, player_status, game_status) {
     game_details.seat_playing = 0;
     game_details.turns_remaining = 1;
     game_details.status = game_status;
+    // Save event
+    game_details = await game_actions.log_event(game_details, "reset_game", "");
     // Create new promise for game save
     await new Promise((resolve, reject) => {
         //Save updated game
@@ -350,6 +352,22 @@ exports.reset_game = async function (game_details, player_status, game_status) {
                 reject(err);
             } else {
                 resolve();
+            }
+        });
+    });
+}
+
+// Name : game_actions.delete_game(game_id)
+// Desc : deletes a existing game in mongodb, returns game_id
+// Author(s) : RAk3rman
+exports.delete_game = async function (game_id) {
+    // Create new promise and return game_id after deleted
+    return await new Promise((resolve, reject) => {
+        game.deleteOne({ _id: game_id }, function (err) {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(game_id);
             }
         });
     });
@@ -386,18 +404,20 @@ exports.game_purge = async function (debug) {
     })
 }
 
-// Name : game_actions.delete_game(game_id)
-// Desc : deletes a existing game in mongodb, returns game_id
+// Name : game_actions.log_event(game_details, event, player_id)
+// Desc : creates a new event and returns the game details, unsaved
 // Author(s) : RAk3rman
-exports.delete_game = async function (game_id) {
-    //Create new promise and return delete_game _id after deleted
-    return await new Promise((resolve, reject) => {
-        game.deleteOne({ _id: game_id }, function (err) {
-            if (err) {
-                reject(err);
-            } else {
-                resolve(game_id);
-            }
-        });
+exports.log_event = async function (game_details, event, player_id) {
+    game_details.events.push({
+        event: event,
+        player_id: player_id === "" ? "unknown" : player_id,
+        seat_playing: game_details.seat_playing,
+        turn_direction: game_details.turn_direction,
+        turns_remaining: game_details.turns_remaining,
+        status: game_details.status,
+        start_time: game_details.start_time,
+        players: game_details.players,
+        cards: game_details.cards
     });
+    return game_details;
 }

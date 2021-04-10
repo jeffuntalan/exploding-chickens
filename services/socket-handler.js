@@ -332,11 +332,7 @@ module.exports = function (fastify, stats_storage) {
         //Find player
         for (let i = 0; i < game_details.players.length; i++) {
             if (game_details.players[i]._id === player_id) {
-                if (game_details.players[i].seat === game_details.seat_playing) {
-                    return true
-                } else {
-                    return false;
-                }
+                return game_details.players[i].seat === game_details.seat_playing;
             }
         }
     }

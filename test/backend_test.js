@@ -138,7 +138,7 @@ describe('Game deletion', function() {
         let game_id_temp;
         it('create purgeable game', function(done) {
             game.create({
-                created: moment().subtract(5, 'hours')
+                created: moment().subtract(7, 'days')
             }, function (err, created_game) {
                 if (!err) {
                     game_id_temp = created_game._id;

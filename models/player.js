@@ -1,10 +1,10 @@
 /*\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
-Filename : exploding-chickens/models/game.js
+Filename : exploding-chickens/models/player.js
 Desc     : mongoose model for players
 Author(s): RAk3rman
 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\*/
 
-//Packages
+// Packages
 let mongoose = require('mongoose');
 const { v4: uuidv4 } = require('uuid');
 

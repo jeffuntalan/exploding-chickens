@@ -21,11 +21,11 @@ let player_actions = require('./player-actions.js');
 // Desc : modifies an existing player, if it doesn't exist, make new player
 // Author(s) : RAk3rman
 exports.modify_player = async function (game_slug, player_id, p_nickname, p_seat, p_avatar, p_type, p_status, p_connection) {
-    //Check if player exists
+    // Check if player exists
     if (await game.exists({ slug: game_slug, "players._id": player_id })) { //Modify existing player
-        //Create new promise and return player id after saved
+        // Create new promise and return player id after saved
         return await new Promise((resolve, reject) => {
-            //Update existing player and return player_id
+            // Update existing player and return player_id
             game.findOneAndUpdate({ slug: game_slug, "players._id": player_id }, {"$set": { "players.$.nickname": p_nickname, "players.$.seat": p_seat, "players.$.avatar": p_avatar, "players.$.status": p_status, "players.$.type": p_type, "players.$.connection": p_connection }}, function (err) {
                 if (err) {
                     reject(err);
@@ -34,18 +34,18 @@ exports.modify_player = async function (game_slug, player_id, p_nickname, p_seat
                 }
             });
         })
-    } else { //Create new player
-        //Get game details
+    } else { // Create new player
+        // Get game details
         let game_details = await game_actions.game_details_slug(game_slug);
-        //Create new promise and return player id after saved
+        // Create new promise and return player id after saved
         return await new Promise((resolve, reject) => {
-            //Create new player id
+            // Create new player id
             if (!player_id) {
                 player_id = uuidv4();
             }
-            //Push new player into existing game
+            // Push new player into existing game
             game_details.players.push({ _id: player_id, nickname: p_nickname, seat: p_seat, avatar: p_avatar, type: p_type, status: p_status, connection: p_connection });
-            //Save existing game and return player_id
+            // Save existing game and return player_id
             game_details.save(function (err) {
                 if (err) {
                     reject(err);
@@ -61,9 +61,9 @@ exports.modify_player = async function (game_slug, player_id, p_nickname, p_seat
 // Desc : updates the connection for a target player
 // Author(s) : RAk3rman
 exports.update_connection = async function (game_slug, player_id, p_connection) {
-    //Create new promise and return player id after saved
+    // Create new promise and return player id after saved
     return await new Promise((resolve, reject) => {
-        //Update existing player and return player_id
+        // Update existing player and return player_id
         game.findOneAndUpdate({ slug: game_slug, "players._id": player_id }, {"$set": { "players.$.connection": p_connection }}, function (err) {
             if (err) {
                 reject(err);
@@ -132,9 +132,11 @@ exports.create_hand = async function (game_slug) {
         let rand_card_pos = rand_bucket(exploding_bucket);
         game_details.cards[rand_card_pos].assignment = "draw_deck";
     }
+    // Save event
+    game_details = await game_actions.log_event(game_details, "create_hand", "");
     // Create new promise
     await new Promise((resolve, reject) => {
-        //Save updated game
+        // Save updated game
         game_details.save({}, function (err) {
             if (err) {
                 reject(err);
@@ -152,18 +154,20 @@ exports.create_hand = async function (game_slug) {
 // Desc : given a game_slug, gives each player a random seat position (without replacement)
 // Author(s) : SengdowJones, RAk3rman
 exports.randomize_seats = async function (game_slug) {
-    //Get game details
+    // Get game details
     let game_details = await game_actions.game_details_slug(game_slug);
-    //Create array containing each available seat
+    // Create array containing each available seat
     let bucket = [];
     for (let i = 0; i <= game_details.players.length - 1; i++) {
         bucket.push(i)
     }
-    //Update seat number for each player
+    // Update seat number for each player
     for (let i = 0; i <= game_details.players.length - 1; i++) {
         game_details.players[i].seat = rand_bucket(bucket);
     }
-    //Create new promise
+    // Save event
+    game_details = await game_actions.log_event(game_details, "randomize_seats", "");
+    // Create new promise
     return await new Promise((resolve, reject) => {
         //Save updated game
         game_details.save({}, function (err) {
@@ -217,7 +221,7 @@ exports.sort_hand = async function (game_details, player_id) {
     // Get cards in player's hand
     let player_hand = [];
     for (let i = 0; i < game_details.cards.length; i++) {
-        //If the card is assigned to this player, add to hand
+        // If the card is assigned to this player, add to hand
         if (game_details.cards[i].assignment === player_id) {
             player_hand.push({
                 loc_pos: game_details.cards[i].position,

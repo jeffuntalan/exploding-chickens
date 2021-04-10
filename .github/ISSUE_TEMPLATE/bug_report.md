@@ -6,7 +6,7 @@ labels: bug
 assignees: rak3rman
 
 ---
-*NOTE: If an error occurs during game play, treat the occurrence as if it was a crime scene. Stop playing immediately and report the bug as fast as possible. Make sure to fill in the game info below. Thanks.*
+*NOTE: If an error occurs during game play, treat the occurrence as if it was a crime scene. Stop playing immediately and report the bug as fast as possible. Make sure to fill in the game info below.*
 
 **Describe the bug**
 A clear and concise description of what the bug is.
@@ -23,7 +23,7 @@ A clear and concise description of what you expected to happen.
 
 **Game & Device information**
  - Game code: [found in the url and sidebar (xxx-xxx)]
- - Time of error: [approximate time at which the error started]
+ - Time of error: [approximate time at which the error started, include time zone]
  - Browser: [e.g. stock browser, chrome, safari]
 
 **Screenshots**

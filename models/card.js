@@ -4,7 +4,7 @@ Desc     : mongoose model for cards
 Author(s): RAk3rman
 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\*/
 
-//Packages
+// Packages
 let mongoose = require('mongoose');
 
 // Card schema
