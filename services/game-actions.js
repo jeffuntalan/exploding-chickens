@@ -161,6 +161,13 @@ exports.base_router = async function (game_details, player_id, card_id, target, 
         game_details.turns_remaining = 0;
         stats_storage.set('explosions', stats_storage.get('explosions') + 1);
         if ((await game_actions.is_winner(game_details)) === true) {
+            // let play_time = stats_storage.get('mins_played') + moment().diff(moment(game_details.start_time), 'minutes');
+            // if (play_time > 1) { // Attempt to catch spamming reset
+            //     stats_storage.set('mins_played', stats_storage.get('mins_played') + moment().diff(moment(game_details.start_time), 'minutes'));
+            // } else {
+            //     stats_storage.set('games_played', stats_storage.get('games_played') - 1);
+            // }
+            stats_storage.set('mins_played', stats_storage.get('mins_played') + moment().diff(moment(game_details.start_time), 'minutes'));
             return {trigger: "winner", data: ""};
         } else {
             await game_actions.advance_turn(game_details);
@@ -349,11 +356,11 @@ exports.reset_game = async function (game_details, player_status, game_status) {
 }
 
 // Name : game_actions.game_purge(debug)
-// Desc : deletes all games that are over 4 hours old
+// Desc : deletes all games that are over 7 days old
 // Author(s) : RAk3rman
 exports.game_purge = async function (debug) {
     if (debug !== false) {
-        spinner.info(wipe(`${chalk.bold.red('Game Purge')}: Purging all games older than 4 hours`));
+        spinner.info(wipe(`${chalk.bold.red('Game Purge')}: Purging all games older than 7 days`));
     }
     await new Promise((resolve, reject) => {
         game.find({}, function (err, found_games) {
@@ -363,8 +370,8 @@ exports.game_purge = async function (debug) {
             } else {
                 // Loop through each game
                 for (let i = 0; i < found_games.length; i++) {
-                    // Determine if the game is more than 4 hours old
-                    if (!moment(found_games[i].created).add(4, "hours").isSameOrAfter(moment())) {
+                    // Determine if the game is more than 7 days old
+                    if (!moment(found_games[i].created).add(7, "days").isSameOrAfter(moment())) {
                         // Delete game
                         game_actions.delete_game(found_games[i]._id).then(() => {
                             if (debug !== false) {

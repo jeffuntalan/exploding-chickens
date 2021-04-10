@@ -145,6 +145,8 @@ module.exports = function (fastify, stats_storage) {
                 if (validate_host(data.player_id, game_details)) {
                     // Reset game
                     await game_actions.reset_game(game_details, "idle", "in_lobby");
+                    // Update stats
+                    stats_storage.set('games_played', stats_storage.get('games_played') - 1);
                     // Emit reset game event
                     spinner.succeed(wipe(`${chalk.bold.blue('Socket')}: ${chalk.dim.cyan('reset-game      ')} ` + socket.id + ` ${chalk.dim.yellow(data.slug)} Existing game has been reset successfully`));
                     await update_game_ui(data.slug, "", "reset-game      ", socket.id);
@@ -217,9 +219,8 @@ module.exports = function (fastify, stats_storage) {
                                 }
                             });
                         } else if (action_res.trigger === "winner") {
-                            // Emit reset game event and winner, update stats
+                            // Emit reset game event and winner
                             spinner.succeed(wipe(`${chalk.bold.blue('Socket')}: ${chalk.dim.cyan('play-card       ')} ` + socket.id + ` ${chalk.dim.yellow(data.slug)} Existing game has ended, a player has won`));
-                            stats_storage.set('mins_played', stats_storage.get('mins_played') + moment().diff(moment(game_details.start_time), 'minutes'));
                             await update_game_ui(data.slug, "", "reset-game      ", socket.id);
                         } else if (action_res.trigger === "error") {
                             spinner.fail(wipe(`${chalk.bold.blue('Socket')}: ${chalk.dim.cyan('play-card       ')} ` + socket.id + ` ${chalk.dim.yellow(data.slug)} Error while playing card: ` + action_res.data));

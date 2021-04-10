@@ -6,6 +6,7 @@ labels: bug
 assignees: rak3rman
 
 ---
+*NOTE: If an error occurs during game play, treat the occurrence as if it was a crime scene. Stop playing immediately and report the bug as fast as possible. Make sure to fill in the game info below. Thanks.*
 
 **Describe the bug**
 A clear and concise description of what the bug is.
@@ -20,10 +21,10 @@ Steps to reproduce the behavior:
 **Expected behavior**
 A clear and concise description of what you expected to happen.
 
-**Device information**
- - Browser: [e.g. stock browser, safari]
- - Device: [e.g. iPhone6]
- - OS: [e.g. iOS8.1]
+**Game & Device information**
+ - Game code: [found in the url and sidebar (xxx-xxx)]
+ - Time of error: [approximate time at which the error started]
+ - Browser: [e.g. stock browser, chrome, safari]
 
 **Screenshots**
 OPTIONAL If applicable, add screenshots to help explain your problem.

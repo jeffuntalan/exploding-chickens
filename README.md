@@ -14,13 +14,7 @@ From there, the drawing deck slowly shrinks and the explosions only become more 
 ![Home UI](public/home_ui.png)
 
 ## Purpose
-The concept of Exploding Chickens grew out of the urge to play the popular Exploding Kittens card game at our high school lunch table.
-Instead of buying the game outright *(such bootleggers, I know)*, we got to work on designing our own version of the game that we could simply print at home.
-After a couple of weeks, we had a playable game that was cracked out nearly every other day.
-Then the coronavirus pandemic came around, which made the prospects of playing any card game quite difficult.
-We resulted to the many games already on the internet, but we still had the urge to play this explosive game.
-Introducing the most overkill method to play Exploding Chickens.
-We hope you enjoy playing this game as much as we did making it.
+What was the reason for building a complex game like this? Check out the blog post, [Exploding Chickens: Building a web-based game from scratch](https://rakerman.com/blog/exploding-chickens/)
 
 ## Install
 As easy as 1, 2, 3..... boom.
@@ -42,7 +36,7 @@ The config file will be populated with the following default values:
 ### Running the project
 The npm package supports multiple ways to run the project.
 - ``npm run start`` Runs the project, plain and simple.
-- ``npm run develop`` Runs `npm run build` then starts the project and watches for all file changes. Restarts the instance if critical files are updated.
+- ``npm run develop`` Builds the project (see build cmd below), then starts the project and watches for all file changes. Restarts the instance if critical files are updated.
 - ``npm run test`` Runs a test suite built using [mocha](https://mochajs.org/) and [chai assert](https://www.chaijs.com/api/assert/). Tests can be found in path ``/test`` . Travis-CI also runs these tests.
 - ``npm run build`` Builds and compresses the css package, along with any other assets. If something new doesn't look right, give this a shot.
 
