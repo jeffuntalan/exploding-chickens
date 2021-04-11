@@ -79,8 +79,6 @@ socket.on(window.location.pathname.substr(6) + "-update", function (data) {
         sbr_update_widgets(data);
         itr_update_players(data);
         itr_update_pcards(data);
-        console.log(data);
-        console.log(session_user._id);
         if (data.req_player_id !== session_user._id) {
             itr_update_discard(data);
             itr_update_hand(data);

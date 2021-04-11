@@ -184,7 +184,7 @@ module.exports = function (fastify, stats_storage) {
                         } else if (action_res.trigger === "seethefuture") {
                             spinner.succeed(wipe(`${chalk.bold.blue('Socket')}: ${chalk.dim.cyan('play-card       ')} ` + socket.id + ` ${chalk.dim.yellow(data.slug)} Card action completed successfully, seethefuture callback`));
                             // Update clients
-                            await update_game_ui(data.slug, "", "play-card       ", socket.id, data.player_id);
+                            await update_game_ui(data.slug, "", "play-card       ", socket.id, "seethefuture_callback");
                             // Trigger stf callback
                             fastify.io.to(socket.id).emit(data.slug + "-callback", {
                                 trigger: "seethefuture",
@@ -225,7 +225,7 @@ module.exports = function (fastify, stats_storage) {
                         } else if (action_res.trigger === "winner") {
                             // Emit reset game event and winner
                             spinner.succeed(wipe(`${chalk.bold.blue('Socket')}: ${chalk.dim.cyan('play-card       ')} ` + socket.id + ` ${chalk.dim.yellow(data.slug)} Existing game has ended, a player has won`));
-                            await update_game_ui(data.slug, "", "reset-game      ", socket.id, data.player_id);
+                            await update_game_ui(data.slug, "", "reset-game      ", socket.id, "winner_callback");
                         } else if (action_res.trigger === "error") {
                             spinner.fail(wipe(`${chalk.bold.blue('Socket')}: ${chalk.dim.cyan('play-card       ')} ` + socket.id + ` ${chalk.dim.yellow(data.slug)} Error while playing card: ` + action_res.data));
                             fastify.io.to(socket.id).emit(data.slug + "-error", action_res.data);
