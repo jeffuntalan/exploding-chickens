@@ -141,7 +141,7 @@ exports.draw_card = async function (game_details, player_id) {
             if (err) {
                 reject(err);
             } else {
-                resolve(draw_deck[draw_deck.length-1].action);
+                resolve(draw_deck[draw_deck.length-1]);
             }
         });
     });

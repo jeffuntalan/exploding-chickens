@@ -111,7 +111,8 @@
         </div>
     </div>
     <div class="flex align-bottom">
-        <div class="rounded-xl shadow-lg center-card bg-center bg-contain mx-1" id="draw_deck" onclick="draw_card()" style="background-image: url('/public/cards/card_back.png');"></div>
+        <div class="rounded-xl shadow-lg center-card bg-center bg-contain mx-1 z-0" id="anim_draw" style="position:absolute;background-image: url('/public/cards/card_back.png');"></div>
+        <div class="rounded-xl shadow-lg center-card bg-center bg-contain mx-1 z-10" onclick="draw_card()" style="background-image: url('/public/cards/card_back.png');"></div>
         <div id="itr_ele_discard_deck">
             <div class="rounded-xl shadow-lg center-card bg-center bg-contain mx-1 border-dashed border-4 border-gray-400">
                 <h1 class="text-gray-400 font-bold flex items-center justify-center center-card-text">Discard Pile</h1>

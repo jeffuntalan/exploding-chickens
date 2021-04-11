@@ -34,16 +34,16 @@ module.exports = function (fastify, stats_storage) {
         // Author(s) : RAk3rman
         socket.on('player-connected', async function (data) {
             spinner.start(wipe(`${chalk.bold.blue('Socket')}: ${chalk.dim.cyan('player-connected')} ` + socket.id + ` ${chalk.dim.yellow(data.slug)} Updating player status to connected`));
-            //Verify game and player exists
+            // Verify game and player exists
             if (await game.exists({ slug: data.slug, "players._id": data.player_id })) {
-                //Update connection and local player data
+                // Update connection and local player data
                 player_data = data;
                 await player_actions.update_connection(data.slug, data.player_id, "connected");
                 spinner.succeed(wipe(`${chalk.bold.blue('Socket')}: ${chalk.dim.cyan('player-connected')} ` + socket.id + ` ${chalk.dim.yellow(data.slug)} Player now ${chalk.dim.green('connected')} with player_id: ` + data.player_id));
-                //Update clients
-                await update_game_ui(data.slug, "", "player-connected", socket.id);
+                // Update clients
+                await update_game_ui(data.slug, "", "player-connected", socket.id, data.player_id);
             } else {
-                //Emit error event with error
+                // Emit error event with error
                 spinner.warn(wipe(`${chalk.bold.blue('Socket')}: ${chalk.dim.cyan('player-connected')} ` + socket.id + ` ${chalk.dim.yellow(data.slug)} Target game does not exist`));
                 fastify.io.to(socket.id).emit(data.slug + "-error", "Game does not exist");
             }
@@ -54,12 +54,12 @@ module.exports = function (fastify, stats_storage) {
         // Author(s) : RAk3rman
         socket.on('retrieve-game', async function (data) {
             spinner.start(wipe(`${chalk.bold.blue('Socket')}: ${chalk.dim.cyan('retrieve-game   ')} ` + socket.id + ` ${chalk.dim.yellow(data.slug)} Received request to retrieve game`));
-            //Verify game exists
+            // Verify game exists
             if (await game.exists({ slug: data.slug })) {
-                //Send updated game data
-                await update_game_ui(data.slug, socket.id, "retrieve-game   ", socket.id);
+                // Send updated game data
+                await update_game_ui(data.slug, socket.id, "retrieve-game   ", socket.id, "unknown");
             } else {
-                //Emit error event with error
+                // Emit error event with error
                 spinner.warn(wipe(`${chalk.bold.blue('Socket')}: ${chalk.dim.cyan('retrieve-game   ')} ` + socket.id + ` ${chalk.dim.yellow(data.slug)} Target game does not exist`));
                 fastify.io.to(socket.id).emit(data.slug + "-error", "Game does not exist");
             }
@@ -70,22 +70,22 @@ module.exports = function (fastify, stats_storage) {
         // Author(s) : RAk3rman
         socket.on('create-player', async function (data) {
             spinner.start(wipe(`${chalk.bold.blue('Socket')}: ${chalk.dim.cyan('create-player   ')} ` + socket.id + ` ${chalk.dim.yellow(data.slug)} Received request to create player with nickname: ` + data.nickname + ` and avatar: ` + data.avatar));
-            //Verify game exists
+            // Verify game exists
             if (await game.exists({ slug: data.slug })) {
-                //Get game details
+                // Get game details
                 let raw_game_details = await game_actions.game_details_slug(data.slug);
-                //Determine host assignment
+                // Determine host assignment
                 let created_player;
                 if (raw_game_details["players"].length === 0) { //Add player as host
                     created_player = await player_actions.modify_player(data.slug, undefined, data.nickname, 0, data.avatar, "host", "idle", "connected");
-                } else { //Add as player
+                } else { // Add as player
                     created_player = await player_actions.modify_player(data.slug, undefined, data.nickname, raw_game_details["players"].length, data.avatar, "player", "idle", "connected");
                 }
-                //Return player_id to client
+                // Return player_id to client
                 fastify.io.to(socket.id).emit("player-created", created_player);
                 spinner.succeed(wipe(`${chalk.bold.blue('Socket')}: ${chalk.dim.cyan('create-player   ')} ` + socket.id + ` ${chalk.dim.yellow(data.slug)} Created new player with player_id: ` + created_player));
-                //Update clients
-                await update_game_ui(data.slug, "", "create-player   ", socket.id);
+                // Update clients
+                await update_game_ui(data.slug, "", "create-player   ", socket.id, created_player);
             } else {
                 //Emit error event with error
                 spinner.warn(wipe(`${chalk.bold.blue('Socket')}: ${chalk.dim.cyan('create-player   ')} ` + socket.id + ` ${chalk.dim.yellow(data.slug)} Target game does not exist`));
@@ -115,7 +115,7 @@ module.exports = function (fastify, stats_storage) {
                         await player_actions.randomize_seats(data.slug);
                         // Emit start game event
                         spinner.succeed(wipe(`${chalk.bold.blue('Socket')}: ${chalk.dim.cyan('start-game      ')} ` + socket.id + ` ${chalk.dim.yellow(data.slug)} New game has started successfully`));
-                        await update_game_ui(data.slug, "", "start-game      ", socket.id);
+                        await update_game_ui(data.slug, "", "start-game      ", socket.id, data.player_id);
                         // Update stats
                         stats_storage.set('games_played', stats_storage.get('games_played') + 1);
                     } else {
@@ -149,7 +149,7 @@ module.exports = function (fastify, stats_storage) {
                     stats_storage.set('games_played', stats_storage.get('games_played') - 1);
                     // Emit reset game event
                     spinner.succeed(wipe(`${chalk.bold.blue('Socket')}: ${chalk.dim.cyan('reset-game      ')} ` + socket.id + ` ${chalk.dim.yellow(data.slug)} Existing game has been reset successfully`));
-                    await update_game_ui(data.slug, "", "reset-game      ", socket.id);
+                    await update_game_ui(data.slug, "", "reset-game      ", socket.id, data.player_id);
                 } else {
                     spinner.warn(wipe(`${chalk.bold.blue('Socket')}: ${chalk.dim.cyan('reset-game      ')} ` + socket.id + ` ${chalk.dim.yellow(data.slug)} Player attempted to complete host action`));
                     fastify.io.to(socket.id).emit(data.slug + "-error", "You are not the host");
@@ -176,11 +176,15 @@ module.exports = function (fastify, stats_storage) {
                         if (action_res.data === "true") {
                             spinner.succeed(wipe(`${chalk.bold.blue('Socket')}: ${chalk.dim.cyan('play-card       ')} ` + socket.id + ` ${chalk.dim.yellow(data.slug)} Card action completed successfully, no callbacks`));
                             // Update clients
-                            await update_game_ui(data.slug, "", "play-card       ", socket.id);
+                            fastify.io.to(socket.id).emit(data.slug + "-play-card", {
+                                card: await card_actions.find_card(data.card_id, game_details["cards"]),
+                                game_details: await get_game_export(data.slug, "play-card       ", data.player_id)
+                            });
+                            await update_game_ui(data.slug, "", "play-card       ", socket.id, data.player_id);
                         } else if (action_res.trigger === "seethefuture") {
                             spinner.succeed(wipe(`${chalk.bold.blue('Socket')}: ${chalk.dim.cyan('play-card       ')} ` + socket.id + ` ${chalk.dim.yellow(data.slug)} Card action completed successfully, seethefuture callback`));
                             // Update clients
-                            await update_game_ui(data.slug, "", "play-card       ", socket.id);
+                            await update_game_ui(data.slug, "", "play-card       ", socket.id, data.player_id);
                             // Trigger stf callback
                             fastify.io.to(socket.id).emit(data.slug + "-callback", {
                                 trigger: "seethefuture",
@@ -192,7 +196,7 @@ module.exports = function (fastify, stats_storage) {
                             fastify.io.to(socket.id).emit(data.slug + "-callback", {
                                 trigger: "favor_target",
                                 payload: {
-                                    game_details: await get_game_export(data.slug, "play-card       "),
+                                    game_details: await get_game_export(data.slug, "play-card       ", data.player_id),
                                     card_id: data.card_id
                                 }
                             });
@@ -212,7 +216,7 @@ module.exports = function (fastify, stats_storage) {
                             fastify.io.emit(data.slug + "-callback", {
                                 trigger: "favor_taken",
                                 payload: {
-                                    game_details: await get_game_export(data.slug, "play-card       "),
+                                    game_details: await get_game_export(data.slug, "play-card       ", data.player_id),
                                     target_player_id: action_res.data["target_player_id"],
                                     favor_player_name: action_res.data["favor_player_name"],
                                     card_image_loc: action_res.data["card_image_loc"]
@@ -221,7 +225,7 @@ module.exports = function (fastify, stats_storage) {
                         } else if (action_res.trigger === "winner") {
                             // Emit reset game event and winner
                             spinner.succeed(wipe(`${chalk.bold.blue('Socket')}: ${chalk.dim.cyan('play-card       ')} ` + socket.id + ` ${chalk.dim.yellow(data.slug)} Existing game has ended, a player has won`));
-                            await update_game_ui(data.slug, "", "reset-game      ", socket.id);
+                            await update_game_ui(data.slug, "", "reset-game      ", socket.id, data.player_id);
                         } else if (action_res.trigger === "error") {
                             spinner.fail(wipe(`${chalk.bold.blue('Socket')}: ${chalk.dim.cyan('play-card       ')} ` + socket.id + ` ${chalk.dim.yellow(data.slug)} Error while playing card: ` + action_res.data));
                             fastify.io.to(socket.id).emit(data.slug + "-error", action_res.data);
@@ -256,7 +260,7 @@ module.exports = function (fastify, stats_storage) {
                         // Draw card from draw deck and place in hand
                         let card_drawn = await game_actions.draw_card(game_details, data.player_id);
                         // Check if card drawn in an ec
-                        if (card_drawn !== "chicken") {
+                        if (card_drawn.action !== "chicken") {
                             game_details = await game_actions.game_details_slug(data.slug);
                             await game_actions.advance_turn(game_details);
                             spinner.succeed(wipe(`${chalk.bold.blue('Socket')}: ${chalk.dim.cyan('draw-card       ')} ` + socket.id + ` ${chalk.dim.yellow(data.slug)} Drew new card and advanced turn for player_id:` + data.player_id));
@@ -264,7 +268,8 @@ module.exports = function (fastify, stats_storage) {
                             spinner.succeed(wipe(`${chalk.bold.blue('Socket')}: ${chalk.dim.cyan('draw-card       ')} ` + socket.id + ` ${chalk.dim.yellow(data.slug)} Player has drawn an ec, player_id:` + data.player_id));
                         }
                         // Update clients
-                        await update_game_ui(data.slug, "", "draw-card       ", socket.id);
+                        await update_game_ui(data.slug, "", "draw-card       ", socket.id, data.player_id);
+                        fastify.io.to(socket.id).emit(data.slug + "-draw-card", card_drawn);
                     } else {
                         spinner.warn(wipe(`${chalk.bold.blue('Socket')}: ${chalk.dim.cyan('play-card       ')} ` + socket.id + ` ${chalk.dim.yellow(data.slug)} Player attempted to draw a card while game is in lobby`));
                         fastify.io.to(socket.id).emit(data.slug + "-error", "Game has not started");
@@ -304,7 +309,7 @@ module.exports = function (fastify, stats_storage) {
                 await player_actions.update_connection(player_data["slug"], player_data["player_id"], "offline");
                 spinner.succeed(wipe(`${chalk.bold.blue('Socket')}: ${chalk.dim.red('disconnect      ')} ` + socket.id + ` ${chalk.dim.yellow(player_data["slug"])} Player now ${chalk.dim.red('offline')} with player_id:` + player_data["player_id"]));
                 // Update clients
-                await update_game_ui(player_data["slug"], "", "disconnect      ", socket.id);
+                await update_game_ui(player_data["slug"], "", "disconnect      ", socket.id, player_data["player_id"]);
             }
         });
     })
@@ -340,9 +345,9 @@ module.exports = function (fastify, stats_storage) {
     // Name : update_game_ui(slug, target, source, socket_id)
     // Desc : sends an event containing game data
     // Author(s) : RAk3rman
-    async function update_game_ui(slug, target, source, socket_id) {
+    async function update_game_ui(slug, target, source, socket_id, player_id) {
         //Get raw pretty game details
-        let pretty_game_details = await get_game_export(slug, source);
+        let pretty_game_details = await get_game_export(slug, source, player_id);
         if (pretty_game_details !== {}) {
             //Send game data
             if (target === "") {
@@ -356,10 +361,10 @@ module.exports = function (fastify, stats_storage) {
         }
     }
 
-    // Name : get_game_export(slug, target, source)
+    // Name : get_game_export(slug, source, player_id)
     // Desc : prepares game data for export to client
     // Author(s) : RAk3rman
-    async function get_game_export(slug, source) {
+    async function get_game_export(slug, source, player_id) {
         // Get raw game details from mongodb
         let raw_game_details = await game_actions.game_details_slug(slug);
         if (raw_game_details !== null) {
@@ -384,6 +389,7 @@ module.exports = function (fastify, stats_storage) {
                 turns_remaining: raw_game_details["turns_remaining"],
                 cards_remaining: draw_deck.length,
                 ec_remaining: ec_count,
+                req_player_id: player_id,
                 trigger: source.trim()
             }
             // Sort and add players to json array
@@ -407,7 +413,7 @@ module.exports = function (fastify, stats_storage) {
                     status: raw_game_details["players"][i].status,
                     connection: raw_game_details["players"][i].connection,
                     nickname: raw_game_details["players"][i].nickname,
-                    seat: raw_game_details["players"][i].seat,
+                    seat: raw_game_details["players"][i].seat
                 });
             }
             // Get discard deck

@@ -79,8 +79,12 @@ socket.on(window.location.pathname.substr(6) + "-update", function (data) {
         sbr_update_widgets(data);
         itr_update_players(data);
         itr_update_pcards(data);
-        itr_update_discard(data);
-        itr_update_hand(data);
+        console.log(data);
+        console.log(session_user._id);
+        if (data.req_player_id !== session_user._id) {
+            itr_update_discard(data);
+            itr_update_hand(data);
+        }
     } else if (data.trigger === "draw-card") { // A card was drawn by a player
         sbr_update_widgets(data);
         itr_update_pcards(data);
@@ -141,6 +145,54 @@ socket.on(window.location.pathname.substr(6) + "-error", function (data) {
             html: '<h1 class="text-lg font-bold pl-2 pr-1">' + data + '</h1>'
         });
     }
+});
+
+// Name : frontend-game.socket.on.{slug}-draw-card
+// Desc : whenever the player draws a card, triggers animation
+socket.on(window.location.pathname.substr(6) + "-draw-card", function (data) {
+    const temp = document.getElementById("anim_draw");
+    const target = document.getElementById(data._id);
+    new AnimationFrames({
+        duration: 350,
+        easing: 'sineInOut',
+        onstart () {
+            temp.style.display = '';
+            temp.style.backgroundImage = 'url(/' + data.image_loc + ')';
+            target.style.visibility = 'hidden';
+        },
+        onprogress: (e) => {
+            temp.style.transform = translate(e * (get_position(target).x - get_position(temp).x), e * (get_position(target).y - get_position(temp).y));
+        },
+        onend () {
+            temp.style.transform = '';
+            target.style.visibility = 'visible';
+        }
+    });
+});
+
+// Name : frontend-game.socket.on.{slug}-play-card
+// Desc : whenever the player plays a card, triggers animation
+socket.on(window.location.pathname.substr(6) + "-play-card", function (data) {
+    const temp = document.getElementById("anim_draw");
+    const target = document.getElementById(data.card._id);
+    const discard = document.getElementById("anim_discard");
+    new AnimationFrames({
+        duration: 350,
+        easing: 'sineInOut',
+        onstart () {
+            temp.style.display = '';
+            temp.style.backgroundImage = 'url(/' + data.card.image_loc + ')';
+            target.style.visibility = 'hidden';
+        },
+        onprogress: (e) => {
+            temp.style.transform = translate((e * ((get_position(discard).x - get_position(target).x)) +  + (get_position(target).x - get_position(temp).x)), (e * (get_position(discard).y - get_position(target).y)) + (get_position(target).y - get_position(temp).y));
+        },
+        onend () {
+            itr_update_discard(data.game_details);
+            itr_update_hand(data.game_details);
+            temp.style.transform = '';
+        }
+    });
 });
 
 // Name : frontend-game.socket.on.connect

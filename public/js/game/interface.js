@@ -87,9 +87,9 @@ function itr_update_pcards(game_details) {
 // Desc : updates discard deck
 function itr_update_discard(game_details) {
     if (game_details.discard_deck.length !== 0) {
-        document.getElementById("itr_ele_discard_deck").innerHTML = "<div class=\"rounded-xl shadow-sm center-card bg-center bg-contain\" style=\"background-image: url('/" + game_details.discard_deck[game_details.discard_deck.length-1].image_loc + "')\"></div>";
+        document.getElementById("itr_ele_discard_deck").innerHTML = "<div class=\"rounded-xl shadow-sm center-card bg-center bg-contain\" id=\"anim_discard\" style=\"background-image: url('/" + game_details.discard_deck[game_details.discard_deck.length-1].image_loc + "')\"></div>";
     } else {
-        document.getElementById("itr_ele_discard_deck").innerHTML = "<div class=\"rounded-xl shadow-lg center-card bg-center bg-contain mx-1 border-dashed border-4 border-gray-400\">\n" +
+        document.getElementById("itr_ele_discard_deck").innerHTML = "<div class=\"rounded-xl shadow-lg center-card bg-center bg-contain mx-1 border-dashed border-4 border-gray-400\" id=\"anim_discard\">\n" +
             "    <h1 class=\"text-gray-400 font-bold flex items-center justify-center center-card-text\">Discard Pile</h1>\n" +
             "</div>";
     }
