@@ -111,7 +111,7 @@
         </div>
     </div>
     <div class="flex align-bottom">
-        <div class="rounded-xl shadow-lg center-card bg-center bg-contain mx-1" onclick="draw_card()" style="background-image: url('/public/cards/card_back.png');"></div>
+        <div class="rounded-xl shadow-lg center-card bg-center bg-contain mx-1" id="draw_deck" onclick="draw_card()" style="background-image: url('/public/cards/card_back.png');"></div>
         <div id="itr_ele_discard_deck">
             <div class="rounded-xl shadow-lg center-card bg-center bg-contain mx-1 border-dashed border-4 border-gray-400">
                 <h1 class="text-gray-400 font-bold flex items-center justify-center center-card-text">Discard Pile</h1>
@@ -355,6 +355,7 @@
 <script src="/socket.io/socket.io.js"></script>
 <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+<script src="/public/js/animation.min.js"></script>
 <script src="/public/js/game/events.js"></script>
 <script src="/public/js/game/interface.js"></script>
 <script src="/public/js/game/setup.js"></script>

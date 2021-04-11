@@ -115,7 +115,7 @@ function itr_update_hand(game_details) {
                     itr_trigger_exp(15, game_details.players[i].cards[j]._id, true);
                     session_user.can_draw = false;
                 }
-                payload += "<div class=\"rounded-xl shadow-sm bottom-card bg-center bg-contain\" onclick=\"" + play_card_funct + "\" style=\"background-image: url('/" + game_details.players[i].cards[j].image_loc + "')\"></div>";
+                payload += "<div class=\"rounded-xl shadow-sm bottom-card bg-center bg-contain\" id=\"" + game_details.players[i].cards[j]._id + "\" onclick=\"" + play_card_funct + "\" style=\"background-image: url('/" + game_details.players[i].cards[j].image_loc + "')\"></div>";
             }
             // Toggle turn banner
             if (game_details.seat_playing === game_details.players[i].seat && !is_turn && game_details.status === "in_game") {
