@@ -120,15 +120,13 @@
     </div>
 </div>
 {{! Card hand }}
-<footer class='w-full h-28 text-center py-2'>
+<div class="w-full h-28 text-center py-2">
     <div class="-my-2 overflow-x-auto">
         <div class="align-middle inline-block min-w-full sm:px-0 lg:px-8">
-            <div class="overflow-hidden">
-                <div class="flex items-center" id="itr_ele_player_hand"></div>
-            </div>
+            <div class="flex items-center" id="itr_ele_player_hand"></div>
         </div>
     </div>
-</footer>
+</div>
 {{! Sidebar }}
 <div class="fixed inset-0 overflow-hidden" x-show="sidebar_open">
     <div class="absolute inset-0 overflow-hidden" x-show="sidebar_open">
@@ -355,7 +353,7 @@
 <script src="/socket.io/socket.io.js"></script>
 <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
-<script src="/public/js/animation.min.js"></script>
+<script src="/public/js/game/animation.js"></script>
 <script src="/public/js/game/events.js"></script>
 <script src="/public/js/game/interface.js"></script>
 <script src="/public/js/game/setup.js"></script>

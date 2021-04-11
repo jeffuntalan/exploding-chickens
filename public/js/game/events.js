@@ -95,42 +95,6 @@ socket.on(window.location.pathname.substr(6) + "-update", function (data) {
         itr_update_discard(data);
         itr_update_hand(data);
     }
-
-    // const deck = document.getElementById("draw_deck");
-    // const target = document.getElementById("seethefuture-4");
-    //
-    // new AnimationFrames({
-    //     delay: 1000,
-    //     duration: 500,
-    //     easing: 'sineInOut',
-    //     onprogress: (e) => {
-    //         deck.style.transform = translate(e * (get_position(target).x - get_position(deck).x), e * (get_position(target).y - get_position(deck).y));
-    //     }
-    // });
-    // const translate = (x, y) => {
-    //     return `translate(${x}px, ${y}px)`;
-    // }
-    //
-    // function get_position(el) {
-    //     let xPos = 0;
-    //     let yPos = 0;
-    //     while (el) {
-    //         if (el.tagName === "BODY") {
-    //             var xScroll = el.scrollLeft || document.documentElement.scrollLeft;
-    //             var yScroll = el.scrollTop || document.documentElement.scrollTop;
-    //             xPos += (el.offsetLeft - xScroll + el.clientLeft);
-    //             yPos += (el.offsetTop - yScroll + el.clientTop);
-    //         } else {
-    //             xPos += (el.offsetLeft - el.scrollLeft + el.clientLeft);
-    //             yPos += (el.offsetTop - el.scrollTop + el.clientTop);
-    //         }
-    //         el = el.offsetParent;
-    //     }
-    //     return {
-    //         x: xPos,
-    //         y: yPos
-    //     };
-    // }
 });
 
 // Name : frontend-game.socket.on.{slug}-callback
