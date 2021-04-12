@@ -12,6 +12,7 @@ const toast_turn = Swal.mixin({
 });
 // Global variables
 let is_turn = false;
+let exploding_active = false;
 
 // Name : frontend-game.itr_update_players(game_details)
 // Desc : updates players
@@ -111,7 +112,7 @@ function itr_update_hand(game_details) {
                     play_card_funct = "play_card('" + game_details.players[i].cards[j]._id + "', '')";
                 }
                 // Check if chicken is active
-                if (game_details.players[i].cards[j].action === "chicken") {
+                if (game_details.players[i].cards[j].action === "chicken" && exploding_active === false) {
                     itr_trigger_exp(15, game_details.players[i].cards[j]._id, true);
                     session_user.can_draw = false;
                 }
@@ -131,7 +132,7 @@ function itr_update_hand(game_details) {
             }
         } else {
             // Check if chicken is active
-            if (game_details.players[i].status === "exploding") {
+            if (game_details.players[i].status === "exploding" && exploding_active === false) {
                 itr_trigger_exp(15, false, true);
             }
         }
@@ -142,6 +143,12 @@ function itr_update_hand(game_details) {
 // Name : frontend-game.itr_trigger_exp(count, card_id, setup)
 // Desc : triggers the exploding chicken ui to appear
 function itr_trigger_exp(count, card_id, setup) {
+    // Check to make sure the element wasn't replaced
+    exploding_active = true;
+    if (document.getElementById("itr_val_defuse_counter") === null && setup === false) {
+        exploding_active = false;
+        return;
+    }
     // Append html overlay if on first function call
     if (setup) {
         document.getElementById("itr_ele_discard_deck").innerHTML = "<div class=\"rounded-xl shadow-lg center-card bg-center bg-contain mx-1\" id=\"anim_discard\" style=\"background-image: linear-gradient(rgba(0, 0, 0, .6), rgba(0, 0, 0, .6)), url('/public/cards/base/chicken.png');\">\n" +
@@ -158,14 +165,24 @@ function itr_trigger_exp(count, card_id, setup) {
     }
     // Call program again if not placed
     if (count > 0) {
+        document.getElementById("itr_ele_ec_count").innerHTML = "<a class=\"text-red-500\"><i class=\"fas fa-bomb\"></i> " + count + "</a>";
         document.getElementById("itr_val_defuse_counter").innerHTML = count;
         setTimeout(function(){ itr_trigger_exp(count, card_id, false) }, 1000);
     } else if (count > -1) {
+        document.getElementById("itr_ele_ec_count").innerHTML = "<a class=\"text-red-500\"><i class=\"fas fa-bomb\"></i> RIP</a>";
         document.getElementById("itr_val_defuse_counter").innerHTML = "<i class=\"fas fa-skull-crossbones\"></i>"
         setTimeout(function(){ itr_trigger_exp(count, card_id, false) }, 1000);
     } else if (card_id !== false) {
         // Force play chicken since time expired
         play_card(card_id);
+        exploding_active = false;
+    } else {
+        exploding_active = false;
+    }
+    // Check again
+    if (document.getElementById("itr_val_defuse_counter") === null) {
+        exploding_active = false;
+        return;
     }
     count--;
 }
@@ -231,7 +248,7 @@ function itr_trigger_chicken_target(max_pos, card_id) {
             "    <div class=\"inline-block sm:flex items-center justify-center\">\n" +
             "        <div class=\"rounded-xl shadow-lg center-card bg-center bg-contain\" style=\"background-image: url('/public/cards/base/chicken.png');width: 12rem;height: 16.9rem;border-radius: 1.8rem\"></div>\n" +
             "        <div class=\"mt-2 sm:ml-3\">" +
-            "            <button onclick=\"place_chicken('" + card_id + "', 'random', '" + max_pos + "')\" class=\"mb-2 w-48 h-12 bg-yellow-500 hover:bg-yellow-600 text-white text-lg font-semibold border border-transparent rounded-xl focus:outline-none transition-colors duration-200\">\n" +
+            "            <button onclick=\"Swal.close();place_chicken('" + card_id + "', 'random', '" + max_pos + "')\" class=\"mb-2 w-48 h-12 bg-yellow-500 hover:bg-yellow-600 text-white text-lg font-semibold border border-transparent rounded-xl focus:outline-none transition-colors duration-200\">\n" +
             "                 <i class=\"fas fa-random pr-2\"></i>Place Randomly\n" +
             "            </button>\n" +
             "            <div class=\"bg-transparent mb-2\">\n" +
@@ -247,7 +264,7 @@ function itr_trigger_chicken_target(max_pos, card_id) {
             "                    </div>\n" +
             "                </div>\n" +
             "            </div>" +
-            "            <button id=\"custom_chicken_pos\" onclick=\"place_chicken('" + card_id + "', 'custom', '" + max_pos + "')\" class=\"w-48 h-12 bg-purple-500 hover:bg-purple-600 text-white text-lg font-semibold border border-transparent rounded-xl focus:outline-none transition-colors duration-200\">\n" +
+            "            <button id=\"custom_chicken_pos\" onclick=\"Swal.close();place_chicken('" + card_id + "', 'custom', '" + max_pos + "')\" class=\"w-48 h-12 bg-purple-500 hover:bg-purple-600 text-white text-lg font-semibold border border-transparent rounded-xl focus:outline-none transition-colors duration-200\">\n" +
             "                 Place on Top\n" +
             "            </button>\n" +
             "        </div>" +
@@ -304,7 +321,6 @@ function place_chicken(card_id, source, max_pos) {
             position = parseInt(cur.substr(6,2));
         }
     }
-    Swal.close();
     play_card(card_id, position);
 }
 

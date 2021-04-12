@@ -148,49 +148,13 @@ socket.on(window.location.pathname.substr(6) + "-error", function (data) {
 // Name : frontend-game.socket.on.{slug}-draw-card
 // Desc : whenever the player draws a card, triggers animation
 socket.on(window.location.pathname.substr(6) + "-draw-card", function (data) {
-    const temp = document.getElementById("anim_draw");
-    const target = document.getElementById(data._id);
-    new AnimationFrames({
-        duration: 400,
-        easing: 'sineInOut',
-        onstart () {
-            temp.style.display = '';
-            temp.style.backgroundImage = 'url(/' + data.image_loc + ')';
-            target.style.visibility = 'hidden';
-        },
-        onprogress: (e) => {
-            temp.style.transform = translate(e * (get_position(target).x - get_position(temp).x), e * (get_position(target).y - get_position(temp).y));
-        },
-        onend () {
-            temp.style.transform = '';
-            target.style.visibility = 'visible';
-        }
-    });
+    anm_draw_card(data, false);
 });
 
 // Name : frontend-game.socket.on.{slug}-play-card
 // Desc : whenever the player plays a card, triggers animation
 socket.on(window.location.pathname.substr(6) + "-play-card", function (data) {
-    const temp = document.getElementById("anim_draw");
-    const target = document.getElementById(data.card._id);
-    const discard = document.getElementById("anim_discard");
-    new AnimationFrames({
-        duration: 400,
-        easing: 'sineInOut',
-        onstart () {
-            temp.style.display = '';
-            temp.style.backgroundImage = 'url(/' + data.card.image_loc + ')';
-            target.style.visibility = 'hidden';
-        },
-        onprogress: (e) => {
-            temp.style.transform = translate((e * ((get_position(discard).x - get_position(target).x)) +  + (get_position(target).x - get_position(temp).x)), (e * (get_position(discard).y - get_position(target).y)) + (get_position(target).y - get_position(temp).y));
-        },
-        onend () {
-            itr_update_discard(data.game_details);
-            itr_update_hand(data.game_details);
-            temp.style.transform = '';
-        }
-    });
+    anm_play_card(data);
 });
 
 // Name : frontend-game.socket.on.connect
@@ -294,7 +258,7 @@ function preload () {
     }
 }
 
-// Preload card images
+// Preload base card images
 preload (
     "/public/cards/base/attack-1.png",
     "/public/cards/base/attack-2.png",
