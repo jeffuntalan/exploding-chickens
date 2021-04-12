@@ -20,12 +20,14 @@ let player_actions = require('../services/player-actions.js');
 
 //Export to app.js file
 module.exports = function (fastify, stats_storage) {
+    stats_storage.set('sockets_active', 0);
     spinner.succeed(wipe(`${chalk.bold.blue('Socket')}: Successfully opened socket.io connection`));
 
     // Name : socket.on.connection
     // Desc : runs when a new connection is created through socket.io
     // Author(s) : RAk3rman
     fastify.io.on('connection', function (socket) {
+        stats_storage.set('sockets_active', stats_storage.get('sockets_active') + 1);
         spinner.info(wipe(`${chalk.bold.blue('Socket')}: ${chalk.dim.green('new-connection  ')} ` + socket.id ));
         let player_data = {};
 
@@ -305,6 +307,7 @@ module.exports = function (fastify, stats_storage) {
         // Desc : runs when the client disconnects
         // Author(s) : RAk3rman
         socket.on('disconnect', async function () {
+            stats_storage.set('sockets_active', stats_storage.get('sockets_active') - 1);
             spinner.info(wipe(`${chalk.bold.blue('Socket')}: ${chalk.dim.red('new-disconnect  ')} ` + socket.id));
             // Mark player as disconnected if active
             if (await game.exists({ slug: player_data["slug"] }) && player_data["player_id"] !== "") {

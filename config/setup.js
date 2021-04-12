@@ -43,7 +43,7 @@ exports.check_values = function (config_storage, stats_storage) {
     }
     // Check default stats values
     spinner.start(wipe(`${chalk.bold.cyan('Setup')}: Checking stats`));
-    let stats_array = ['games_played', 'mins_played', 'explosions', 'attacks', 'defuses', 'favors', 'reverses', 'seethefutures', 'shuffles', 'skips'];
+    let stats_array = ['games_played', 'mins_played', 'explosions', 'attacks', 'defuses', 'favors', 'reverses', 'seethefutures', 'shuffles', 'skips', 'sockets_active'];
     stats_array.forEach(element => {
         if (!stats_storage.has(element)) {
             stats_storage.set(element, 0);
