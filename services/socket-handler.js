@@ -249,16 +249,16 @@ module.exports = function (fastify, stats_storage) {
         // Name : socket.on.draw-card
         // Desc : runs when a card is drawn on the client
         // Author(s) : RAk3rman
+        let cooldown = true;
         socket.on('draw-card', async function (data) {
             spinner.start(wipe(`${chalk.bold.blue('Socket')}: ${chalk.dim.cyan('draw-card       ')} ` + socket.id + ` ${chalk.dim.yellow(data.slug)} Received request to draw a new card for player_id: ` + data.player_id));
             // Verify game exists
             if (await game.exists({ slug: data.slug, "players._id": data.player_id })) {
                 // Get game details
                 let game_details = await game_actions.game_details_slug(data.slug);
-                let cooldown = true;
                 if (validate_turn(data.player_id, game_details) && cooldown) {
                     cooldown = false;
-                    setTimeout( function () {cooldown = false}, 500);
+                    setTimeout( function () {cooldown = true}, 500);
                     if (game_details.status === "in_game") {
                         // Draw card from draw deck and place in hand
                         let card_drawn = await game_actions.draw_card(game_details, data.player_id);
