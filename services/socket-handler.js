@@ -255,7 +255,10 @@ module.exports = function (fastify, stats_storage) {
             if (await game.exists({ slug: data.slug, "players._id": data.player_id })) {
                 // Get game details
                 let game_details = await game_actions.game_details_slug(data.slug);
-                if (validate_turn(data.player_id, game_details)) {
+                let cooldown = true;
+                if (validate_turn(data.player_id, game_details) && cooldown) {
+                    cooldown = false;
+                    setTimeout(500, function () {cooldown = false});
                     if (game_details.status === "in_game") {
                         // Draw card from draw deck and place in hand
                         let card_drawn = await game_actions.draw_card(game_details, data.player_id);

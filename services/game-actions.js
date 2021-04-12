@@ -415,16 +415,16 @@ exports.game_purge = async function (debug) {
 // Desc : creates a new event and returns the game details, unsaved
 // Author(s) : RAk3rman
 exports.log_event = async function (game_details, event, player_id) {
-    game_details.events.push({
-        event: event,
-        player_id: player_id === "" ? "unknown" : player_id,
-        seat_playing: game_details.seat_playing,
-        turn_direction: game_details.turn_direction,
-        turns_remaining: game_details.turns_remaining,
-        status: game_details.status,
-        start_time: game_details.start_time,
-        players: game_details.players,
-        cards: game_details.cards
-    });
+    // game_details.events.push({
+    //     event: event,
+    //     player_id: player_id === "" ? "unknown" : player_id,
+    //     seat_playing: game_details.seat_playing,
+    //     turn_direction: game_details.turn_direction,
+    //     turns_remaining: game_details.turns_remaining,
+    //     status: game_details.status,
+    //     start_time: game_details.start_time,
+    //     players: game_details.players,
+    //     cards: game_details.cards
+    // });
     return game_details;
 }
