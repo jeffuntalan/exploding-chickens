@@ -21,7 +21,6 @@ const pkg = require('./package.json');
 const ora = require('ora');
 const spinner = ora('');
 const wipe = chalk.white;
-const ip = require('ip');
 
 // Configuration & testing
 let setup = require('./config/setup.js');

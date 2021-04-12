@@ -14,7 +14,9 @@ From there, the drawing deck slowly shrinks and the explosions only become more 
 ![Home UI](public/home_ui.png)
 
 ## Purpose
-What was the reason for building a complex game like this? Check out the blog post, [Exploding Chickens: Building a web-based game from scratch](https://rakerman.com/blog/exploding-chickens/)
+What was the reason for building a complex game like this? Learn more by reading the blog post below!
+
+[Exploding Chickens: Building a web-based game from scratch](https://rakerman.com/blog/exploding-chickens/)
 
 ## Install
 As easy as 1, 2, 3..... boom.
