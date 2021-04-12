@@ -263,8 +263,11 @@ function play_card(card_id, target) {
 
 // Name : frontend-game.draw_card()
 // Desc : emits the draw-card event when the draw deck is clicked
+let draw_cooldown = true;
 function draw_card() {
-    if (session_user.can_draw) {
+    if (session_user.can_draw && draw_cooldown) {
+        draw_cooldown = false;
+        setTimeout(function () {draw_cooldown = true;}, 300);
         socket.emit('draw-card', {
             slug: window.location.pathname.substr(6),
             player_id: session_user._id
