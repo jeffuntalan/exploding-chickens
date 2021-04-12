@@ -304,6 +304,7 @@ function place_chicken(card_id, source, max_pos) {
             position = parseInt(cur.substr(6,2));
         }
     }
+    Swal.close();
     play_card(card_id, position);
 }
 
