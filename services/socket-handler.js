@@ -258,7 +258,7 @@ module.exports = function (fastify, stats_storage) {
                 let cooldown = true;
                 if (validate_turn(data.player_id, game_details) && cooldown) {
                     cooldown = false;
-                    setTimeout(500, function () {cooldown = false});
+                    setTimeout( function () {cooldown = false}, 500);
                     if (game_details.status === "in_game") {
                         // Draw card from draw deck and place in hand
                         let card_drawn = await game_actions.draw_card(game_details, data.player_id);
