@@ -112,7 +112,7 @@
     </div>
     <div class="flex align-bottom">
         <div class="rounded-xl shadow-lg center-card bg-center bg-contain mx-1 z-0" id="anim_draw" style="position:absolute;background-image: url('/public/cards/card_back.png');"></div>
-        <div class="rounded-xl shadow-lg center-card bg-center bg-contain mx-1 z-10" onclick="draw_card()" style="background-image: url('/public/cards/card_back.png');"></div>
+        <button class="rounded-xl shadow-lg center-card bg-center bg-contain mx-1 z-10 focus:outline-none active:outline-none active:ring-2 active:ring-offset-2 active:ring-gray-700" onclick="draw_card()" style="background-image: url('/public/cards/card_back.png');"></button>
         <div id="itr_ele_discard_deck">
             <div class="rounded-xl shadow-lg center-card bg-center bg-contain mx-1 border-dashed border-4 border-gray-400">
                 <h1 class="text-gray-400 font-bold flex items-center justify-center center-card-text">Discard Pile</h1>
@@ -122,14 +122,14 @@
 </div>
 {{! Card hand }}
 <div class="w-full h-28 text-center py-2">
-    <div class="-my-2 overflow-x-auto">
+    <div class="-my-10 overflow-x-auto">
         <div class="align-middle inline-block min-w-full sm:px-0 lg:px-8">
             <div class="flex items-center" id="itr_ele_player_hand"></div>
         </div>
     </div>
 </div>
 {{! Sidebar }}
-<div class="fixed inset-0 overflow-hidden" x-show="sidebar_open">
+<div class="fixed inset-0 overflow-hidden z-10" x-show="sidebar_open">
     <div class="absolute inset-0 overflow-hidden" x-show="sidebar_open">
         <div x-show="sidebar_open" x-description="Background overlay, show/hide based on slide-over state." x-transition:enter="ease-in-out duration-500" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="ease-in-out duration-500" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" class="absolute inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true"></div>
         <section @click.away="sidebar_open = false" class="absolute inset-y-0 right-0 pl-10 max-w-full flex" aria-labelledby="slide-over-heading">

@@ -144,7 +144,7 @@ function itr_update_hand(game_details) {
 function itr_trigger_exp(count, card_id, setup) {
     // Append html overlay if on first function call
     if (setup) {
-        document.getElementById("itr_ele_discard_deck").innerHTML = "<div class=\"rounded-xl shadow-lg center-card bg-center bg-contain mx-1\" style=\"background-image: linear-gradient(rgba(0, 0, 0, .6), rgba(0, 0, 0, .6)), url('/public/cards/base/chicken.png');\">\n" +
+        document.getElementById("itr_ele_discard_deck").innerHTML = "<div class=\"rounded-xl shadow-lg center-card bg-center bg-contain mx-1\" id=\"anim_discard\" style=\"background-image: linear-gradient(rgba(0, 0, 0, .6), rgba(0, 0, 0, .6)), url('/public/cards/base/chicken.png');\">\n" +
             "    <div class=\"rounded-xl shadow-lg center-card bg-center bg-contain border-dashed border-4 border-green-500 h-full\" style=\"border-color: rgb(178, 234, 55); color: rgb(178, 234, 55);\">\n" +
             "        <div class=\"flex flex-wrap content-center justify-center h-full w-full\">\n" +
             "            <div class=\"block text-center space-y-2\">\n" +
@@ -155,7 +155,6 @@ function itr_trigger_exp(count, card_id, setup) {
             "        </div>\n" +
             "    </div>\n" +
             "</div>";
-        //toggle_halo(player_id, "ring-2 ring-red-500 animate-pulse");
     }
     // Call program again if not placed
     if (count > 0) {

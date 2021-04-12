@@ -244,20 +244,27 @@ exports.base_router = async function (game_details, player_id, card_id, target, 
 exports.discard_card = async function (game_details, card_id) {
     // Find greatest position in discard deck
     let discard_deck = await card_actions.filter_cards("discard_deck", game_details.cards);
-    // Create new promise to save game
-    return await new Promise((resolve, reject) => {
-        // Update card that was discarded
-        game.findOneAndUpdate(
-            { slug: game_details.slug, "cards._id": card_id},
-            {"$set": { "cards.$.assignment": "discard_deck", "cards.$.position": discard_deck.length }},
-            function (err) {
-                if (err) {
-                    reject(err);
-                } else {
-                    player_actions.sort_hand(game_details, card_id.assignment);
-                    resolve();
-                }
-            });
+    // Update card details
+    let player_id;
+    for (let i = 0; i <= game_details.cards.length - 1; i++) {
+        if (game_details.cards[i]._id === card_id) {
+            player_id = game_details.cards[i].assignment;
+            game_details.cards[i].assignment = "discard_deck";
+            game_details.cards[i].position = discard_deck.length;
+            break;
+        }
+    }
+    await player_actions.sort_hand(game_details, player_id);
+    // Create new promise for game save
+    await new Promise((resolve, reject) => {
+        //Save updated game
+        game_details.save({}, function (err) {
+            if (err) {
+                reject(err);
+            } else {
+                resolve();
+            }
+        });
     });
 }
 

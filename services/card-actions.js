@@ -178,20 +178,25 @@ exports.ask_favor = async function (game_details, player_id, target) {
     let current_hand = await card_actions.filter_cards(player_id, game_details.cards);
     // Determine random card
     let rand_pos = Math.floor(Math.random() * (target_hand.length - 1));
+    // Update card details
+    for (let i = 0; i <= game_details.cards.length - 1; i++) {
+        if (game_details.cards[i]._id === target_hand[rand_pos]._id) {
+            game_details.cards[i].assignment = player_id;
+            game_details.cards[i].position = current_hand.length;
+            break;
+        }
+    }
+    await player_actions.sort_hand(game_details, target);
     // Create new promise for game save
     await new Promise((resolve, reject) => {
-        // Update player with card that was chosen
-        game.findOneAndUpdate(
-            { slug: game_details.slug, "cards._id": target_hand[rand_pos]._id},
-            { "$set": { "cards.$.assignment": player_id, "cards.$.position": current_hand.length }},
-            function (err) {
-                if (err) {
-                    reject(err);
-                } else {
-                    player_actions.sort_hand(game_details, target);
-                    resolve();
-                }
-            });
+        //Save updated game
+        game_details.save({}, function (err) {
+            if (err) {
+                reject(err);
+            } else {
+                resolve();
+            }
+        });
     });
     return target_hand[rand_pos];
 }

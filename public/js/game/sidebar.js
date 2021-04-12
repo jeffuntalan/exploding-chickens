@@ -14,7 +14,13 @@ function sbr_update_widgets(game_details) {
     let stat_color_b = "";
     // Construct status widget
     if (session_user.is_host) {
-        if (game_details.status === "in_lobby") {
+        if (game_details.status === "starting") {
+            stat_header = "<button type=\"button\" class=\"widget w-full p-2.5 rounded-lg bg-white border border-gray-100 bg-gradient-to-r from-green-500 to-green-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500\" onclick=\"start_game()\">\n";
+            stat_icon = "<svg class=\"stroke-current text-white\" height=\"24\" width=\"24\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\">\n" +
+                "<path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M3 21v-4m0 0V5a2 2 0 012-2h6.5l1 1H21l-3 6 3 6h-8.5l-1-1H5a2 2 0 00-2 2zm9-13.5V9\" />\n" +
+                "</svg>";
+            stat_text = "Starting...";
+        } else if (game_details.status === "in_lobby") {
             stat_header = "<button type=\"button\" class=\"widget w-full p-2.5 rounded-lg bg-white border border-gray-100 bg-gradient-to-r from-green-500 to-green-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500\" onclick=\"start_game()\">\n";
             stat_icon = "<svg class=\"stroke-current text-white\" height=\"24\" width=\"24\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\">\n" +
                 "<path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M3 21v-4m0 0V5a2 2 0 012-2h6.5l1 1H21l-3 6 3 6h-8.5l-1-1H5a2 2 0 00-2 2zm9-13.5V9\" />\n" +
@@ -57,6 +63,7 @@ function sbr_update_widgets(game_details) {
         "        </div>\n" + stat_icon +
         "    </div>\n" +
         "</div>";
+    if (game_details.status === "starting") { return }
     // Update ec count widget
     let p_chance = 100;
     if (game_details.cards_remaining !== 0) {

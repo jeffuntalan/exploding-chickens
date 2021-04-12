@@ -5,8 +5,8 @@
   "main": "app.js",
   "scripts": {
     "start": "node app.js",
-    "develop": "npm i && cd public/css && cross-env NODE_ENV=production npx tailwindcss-cli@latest build -o tailwind.css -c tailwind.config.js && cd ../../ && nodemon app.js develop --ignore public/ --ignore templates/ --ignore config/stats.json",
-    "build": "cd public/css && cross-env NODE_ENV=production npx tailwindcss-cli@latest build -o tailwind.css -c tailwind.config.js && cd ../../",
+    "develop": "npm i && cd public/css && cross-env NODE_ENV=production npx tailwindcss-cli@latest build -o tailwind.css -c ../../config/tailwind.config.js && cd ../../ && nodemon app.js develop --ignore public/ --ignore templates/ --ignore config/stats.json",
+    "build": "cd public/css && cross-env NODE_ENV=production npx tailwindcss-cli@latest build -o tailwind.css -c ../../config/tailwind.config.js && cd ../../",
     "test": "mocha"
   },
   "repository": {

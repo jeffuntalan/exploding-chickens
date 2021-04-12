@@ -28,6 +28,7 @@ let session_user = {
 // Name : frontend-game.socket.on.{slug}-update
 // Desc : whenever an event occurs containing a game update
 socket.on(window.location.pathname.substr(6) + "-update", function (data) {
+    console.log(data);
     // Check browser session
     setup_session_check(data);
     // Update elements based on update trigger
@@ -151,7 +152,7 @@ socket.on(window.location.pathname.substr(6) + "-draw-card", function (data) {
     const temp = document.getElementById("anim_draw");
     const target = document.getElementById(data._id);
     new AnimationFrames({
-        duration: 350,
+        duration: 400,
         easing: 'sineInOut',
         onstart () {
             temp.style.display = '';
@@ -175,7 +176,7 @@ socket.on(window.location.pathname.substr(6) + "-play-card", function (data) {
     const target = document.getElementById(data.card._id);
     const discard = document.getElementById("anim_discard");
     new AnimationFrames({
-        duration: 350,
+        duration: 400,
         easing: 'sineInOut',
         onstart () {
             temp.style.display = '';
@@ -234,6 +235,7 @@ socket.on("disconnect", function (data) {
 // Name : frontend-game.start_game()
 // Desc : emits the start-game event when the host clicks the start game button
 function start_game() {
+    sbr_update_widgets({status: "starting"});
     socket.emit('start-game', {
         slug: window.location.pathname.substr(6),
         player_id: session_user._id
