@@ -2,6 +2,8 @@
 
 [![Build status](https://travis-ci.org/RAK3RMAN/exploding-chickens.svg?branch=main)](https://travis-ci.org/RAK3RMAN/exploding-chickens) ![Language](https://img.shields.io/badge/Language-Node.js-informational.svg?style=flat) ![License](https://img.shields.io/badge/License-MPL2.0-red.svg)
 
+#### We are seeking artists & graphic designers to help design the upcoming packs of Exploding Chickens! If you have a knack to create awesome card designs and want to give back to the community, drop me a line [here](https://rakerman.com/contact/).
+
 A beautiful, online alternative to the popular kitty-powered version of Russian Roulette, Exploding Kittens. 
 Exploding Chickens is a card game with explosions and of course, chickens — all crafted on the Node.js platform. 
 The rules are simple. Each player takes turns drawing a card or playing a card, rolling the dice of luck so that they can survive for yet another turn. 
@@ -14,8 +16,7 @@ From there, the drawing deck slowly shrinks and the explosions only become more 
 ![Home UI](public/home_ui.png)
 
 ## Purpose
-What was the reason for building a complex game like this? Learn more by reading the blog post below!
-
+What was the reason for building a complex game like this? Learn more by reading the blog post —
 [Exploding Chickens: Building a web-based game from scratch](https://rakerman.com/blog/exploding-chickens/)
 
 ## Install
@@ -73,5 +74,14 @@ Author(s): RAk3rman
 - **Evan Carlson** / Code Review
 
 *Individual contributions are listed on most functions*
+
+## Sponsorship
+Your sponsorship is **incredibly important** in keeping projects like this running.
+Exploding Chickens requires a surprisingly large amount of resources.
+Take server hosting, network infrastructure, and external commissions, just to name a few.
+We would greatly appreciate it if you could make a contribution of any size to this project. Thanks!
+
+[https://github.com/sponsors/rak3rman](https://github.com/sponsors/rak3rman)
+
 ## License
 This project (exploding-chickens) is protected by the Mozilla Public License 2.0 as disclosed in the [LICENSE](https://github.com/rak3rman/exploding-chickens/blob/main/LICENSE). Adherence to the policies and terms listed is required.
