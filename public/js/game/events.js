@@ -28,7 +28,6 @@ let session_user = {
 // Name : frontend-game.socket.on.{slug}-update
 // Desc : whenever an event occurs containing a game update
 socket.on(window.location.pathname.substr(6) + "-update", function (data) {
-    console.log(data);
     // Check browser session
     setup_session_check(data);
     // Update elements based on update trigger
@@ -277,3 +276,57 @@ function draw_card() {
         });
     }
 }
+
+/*\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
+ CARD IMAGE PRELOAD
+\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\*/
+
+let images = [];
+// Name : frontend-game.preload()
+// Desc : preloads the images passed into it
+function preload () {
+    for (let i = 0; i < arguments.length; i++) {
+        images[i] = new Image();
+        images[i].src = preload.arguments[i];
+    }
+}
+
+// Preload card images
+preload (
+    "/public/cards/base/attack-1.png",
+    "/public/cards/base/attack-2.png",
+    "/public/cards/base/attack-3.png",
+    "/public/cards/base/attack-4.png",
+    "/public/cards/base/chicken.png",
+    "/public/cards/base/defuse-1.png",
+    "/public/cards/base/defuse-2.png",
+    "/public/cards/base/defuse-3.png",
+    "/public/cards/base/defuse-4.png",
+    "/public/cards/base/defuse-5.png",
+    "/public/cards/base/defuse-6.png",
+    "/public/cards/base/favor-1.png",
+    "/public/cards/base/favor-2.png",
+    "/public/cards/base/favor-3.png",
+    "/public/cards/base/favor-4.png",
+    "/public/cards/base/randchick-1.png",
+    "/public/cards/base/randchick-2.png",
+    "/public/cards/base/randchick-3.png",
+    "/public/cards/base/randchick-4.png",
+    "/public/cards/base/reverse-1.png",
+    "/public/cards/base/reverse-2.png",
+    "/public/cards/base/reverse-3.png",
+    "/public/cards/base/reverse-4.png",
+    "/public/cards/base/seethefuture-1.png",
+    "/public/cards/base/seethefuture-2.png",
+    "/public/cards/base/seethefuture-3.png",
+    "/public/cards/base/seethefuture-4.png",
+    "/public/cards/base/seethefuture-5.png",
+    "/public/cards/base/shuffle-1.png",
+    "/public/cards/base/shuffle-2.png",
+    "/public/cards/base/shuffle-3.png",
+    "/public/cards/base/shuffle-4.png",
+    "/public/cards/base/skip-1.png",
+    "/public/cards/base/skip-2.png",
+    "/public/cards/base/skip-3.png",
+    "/public/cards/base/skip-4.png"
+)
