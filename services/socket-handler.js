@@ -258,7 +258,7 @@ module.exports = function (fastify, stats_storage) {
             if (await game.exists({ slug: data.slug, "players._id": data.player_id })) {
                 // Get game details
                 let game_details = await game_actions.game_details_slug(data.slug);
-                if (validate_turn(data.player_id, game_details) && cooldown) {
+                if (validate_turn(data.player_id, game_details) && !validate_explode(data.player_id, game_details) && cooldown) {
                     cooldown = false;
                     setTimeout( function () {cooldown = true}, 300);
                     if (game_details.status === "in_game") {
@@ -340,10 +340,22 @@ module.exports = function (fastify, stats_storage) {
     // Desc : returns a bool stating if the player_id is on its turn
     // Author(s) : RAk3rman
     function validate_turn(player_id, game_details) {
-        //Find player
+        // Find player
         for (let i = 0; i < game_details.players.length; i++) {
             if (game_details.players[i]._id === player_id) {
                 return game_details.players[i].seat === game_details.seat_playing;
+            }
+        }
+    }
+
+    // Name : validate_explode(player_id, game_details)
+    // Desc : returns a bool stating if the player is exploding
+    // Author(s) : RAk3rman
+    function validate_explode(player_id, game_details) {
+        // Find player
+        for (let i = 0; i < game_details.players.length; i++) {
+            if (game_details.players[i]._id === player_id) {
+                return game_details.players[i].status === "exploding";
             }
         }
     }
