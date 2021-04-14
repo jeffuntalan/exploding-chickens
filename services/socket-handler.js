@@ -400,7 +400,7 @@ module.exports = function (fastify, stats_storage) {
                 players: [],
                 discard_deck: [],
                 slug: raw_game_details["slug"],
-                created: moment(raw_game_details["created"]).calendar(),
+                created: moment(raw_game_details["created"]),
                 status: raw_game_details["status"],
                 seat_playing: raw_game_details["seat_playing"],
                 turn_direction: raw_game_details["turn_direction"],
