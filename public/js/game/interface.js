@@ -13,6 +13,7 @@ const toast_turn = Swal.mixin({
 // Global variables
 let is_turn = false;
 let exploding_active = false;
+let ec_defuse_count = 15;
 
 // Name : frontend-game.itr_update_players(game_details)
 // Desc : updates players
@@ -112,8 +113,11 @@ function itr_update_hand(game_details) {
                     play_card_funct = "play_card('" + game_details.players[i].cards[j]._id + "', '')";
                 }
                 // Check if chicken is active
-                if (game_details.players[i].cards[j].action === "chicken" && exploding_active === false) {
-                    itr_trigger_exp(15, game_details.players[i].cards[j]._id, true);
+                if (game_details.players[i].cards[j].action === "chicken") {
+                    if (!exploding_active) {
+                        ec_defuse_count = 15;
+                        itr_trigger_exp(game_details.players[i].cards[j]._id, true);
+                    }
                     session_user.can_draw = false;
                 }
                 payload += "<div class=\"rounded-xl shadow-sm bottom-card bg-center bg-contain\" id=\"" + game_details.players[i].cards[j]._id + "\" onclick=\"" + play_card_funct + "\" style=\"background-image: url('/" + game_details.players[i].cards[j].image_loc + "')\"></div>";
@@ -132,17 +136,20 @@ function itr_update_hand(game_details) {
             }
         } else {
             // Check if chicken is active
-            if (game_details.players[i].status === "exploding" && exploding_active === false) {
-                itr_trigger_exp(15, false, true);
+            if (!exploding_active && game_details.players[i].status === "exploding") {
+                ec_defuse_count = 15;
+                itr_trigger_exp(false, true);
+            } else if (exploding_active && game_details.players[i]._id === game_details.req_player_id && game_details.players[i].status === "exploding") {
+                ec_defuse_count = 15;
             }
         }
     }
     document.getElementById("itr_ele_player_hand").innerHTML = payload;
 }
 
-// Name : frontend-game.itr_trigger_exp(count, card_id, setup)
+// Name : frontend-game.itr_trigger_exp(card_id, setup)
 // Desc : triggers the exploding chicken ui to appear
-function itr_trigger_exp(count, card_id, setup) {
+function itr_trigger_exp(card_id, setup) {
     // Check to make sure the element wasn't replaced
     exploding_active = true;
     if (document.getElementById("itr_val_defuse_counter") === null && setup === false) {
@@ -156,7 +163,7 @@ function itr_trigger_exp(count, card_id, setup) {
             "        <div class=\"flex flex-wrap content-center justify-center h-full w-full\">\n" +
             "            <div class=\"block text-center space-y-2\">\n" +
             "                <h1 class=\"font-extrabold text-xl m-0\">DEFUSE</h1>\n" +
-            "                <h1 class=\"font-bold text-8xl m-0\" id=\"itr_val_defuse_counter\">" + count + "</h1>\n" +
+            "                <h1 class=\"font-bold text-8xl m-0\" id=\"itr_val_defuse_counter\">" + ec_defuse_count + "</h1>\n" +
             "                <h1 class=\"font-extrabold text-xl m-0\">CHICKEN</h1>\n" +
             "            </div>\n" +
             "        </div>\n" +
@@ -164,14 +171,14 @@ function itr_trigger_exp(count, card_id, setup) {
             "</div>";
     }
     // Call program again if not placed
-    if (count > 0) {
-        document.getElementById("itr_ele_ec_count").innerHTML = "<a class=\"text-red-500\"><i class=\"fas fa-bomb\"></i> " + count + "</a>";
-        document.getElementById("itr_val_defuse_counter").innerHTML = count;
-        setTimeout(function(){ itr_trigger_exp(count, card_id, false) }, 1000);
-    } else if (count > -1) {
+    if (ec_defuse_count > 0 && document.getElementById("itr_val_defuse_counter") !== null) {
+        document.getElementById("itr_ele_ec_count").innerHTML = "<a class=\"text-red-500\"><i class=\"fas fa-bomb\"></i> " + ec_defuse_count + "</a>";
+        document.getElementById("itr_val_defuse_counter").innerHTML = ec_defuse_count;
+        setTimeout(function(){ itr_trigger_exp(card_id, false) }, 1000);
+    } else if (ec_defuse_count > -1 && document.getElementById("itr_val_defuse_counter") !== null) {
         document.getElementById("itr_ele_ec_count").innerHTML = "<a class=\"text-red-500\"><i class=\"fas fa-bomb\"></i> RIP</a>";
         document.getElementById("itr_val_defuse_counter").innerHTML = "<i class=\"fas fa-skull-crossbones\"></i>"
-        setTimeout(function(){ itr_trigger_exp(count, card_id, false) }, 1000);
+        setTimeout(function(){ itr_trigger_exp(card_id, false) }, 1000);
     } else if (card_id !== false) {
         // Force play chicken since time expired
         play_card(card_id);
@@ -184,7 +191,7 @@ function itr_trigger_exp(count, card_id, setup) {
         exploding_active = false;
         return;
     }
-    count--;
+    ec_defuse_count--;
 }
 
 // Name : frontend-game.itr_trigger_stf(top_3)
