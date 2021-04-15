@@ -87,6 +87,21 @@ socket.on(window.location.pathname.substr(6) + "-update", function (data) {
         sbr_update_widgets(data);
         itr_update_pcards(data);
         itr_update_hand(data);
+    } else if (data.trigger === "make-host") {
+        // Update host designation in session_user
+        for (let i = 0; i < data.players.length; i++) {
+            // Check if individual player exists
+            if (data.players[i]._id === JSON.parse(localStorage.getItem('ec_session')).player_id) {
+                // Update session_user _id and is_host
+                session_user = {
+                    _id: data.players[i]._id,
+                    is_host: data.players[i].type === "host"
+                };
+                break;
+            }
+        }
+        sbr_update_widgets(data);
+        sbr_update_players(data);
     } else if (data.trigger === "disconnect") { // Existing player disconnected
         sbr_update_pstatus(data);
         itr_update_pstatus(data);
@@ -242,6 +257,26 @@ function draw_card() {
             html: '<h1 class="text-lg font-bold pl-2 pr-1">You cannot draw a card</h1>'
         });
     }
+}
+
+// Name : frontend-game.kick_player(target_player_id)
+// Desc : emits the kick-player event to kick a target player
+function kick_player(target_player_id) {
+    socket.emit('kick-player', {
+        slug: window.location.pathname.substr(6),
+        player_id: session_user._id,
+        kick_player_id: target_player_id
+    })
+}
+
+// Name : frontend-game.make_host(target_player_id)
+// Desc : emits the make-host event to update the host
+function make_host(target_player_id) {
+    socket.emit('make-host', {
+        slug: window.location.pathname.substr(6),
+        player_id: session_user._id,
+        suc_player_id: target_player_id
+    })
 }
 
 /*\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\

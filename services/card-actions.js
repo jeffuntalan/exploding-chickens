@@ -44,7 +44,7 @@ exports.attack = async function (game_details) {
     });
 }
 
-// Name : card_actions.kill_player(game_details)
+// Name : card_actions.kill_player(game_details, player_id)
 // Desc : player exploded, removes player from game and frees cards
 // Author(s) : RAk3rman
 exports.kill_player = async function (game_details, player_id) {

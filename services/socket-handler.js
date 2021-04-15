@@ -114,7 +114,8 @@ module.exports = function (fastify, stats_storage) {
                         // Create hand for each player
                         await player_actions.create_hand(data.slug);
                         // Randomize seat positions
-                        await player_actions.randomize_seats(data.slug);
+                        game_details = await game_actions.game_details_slug(data.slug);
+                        await player_actions.randomize_seats(game_details);
                         // Emit start game event
                         spinner.succeed(wipe(`${chalk.bold.blue('Socket')}: ${chalk.dim.cyan('start-game      ')} ` + socket.id + ` ${chalk.dim.yellow(data.slug)} New game has started successfully`));
                         await update_game_ui(data.slug, "", "start-game      ", socket.id, data.player_id);
@@ -285,6 +286,58 @@ module.exports = function (fastify, stats_storage) {
                 }
             } else {
                 spinner.warn(wipe(`${chalk.bold.blue('Socket')}: ${chalk.dim.cyan('draw-card       ')} ` + socket.id + ` ${chalk.dim.yellow(data.slug)} Target game does not exist`));
+                fastify.io.to(socket.id).emit(data.slug + "-error", "Game does not exist");
+            }
+        })
+
+        // Name : socket.on.kick-player
+        // Desc : kicks a target player from a game
+        // Author(s) : RAk3rman
+        socket.on('kick-player', async function (data) {
+            spinner.start(wipe(`${chalk.bold.blue('Socket')}: ${chalk.dim.cyan('kick-player     ')} ` + socket.id + ` ${chalk.dim.yellow(data.slug)} Received request to kick player`));
+            // Verify game exists
+            if (await game.exists({ slug: data.slug, "players._id": data.player_id })) {
+                // Get game details
+                let game_details = await game_actions.game_details_slug(data.slug);
+                // Verify host
+                if (validate_host(data.player_id, game_details)) {
+                    // Kick player
+                    await player_actions.kick_player(game_details, data.player_id, data.kick_player_id);
+                    // Emit reset game event
+                    spinner.succeed(wipe(`${chalk.bold.blue('Socket')}: ${chalk.dim.cyan('kick-player     ')} ` + socket.id + ` ${chalk.dim.yellow(data.slug)} Player has been kicked successfully`));
+                    await update_game_ui(data.slug, "", "kick-player     ", socket.id, data.player_id);
+                } else {
+                    spinner.warn(wipe(`${chalk.bold.blue('Socket')}: ${chalk.dim.cyan('kick-player     ')} ` + socket.id + ` ${chalk.dim.yellow(data.slug)} Player attempted to complete host action`));
+                    fastify.io.to(socket.id).emit(data.slug + "-error", "You are not the host");
+                }
+            } else {
+                spinner.warn(wipe(`${chalk.bold.blue('Socket')}: ${chalk.dim.cyan('kick-player     ')} ` + socket.id + ` ${chalk.dim.yellow(data.slug)} Target game does not exist`));
+                fastify.io.to(socket.id).emit(data.slug + "-error", "Game does not exist");
+            }
+        })
+
+        // Name : socket.on.make-host
+        // Desc : makes a new player the host
+        // Author(s) : RAk3rman
+        socket.on('make-host', async function (data) {
+            spinner.start(wipe(`${chalk.bold.blue('Socket')}: ${chalk.dim.cyan('make-host       ')} ` + socket.id + ` ${chalk.dim.yellow(data.slug)} Received request to transfer host role ` + data.player_id + ` -> ` + data.suc_player_id));
+            // Verify game exists
+            if (await game.exists({ slug: data.slug, "players._id": data.player_id })) {
+                // Get game details
+                let game_details = await game_actions.game_details_slug(data.slug);
+                // Verify host
+                if (validate_host(data.player_id, game_details)) {
+                    // Kick player
+                    await player_actions.make_host(game_details, data.player_id, data.suc_player_id);
+                    // Emit reset game event
+                    spinner.succeed(wipe(`${chalk.bold.blue('Socket')}: ${chalk.dim.cyan('make-host       ')} ` + socket.id + ` ${chalk.dim.yellow(data.slug)} Transfered host role ` + data.player_id + ` -> ` + data.suc_player_id));
+                    await update_game_ui(data.slug, "", "make-host       ", socket.id, data.player_id);
+                } else {
+                    spinner.warn(wipe(`${chalk.bold.blue('Socket')}: ${chalk.dim.cyan('make-host       ')} ` + socket.id + ` ${chalk.dim.yellow(data.slug)} Player attempted to complete host action`));
+                    fastify.io.to(socket.id).emit(data.slug + "-error", "You are not the host");
+                }
+            } else {
+                spinner.warn(wipe(`${chalk.bold.blue('Socket')}: ${chalk.dim.cyan('make-host       ')} ` + socket.id + ` ${chalk.dim.yellow(data.slug)} Target game does not exist`));
                 fastify.io.to(socket.id).emit(data.slug + "-error", "Game does not exist");
             }
         })

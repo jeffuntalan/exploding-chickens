@@ -80,7 +80,7 @@ exports.update_connection = async function (game_slug, player_id, p_connection) 
 exports.get_player = async function (game_details, player_id) {
     // Find player and return details
     for (let i = 0; i < game_details.players.length; i++) {
-        //If the card is assigned to this player, add to hand
+        // If the card is assigned to this player, add to hand
         if (game_details.players[i]._id === player_id) {
             return game_details.players[i];
         }
@@ -150,12 +150,10 @@ exports.create_hand = async function (game_slug) {
 }
 
 
-// Name : player_actions.randomize_seats(game_slug)
+// Name : player_actions.randomize_seats(game_details)
 // Desc : given a game_slug, gives each player a random seat position (without replacement)
 // Author(s) : SengdowJones, RAk3rman
-exports.randomize_seats = async function (game_slug) {
-    // Get game details
-    let game_details = await game_actions.game_details_slug(game_slug);
+exports.randomize_seats = async function (game_details) {
     // Create array containing each available seat
     let bucket = [];
     for (let i = 0; i <= game_details.players.length - 1; i++) {
@@ -212,6 +210,66 @@ exports.next_seat = async function (game_details) {
             }
         }
     }
+}
+
+// Name : player_actions.kick_player(game_details, host_player_id, kick_player_id)
+// Desc : remove a player from the game
+// Author(s) : RAk3rman
+exports.kick_player = async function (game_details, host_player_id, kick_player_id) {
+    // Make sure they aren't kicking themselves
+    if (host_player_id === kick_player_id) {
+        return;
+    }
+    // Remove player from game and release cards
+    await card_actions.kill_player(game_details, kick_player_id);
+    // Find player to delete
+    for (let i = 0; i < game_details.players.length; i++) {
+        if (game_details.players[i]._id === kick_player_id) {
+            // Check if player is playing
+            if (game_details.players[i].seat === game_details.seat_playing) {
+                await game_actions.advance_turn(game_details);
+            }
+            game_details.players.splice(i, 1);
+            break;
+        }
+    }
+    // Reset game if we have 1 player left
+    if (game_details.players.length <= 1) {
+        await game_actions.reset_game(game_details, "idle", "in_lobby");
+    } else {
+        // Reset player seat positions
+        await player_actions.randomize_seats(game_details);
+    }
+}
+
+// Name : player_actions.make_host(game_details, curr_player_id, suc_player_id)
+// Desc : make a new player the host
+// Author(s) : RAk3rman
+exports.make_host = async function (game_details, curr_player_id, suc_player_id) {
+    // Make sure they aren't making themselves a host
+    if (curr_player_id === suc_player_id) {
+        return;
+    }
+    // Both players and modify type
+    for (let i = 0; i < game_details.players.length; i++) {
+        // Check if the player id's match, update changes
+        if (game_details.players[i]._id === curr_player_id) {
+            game_details.players[i].type = "player";
+        } else if (game_details.players[i]._id === suc_player_id) {
+            game_details.players[i].type = "host";
+        }
+    }
+    // Create new promise for game save
+    return await new Promise((resolve, reject) => {
+        //Save updated game
+        game_details.save({}, function (err) {
+            if (err) {
+                reject(err);
+            } else {
+                resolve();
+            }
+        });
+    });
 }
 
 // Name : player_actions.sort_hand(game_details, player_id)
