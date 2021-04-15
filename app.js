@@ -122,7 +122,7 @@ function mongoose_connected() {
     spinner.succeed(wipe(`${chalk.bold.yellow('Mongoose')}: Connected successfully at ` + config_storage.get('mongodb_url')));
     // Start purge game cycle
     game_actions.game_purge().then(r => {});
-    setInterval(game_actions.game_purge, 3600000*12);
+    setInterval(game_actions.game_purge, 3600000*2);
     // Start webserver using config values
     spinner.info(wipe(`${chalk.bold.magenta('Fastify')}: Attempting to start http webserver on port ` + config_storage.get('webserver_port')));
     fastify.listen(config_storage.get('webserver_port'), function (err, address) {

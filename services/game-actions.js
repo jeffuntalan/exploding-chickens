@@ -385,7 +385,7 @@ exports.delete_game = async function (game_id) {
 // Author(s) : RAk3rman
 exports.game_purge = async function (debug) {
     if (debug !== false) {
-        spinner.info(wipe(`${chalk.bold.red('Game Purge')}: Purging all games older than 7 days`));
+        spinner.info(wipe(`${chalk.bold.red('Game Purge')}: Purging all games older than ` + config_storage.get('game_purge_age_hrs') + ` hours`));
     }
     await new Promise((resolve, reject) => {
         game.find({}, function (err, found_games) {
@@ -395,8 +395,8 @@ exports.game_purge = async function (debug) {
             } else {
                 // Loop through each game
                 for (let i = 0; i < found_games.length; i++) {
-                    // Determine if the game is more than 7 days old
-                    if (!moment(found_games[i].created).add(7, "days").isSameOrAfter(moment())) {
+                    // Determine if the game is more than X hours old
+                    if (!moment(found_games[i].created).add(config_storage.get('game_purge_age_hrs'), "hours").isSameOrAfter(moment())) {
                         // Delete game
                         game_actions.delete_game(found_games[i]._id).then(() => {
                             if (debug !== false) {

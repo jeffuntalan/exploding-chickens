@@ -34,6 +34,11 @@ exports.check_values = function (config_storage, stats_storage) {
         config_storage.set('verbose_debug_mode', false);
         spinner.warn(wipe(`${chalk.bold.cyan('Setup')}: "verbose_debug_mode" value in config.json set to default: "false"`));
     }
+    // Config value: game_purge_interval | the verbosity of output to the console
+    if (!config_storage.has('game_purge_age_hrs') || config_storage.get('game_purge_age_hrs') === '') {
+        config_storage.set('game_purge_age_hrs', 12);
+        spinner.warn(wipe(`${chalk.bold.cyan('Setup')}: "game_purge_age_hrs" value in config.json set to default: "12"`));
+    }
     // Exit if the config values are not set properly
     if (invalid_config) {
         spinner.info(wipe(`${chalk.bold.cyan('Setup')}: Please check "config.json" and configure the appropriate values`));
