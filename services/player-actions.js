@@ -237,6 +237,13 @@ exports.kick_player = async function (game_details, host_player_id, kick_player_
     if (game_details.players.length <= 1) {
         await game_actions.reset_game(game_details, "idle", "in_lobby");
     } else {
+        // Remove an ec from the deck
+        for (let i = 0; i < game_details.cards.length; i++) {
+            if (game_details.cards[i].action === "chicken" && game_details.cards[i].assignment === "draw_deck") {
+                game_details.cards[i].assignment = "out_of_play";
+                break;
+            }
+        }
         // Reset player seat positions
         await player_actions.randomize_seats(game_details);
     }

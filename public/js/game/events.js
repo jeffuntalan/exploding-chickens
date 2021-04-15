@@ -102,6 +102,20 @@ socket.on(window.location.pathname.substr(6) + "-update", function (data) {
         }
         sbr_update_widgets(data);
         sbr_update_players(data);
+        toast_turn.close();
+        toast_alert.fire({
+            icon: 'info',
+            html: '<h1 class="text-lg font-bold pl-2 pr-1">Host was updated</h1>'
+        });
+    } else if (data.trigger === "kick-player") {
+        sbr_update_widgets(data);
+        sbr_update_players(data);
+        itr_update_players(data);
+        toast_turn.close();
+        toast_alert.fire({
+            icon: 'info',
+            html: '<h1 class="text-lg font-bold pl-2 pr-1">Player was kicked</h1>'
+        });
     } else if (data.trigger === "disconnect") { // Existing player disconnected
         sbr_update_pstatus(data);
         itr_update_pstatus(data);
