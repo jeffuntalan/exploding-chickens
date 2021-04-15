@@ -32,7 +32,7 @@ This file stores all the environment variables needed for the project, which can
 The config file will be populated with the following default values:
 - ``"webserver_port": 3000`` Port where the webserver will accept incoming connections, of type int
 - ``"mongodb_url": "mongodb://localhost:27017/exploding-chickens"`` The url of your mongodb instance (make sure to add "/exploding-chickens" at the end of the url), of type string
-- ``"verbose_debug_mode": false`` Whether to output verbose debug output, of type bool
+- ``"game_purge_age_hrs": 12`` How old should a game be (in hours) before it is deleted
 
 **NOTE:** Make sure to stop the instance of exploding-chickens before changing any of these values. If the file is modified while an instance is active, the changes will be overridden.
 

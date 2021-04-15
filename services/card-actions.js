@@ -5,13 +5,7 @@ Desc     : all actions and helper functions
 Author(s): RAk3rman, vmdo3, SengdowJones
 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\*/
 
-//Packages
-let game = require('../models/game.js');
-const dataStore = require('data-store');
-const config_storage = new dataStore({path: './config/config.json'});
-let verbose_debug_mode = config_storage.get('verbose_debug_mode');
-
-//Services
+// Services
 let card_actions = require('../services/card-actions.js');
 let game_actions = require('../services/game-actions.js');
 let player_actions = require('./player-actions.js');

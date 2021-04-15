@@ -12,11 +12,9 @@ const chalk = require('chalk');
 const moment = require('moment');
 const spinner = ora('');
 const wipe = chalk.white;
-const { v4: uuidv4 } = require('uuid');
 const { uniqueNamesGenerator, adjectives, colors, animals } = require('unique-names-generator');
 const dataStore = require('data-store');
 const config_storage = new dataStore({path: './config/config.json'});
-let verbose_debug_mode = config_storage.get('verbose_debug_mode');
 
 //Services
 let card_actions = require('../services/card-actions.js');
@@ -385,12 +383,12 @@ exports.delete_game = async function (game_id) {
 // Author(s) : RAk3rman
 exports.game_purge = async function (debug) {
     if (debug !== false) {
-        spinner.info(wipe(`${chalk.bold.red('Game Purge')}: Purging all games older than ` + config_storage.get('game_purge_age_hrs') + ` hours`));
+        spinner.info(wipe(`${chalk.bold.red('Purge')}:   [` + moment().format('MM/DD/YY-HH:mm:ss') + `] Purging all games older than ` + config_storage.get('game_purge_age_hrs') + ` hours`));
     }
     await new Promise((resolve, reject) => {
         game.find({}, function (err, found_games) {
             if (err) {
-                spinner.fail(wipe(`${chalk.bold.red('Game Purge')}: Could not retrieve games`));
+                spinner.fail(wipe(`${chalk.bold.red('Purge')}:   [` + moment().format('MM/DD/YY-HH:mm:ss') + `] Could not retrieve games`));
                 reject(err);
             } else {
                 // Loop through each game
@@ -400,7 +398,7 @@ exports.game_purge = async function (debug) {
                         // Delete game
                         game_actions.delete_game(found_games[i]._id).then(() => {
                             if (debug !== false) {
-                                spinner.succeed(wipe(`${chalk.bold.red('Game Purge')}: Deleted game with id:` + found_games[i]._id));
+                                spinner.succeed(wipe(`${chalk.bold.red('Purge')}:   [` + moment().format('MM/DD/YY-HH:mm:ss') + `] Deleted game with id:` + found_games[i]._id));
                             }
                         });
                     }

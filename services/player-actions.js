@@ -8,9 +8,6 @@ Author(s): RAk3rman, SengdowJones
 //Packages
 let game = require('../models/game.js');
 const { v4: uuidv4 } = require('uuid');
-const dataStore = require('data-store');
-const config_storage = new dataStore({path: './config/config.json'});
-let verbose_debug_mode = config_storage.get('verbose_debug_mode');
 
 //Services
 let card_actions = require('../services/card-actions.js');
