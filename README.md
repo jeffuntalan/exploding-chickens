@@ -67,11 +67,10 @@ Author(s): RAk3rman
 - Make sure in line comments are clear. Use good coding practices.
 
 ## Contributors
-- **Radison Akerman** / Project Manager & Lead Developer
-- **Sengdao Inthavong** / Front-end Developer
-- **Vincent Do** / Back-end Developer
-- **Richard Yang** / Back-end Developer
-- **Evan Carlson** / Code Review
+- **Radison Akerman**
+- **Sengdao Inthavong**
+- **Vincent Do**
+- **Richard Yang**
 
 *Individual contributions are listed on most functions*
 

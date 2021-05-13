@@ -111,6 +111,8 @@ socket.on(window.location.pathname.substr(6) + "-update", function (data) {
         sbr_update_widgets(data);
         sbr_update_players(data);
         itr_update_players(data);
+        itr_update_discard(data);
+        itr_update_hand(data);
         toast_turn.close();
         toast_alert.fire({
             icon: 'info',

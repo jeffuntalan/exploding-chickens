@@ -217,6 +217,17 @@ exports.kick_player = async function (game_details, host_player_id, kick_player_
     if (host_player_id === kick_player_id) {
         return;
     }
+    // Check if chicken is in hand
+    let is_exploding = false;
+    for (let i = 0; i < game_details.players.length; i++) {
+        if (game_details.players[i]._id === kick_player_id) {
+            // Check if player is exploding
+            if (game_details.players[i].status === "exploding") {
+                is_exploding = true;
+            }
+            break;
+        }
+    }
     // Remove player from game and release cards
     await card_actions.kill_player(game_details, kick_player_id);
     // Find player to delete
@@ -226,6 +237,7 @@ exports.kick_player = async function (game_details, host_player_id, kick_player_
             if (game_details.players[i].seat === game_details.seat_playing) {
                 await game_actions.advance_turn(game_details);
             }
+            // Remove player from game
             game_details.players.splice(i, 1);
             break;
         }
@@ -235,10 +247,12 @@ exports.kick_player = async function (game_details, host_player_id, kick_player_
         await game_actions.reset_game(game_details, "idle", "in_lobby");
     } else {
         // Remove an ec from the deck
-        for (let i = 0; i < game_details.cards.length; i++) {
-            if (game_details.cards[i].action === "chicken" && game_details.cards[i].assignment === "draw_deck") {
-                game_details.cards[i].assignment = "out_of_play";
-                break;
+        if (!is_exploding) {
+            for (let i = 0; i < game_details.cards.length; i++) {
+                if (game_details.cards[i].action === "chicken" && game_details.cards[i].assignment === "draw_deck") {
+                    game_details.cards[i].assignment = "out_of_play";
+                    break;
+                }
             }
         }
         // Reset player seat positions
@@ -254,7 +268,7 @@ exports.make_host = async function (game_details, curr_player_id, suc_player_id)
     if (curr_player_id === suc_player_id) {
         return;
     }
-    // Both players and modify type
+    // Find both players and modify type
     for (let i = 0; i < game_details.players.length; i++) {
         // Check if the player id's match, update changes
         if (game_details.players[i]._id === curr_player_id) {

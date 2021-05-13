@@ -11,9 +11,9 @@ function anm_draw_card(data, recur) {
     const temp = document.getElementById("anim_draw");
     const target = document.getElementById(data._id);
     // Handle lag from data update
-    if (target === null && recur === true) {
+    if (get_position(target).x === 0 && get_position(target).y === 0 && recur === true) {
         setTimeout(function () { anm_draw_card(data, true) }, 100);
-    } else if (target === null && recur === false) {
+    } else if (get_position(target).x === 0 && get_position(target).y === 0 && recur === false) {
         return;
     }
     // Add new animation
